@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:'Courier New', Courier, monospace;
+}
+
+.navbar{
+  background-color: rgb(55, 48, 48);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+
+.site-title {
+  font-size: 1.5rem;
+  padding: 0.5rem;
+}
+
+.site-title:hover {
+  border: black;
+  color: green;
+  border-radius: 7px;
+  background-color: black;
+}
+
+.navbar ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display:flex;
+  gap: 2rem;
+}
+
+.navbar a {
+  color: inherit;
+  text-decoration: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.navbar li {
+  padding: 0.7rem;
+}
+
+.navbar li:hover {
+  border-radius: 10px;
+  background-color: black;
+  color: green;
+}
+
+.nav-link:hover {
+  color: green;
+}
+
+.navbar li.active {
+  border: black;
+  border-radius: 10px;
+  background-color: black;
+  color: green;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar-form {
+  position: relative;
+  display: inline-block;
+}
+
+.search-bar {
+  width: 150px;
+  padding: 0.5rem;
+  border: 2px solid black;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+
+.search-bar:focus {
+  width: 300px;
+}
+
+.search-bar:focus {
+  border: 1px solid darkblue;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.task {
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  transition: transform 0.2s;
+}
+
+.task:hover {
+  -webkit-transform: scale(1.02);
+  transform: scale(1.02);
+}
+
+.accordion-header {
+  display: flex;
+  opacity: 0.9;
+  border-radius: 0.5rem;
+  background: #3f475d;
+  padding: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.accordion-header:hover {
+  opacity: 1;
+}
+
+.arrow {
+  margin-left: auto;
+  transition: transform 0.5s ease;
+}
+
+.arrow.rotate {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease-in-out;
+}
+
+.accordion-body.show {
+  height: auto;
+  opacity: 1;
+  border-radius: 0.5rem; 
+}
+
+.completion-date {
+  font-style: italic;
+}
+
+.progress-title {
+  color: white;
+  padding: 0.6rem 0.4rem;
+  border: solid 1px black;
+  border-radius: 5px;
+  font-size: large;
+}
+
+.progress-title .bubble {
+  padding: 5px;
+  margin-left: 1rem;
+  font-size: small;
+}
+
+.title-bubble {
+  align-self: center;
+  padding-left: 0.6rem;
+  height: 2rem;
+  width: 2rem;
+  color: white;
+  background-color: black;
+  border: solid 2px black;
+  border-radius: 50%;
+}
+
+.profilePic {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+}
+
+.profilePicNavbar {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin-right: 0.5rem;
+}
