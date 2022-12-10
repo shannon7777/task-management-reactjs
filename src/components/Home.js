@@ -1,9 +1,11 @@
+import { useState } from "react";
+import { Col, Row } from "react-bootstrap";
+
 import Header from "./Header";
 import AddTask from "./AddTask";
 import useAuth from "../hooks/useAuth";
 import Task from "./Task";
-import { useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import PersonalAnalytics from "./PersonalAnalytics";
 
 const Home = ({
   onAdd,
@@ -114,6 +116,13 @@ const Home = ({
       ) : (
         <h3>You have no tasks, please add some</h3>
       )}
+      <PersonalAnalytics
+        totalCompleted={completedTasks.length}
+        totalNew={newTasks.length}
+        totalInProgress={inProgressTasks.length}
+        totalStuck={stuckTasks.length}
+        totalTasks={tasks.length}
+      />
     </>
   );
 };
