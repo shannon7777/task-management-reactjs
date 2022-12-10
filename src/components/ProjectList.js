@@ -1,11 +1,14 @@
-import React from 'react';
+import React from "react";
+import useAuth from "../hooks/useAuth";
 
 const ProjectList = ({}) => {
-  return (
-    <div>
-      Team Projects
-    </div>
-  );
-}
+  const {
+    auth: {
+      user: { username },
+    },
+  } = useAuth();
+  
+  return <div>Team Projects</div>;
+};
 
 export default ProjectList;
