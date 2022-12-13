@@ -18,7 +18,7 @@ const TaskIconSignal = ({ progress, dateToComplete }) => {
     return overdue && incomplete;
   };
 
-  const iconDueToday = dueToday && (
+  const iconDueToday = dueToday && !progress === "Completed" && (
     <>
       <span
         ref={target}
