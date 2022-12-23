@@ -10,15 +10,15 @@ const TaskIconSignal = ({ progress, dateToComplete }) => {
   const toggleShow = () => setShow((prev) => !prev);
 
   const dueToday = dateToComplete === new Date().toDateString();
+  const incomplete = progress !== "Completed";
 
   const checkOverdue = (dateToComplete) => {
     let dateToday = new Date().setHours(0, 0, 0, 0);
-    const incomplete = progress !== "Completed";
     const overdue = dateToComplete < dateToday;
     return overdue && incomplete;
   };
 
-  const iconDueToday = dueToday && !progress === "Completed" && (
+  const iconDueToday = dueToday && incomplete && (
     <>
       <span
         ref={target}

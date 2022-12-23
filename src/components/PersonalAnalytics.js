@@ -19,6 +19,10 @@ const PersonalAnalytics = ({
   totalInProgress,
   totalNew,
   totalStuck,
+  dueThisWeek,
+  dueNextWeekend,
+  dueTwoWeeksFromNow,
+  dueThreeWeeksFromNow,
 }) => {
   const {
     auth: { user },
@@ -33,10 +37,41 @@ const PersonalAnalytics = ({
 
   const pieChartColors = ["#92a8d1", "#feb236", "#c94c4c", "#82b74b"];
 
+  const stuckThisWeek = dueThisWeek.filter((task) => task.progress === "Stuck");
+
+  const stuckNextWeek = dueNextWeekend.filter(
+    (task) => task.progress === "Stuck"
+  );
+
+  const stuckTwoWeeksFromNow = dueTwoWeeksFromNow.filter(
+    (task) => task.progress === "Stuck"
+  );
+
+  const stuckThreeWeeksFromNow = dueThreeWeeksFromNow.filter(
+    (task) => task.progress === "Stuck"
+  );
+
   const barChartData = [
-    { name: "This week", "amount of tasks due": 5, "Stuck Tasks": 2 },
-    { name: "Next week", "amount of tasks due": 4, "Stuck Tasks": 1 },
-    { name: "Week after", "amount of tasks due": 8, "Stuck Tasks": 3 },
+    {
+      name: "This week",
+      "amount of tasks due": dueThisWeek.length,
+      "Stuck Tasks": stuckThisWeek.length,
+    },
+    {
+      name: "Next week",
+      "amount of tasks due": dueNextWeekend.length,
+      "Stuck Tasks": stuckNextWeek.length,
+    },
+    {
+      name: "Week after",
+      "amount of tasks due": dueTwoWeeksFromNow.length,
+      "Stuck Tasks": stuckTwoWeeksFromNow.length,
+    },
+    {
+      name: "3 weeks time",
+      "amount of tasks due": dueThreeWeeksFromNow.length,
+      "Stuck Tasks": stuckThreeWeeksFromNow.length,
+    },
   ];
 
   const barChartDataCompleted = [
@@ -46,9 +81,11 @@ const PersonalAnalytics = ({
 
   return (
     <Card className="p-3 m-4 bg-white">
-      <header className="text-uppercase text-center">
+      <Card.Title className="text-uppercase text-center">
         Analytics for Personal Tasks
-      </header>
+      </Card.Title>
+
+      <Card.Title className="pl-5">Total tasks: {totalTasks}</Card.Title>
 
       {/* PIE CHART */}
       <Row>
@@ -79,15 +116,9 @@ const PersonalAnalytics = ({
           Number of tasks due
           <BarChart
             className="m-3"
-            width={400}
+            width={500}
             height={400}
             data={barChartData}
-            // margin={{
-            //   top: 5,
-            //   right: 30,
-            //   left: 20,
-            //   bottom: 5,
-            // }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />

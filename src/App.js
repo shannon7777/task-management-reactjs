@@ -40,7 +40,7 @@ const App = () => {
       credentials: "include",
     });
     const { tasks } = await result.json();
-    setTasks(tasks);
+    setTasks(prev => tasks);
   };
 
   useEffect(() => {

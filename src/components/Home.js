@@ -31,6 +31,42 @@ const Home = ({
     editTask,
   };
 
+  const notCompleted = tasks.filter((task) => task.progress !== "Completed");
+  const thisWeekend = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 7)
+  );
+  const nextWeekend = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 14)
+  );
+  const twoWeeksFromNow = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 21)
+  );
+  const threeWeeksFromNow = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 28)
+  );
+
+  const dueThisWeek = notCompleted.filter(
+    (task) => new Date(task.dateToComplete) < thisWeekend
+  );
+
+  const dueNextWeekend = notCompleted.filter(
+    (task) =>
+      thisWeekend < new Date(task.dateToComplete) &&
+      new Date(task.dateToComplete) < nextWeekend
+  );
+
+  const dueTwoWeeksFromNow = notCompleted.filter(
+    (task) =>
+      nextWeekend < new Date(task.dateToComplete) &&
+      new Date(task.dateToComplete) < twoWeeksFromNow
+  );
+
+  const dueThreeWeeksFromNow = notCompleted.filter(
+    (task) =>
+      twoWeeksFromNow < new Date(task.dateToComplete) &&
+      new Date(task.dateToComplete) < threeWeeksFromNow
+  );
+
   const newTasks = tasks
     .filter((i) => i.progress === "New Task")
     .map((task, index) => <Task key={index} task={task} {...taskProps} />);
@@ -122,6 +158,10 @@ const Home = ({
         totalInProgress={inProgressTasks.length}
         totalStuck={stuckTasks.length}
         totalTasks={tasks.length}
+        dueThisWeek={dueThisWeek}
+        dueNextWeekend={dueNextWeekend}
+        dueTwoWeeksFromNow={dueTwoWeeksFromNow}
+        dueThreeWeeksFromNow={dueThreeWeeksFromNow}
       />
     </>
   );
