@@ -23,6 +23,9 @@ const PersonalAnalytics = ({
   dueNextWeekend,
   dueTwoWeeksFromNow,
   dueThreeWeeksFromNow,
+  completedThisWeek,
+  completedLastWeek,
+  completedTwoWeeksAgo,
 }) => {
   const {
     auth: { user },
@@ -75,8 +78,9 @@ const PersonalAnalytics = ({
   ];
 
   const barChartDataCompleted = [
-    { name: "Last week", "Completed Tasks": 3 },
-    { name: "This week", "Completed Tasks": 2 },
+    { name: "2 Weeks ago", "Completed Tasks": completedTwoWeeksAgo },
+    { name: "Last week", "Completed Tasks": completedLastWeek },
+    { name: "This week", "Completed Tasks": completedThisWeek },
   ];
 
   return (

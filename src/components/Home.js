@@ -6,6 +6,7 @@ import AddTask from "./AddTask";
 import useAuth from "../hooks/useAuth";
 import Task from "./Task";
 import PersonalAnalytics from "./PersonalAnalytics";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 
 const Home = ({
   onAdd,
@@ -31,6 +32,26 @@ const Home = ({
     editTask,
   };
 
+  // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
+
+  const newTasks = tasks
+    .filter((i) => i.progress === "New Task")
+    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+
+  const inProgressTasks = tasks
+    .filter((i) => i.progress === "In progress")
+    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+
+  const completedTasks = tasks
+    .filter((i) => i.progress === "Completed")
+    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+
+  const stuckTasks = tasks
+    .filter((i) => i.progress === "Stuck")
+    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+
+  // --------- FIRST BAR CHART -------------
+
   const notCompleted = tasks.filter((task) => task.progress !== "Completed");
   const thisWeekend = new Date(
     new Date().setDate(new Date().getDate() - new Date().getDay() + 7)
@@ -45,6 +66,7 @@ const Home = ({
     new Date().setDate(new Date().getDate() - new Date().getDay() + 28)
   );
 
+  // --------- TIME RANGE FILTERS FOR ANALYTICS ----------
   const dueThisWeek = notCompleted.filter(
     (task) => new Date(task.dateToComplete) < thisWeekend
   );
@@ -67,21 +89,37 @@ const Home = ({
       new Date(task.dateToComplete) < threeWeeksFromNow
   );
 
-  const newTasks = tasks
-    .filter((i) => i.progress === "New Task")
-    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+  // -------- SECOND BAR CHART --------
 
-  const inProgressTasks = tasks
-    .filter((i) => i.progress === "In progress")
-    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+  const thisWeekMonday = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay())
+  );
 
-  const completedTasks = tasks
-    .filter((i) => i.progress === "Completed")
-    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+  const lastWeekMonday = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() - 6)
+  );
 
-  const stuckTasks = tasks
-    .filter((i) => i.progress === "Stuck")
-    .map((task, index) => <Task key={index} task={task} {...taskProps} />);
+  const twoWeeksAgoMonday = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() - 13)
+  );
+
+  const completed = tasks.filter((task) => task.progress === "Completed");
+
+  const completedThisWeek = completed.filter(
+    (task) => thisWeekMonday < new Date(task.completedDate)
+  );
+
+  const completedLastWeek = completed.filter(
+    (task) =>
+      lastWeekMonday < new Date(task.completedDate) &&
+      new Date(task.completedDate) < thisWeekMonday
+  );
+
+  const completedTwoWeeksAgo = completed.filter(
+    (task) =>
+      twoWeeksAgoMonday < new Date(task.completedDate) &&
+      new Date(task.completedDate) < lastWeekMonday
+  );
 
   // const tasksList =
   //   tasks?.length === 0 ? (
@@ -162,6 +200,9 @@ const Home = ({
         dueNextWeekend={dueNextWeekend}
         dueTwoWeeksFromNow={dueTwoWeeksFromNow}
         dueThreeWeeksFromNow={dueThreeWeeksFromNow}
+        completedThisWeek={completedThisWeek.length}
+        completedLastWeek={completedLastWeek.length}
+        completedTwoWeeksAgo={completedTwoWeeksAgo.length}
       />
     </>
   );
