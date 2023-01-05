@@ -224,7 +224,7 @@ const App = () => {
             </Route>
 
             <Route element={<RequireAuth />}>
-              <Route path="/dashboard" element={<Dashboard />} /> 
+              <Route path="/dashboard" element={<Dashboard tasks={tasks} />} /> 
             </Route>
 
             <Route element={<RequireAuth />}>
