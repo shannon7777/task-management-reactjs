@@ -21,8 +21,8 @@ const BarChartDueTasks = ({ barChartDataTasksDue }) => {
       <YAxis />
       <Tooltip />
       <Legend />
-      <Bar dataKey="Stuck Tasks" fill="#c94c4c" stackId="a" />
-      <Bar dataKey="amount of tasks due" fill="#feb236" stackId="a" />
+      <Bar dataKey="Tasks Stuck & Due" fill="#c94c4c" stackId="a" />
+      <Bar dataKey="amount of tasks due" fill="#feb236" stackId="b" />
     </BarChart>
   );
 };

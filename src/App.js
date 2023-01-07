@@ -107,7 +107,7 @@ const App = () => {
 
       const {
         message,
-        updatedTask: { text, description, dateToComplete, progress },
+        updatedTask: { text, description, dateToComplete, progress, completedDate },
       } = await res.json();
 
       if (res.status === 401) throw Error({ text: message });
@@ -121,6 +121,7 @@ const App = () => {
               ? dateToComplete
               : task.dateToComplete;
             task.progress = progress ? progress : task.progress;
+            task.completedDate = completedDate ? completedDate : "";
           }
           return task;
         })
@@ -204,7 +205,7 @@ const App = () => {
                     deleteTask={deleteTask}
                     editTask={editTask}
                     tasks={tasks}
-                    fetchAllTasks={fetchAllTasks}
+                    // fetchAllTasks={fetchAllTasks}
                   />
                 }
               />

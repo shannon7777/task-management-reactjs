@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, Row, Col } from "react-bootstrap";
 
 import BarChartDueTasks from "./BarChartDueTasks";
@@ -12,19 +11,19 @@ const Dashboard = ({ tasks }) => {
   const totalInProgress = tasks.filter(
     (task) => task.progress === "In progress"
   );
-  const totalCompleted = tasks.filter((task) => task.progress === "Completed");
+  const notCompleted = tasks.filter((task) => task.progress !== "Completed");
+  const completed = tasks.filter((task) => task.progress === "Completed");
   const totalStuck = tasks.filter((task) => task.progress === "Stuck");
 
   const pieChartData = [
     { name: "New Tasks", value: totalNew.length },
     { name: "In Progress", value: totalInProgress.length },
     { name: "Stuck", value: totalStuck.length },
-    { name: "Completed", value: totalCompleted.length },
+    { name: "Completed", value: completed.length },
   ];
   const pieChartColors = ["#92a8d1", "#feb236", "#c94c4c", "#82b74b"];
 
   // ------- TIME RANGES (TASKS DUE VS TASKS) ------
-  const notCompleted = tasks.filter((task) => task.progress !== "Completed");
 
   const thisWeekMonday = new Date(
     new Date().setDate(new Date().getDate() - new Date().getDay())
@@ -84,31 +83,23 @@ const Dashboard = ({ tasks }) => {
   const barChartDataTasksDue = [
     {
       name: "This week",
-      "amount of tasks due": stuckThisWeek.length
-        ? dueThisWeek.length - stuckThisWeek.length
-        : dueThisWeek.length,
-      "Stuck Tasks": stuckThisWeek.length,
+      "amount of tasks due": dueThisWeek.length,
+      "Tasks Stuck & Due": stuckThisWeek.length,
     },
     {
       name: "Next week",
-      "amount of tasks due": stuckNextWeek.length
-        ? dueNextWeekend.length - stuckThisWeek.length
-        : dueNextWeekend.length,
-      "Stuck Tasks": stuckNextWeek.length,
+      "amount of tasks due": dueNextWeekend.length,
+      "Tasks Stuck & Due": stuckNextWeek.length,
     },
     {
       name: "Week after",
-      "amount of tasks due": stuckTwoWeeksFromNow.length
-        ? dueTwoWeeksFromNow.length - stuckThisWeek.length
-        : dueTwoWeeksFromNow.length,
-      "Stuck Tasks": stuckTwoWeeksFromNow.length,
+      "amount of tasks due": dueTwoWeeksFromNow.length,
+      "Tasks Stuck & Due": stuckTwoWeeksFromNow.length,
     },
     {
       name: "3 weeks time",
-      "amount of tasks due": stuckThreeWeeksFromNow.length
-        ? dueThreeWeeksFromNow.length - stuckThisWeek.length
-        : dueThreeWeeksFromNow.length,
-      "Stuck Tasks": stuckThreeWeeksFromNow.length,
+      "amount of tasks due": dueThreeWeeksFromNow.length,
+      "Tasks Stuck & Due": stuckThreeWeeksFromNow.length,
     },
   ];
 
@@ -121,8 +112,6 @@ const Dashboard = ({ tasks }) => {
   const twoWeeksAgoMonday = new Date(
     new Date().setDate(new Date().getDate() - new Date().getDay() - 13)
   );
-
-  const completed = tasks.filter((task) => task.progress === "Completed");
 
   const completedThisWeek = completed.filter(
     (task) =>
@@ -143,9 +132,9 @@ const Dashboard = ({ tasks }) => {
   );
 
   const barChartDataCompleted = [
-    { name: "2 Weeks ago", "Completed Tasks": completedTwoWeeksAgo.length },
-    { name: "Last week", "Completed Tasks": completedLastWeek.length },
     { name: "This week", "Completed Tasks": completedThisWeek.length },
+    { name: "Last week", "Completed Tasks": completedLastWeek.length },
+    { name: "2 Weeks ago", "Completed Tasks": completedTwoWeeksAgo.length },
   ];
 
   return (
@@ -165,6 +154,7 @@ const Dashboard = ({ tasks }) => {
         </Col>
         {/* BAR CHART FOR DUE TASKS & STUCK TASKS */}
         <Col className="border border-muted rounded shadow m-3">
+          <Card.Title>Total Tasks Due : {notCompleted.length}</Card.Title>
           <BarChartDueTasks barChartDataTasksDue={barChartDataTasksDue} />
         </Col>
       </Row>

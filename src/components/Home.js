@@ -13,7 +13,6 @@ const Home = ({
   tasks,
   deleteTask,
   editTask,
-  fetchAllTasks,
 }) => {
   const {
     auth: {
@@ -53,7 +52,7 @@ const Home = ({
       <Header
         onAdd={onAdd}
         showAddTask={showAddTask}
-        fetchAllTasks={fetchAllTasks}
+        // fetchAllTasks={fetchAllTasks}
         totalTasks={tasks.length}
       />
 
