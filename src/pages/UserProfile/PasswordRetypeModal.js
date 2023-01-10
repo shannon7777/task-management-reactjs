@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 
 const PasswordRetypeModal = ({
   setEditPassword,

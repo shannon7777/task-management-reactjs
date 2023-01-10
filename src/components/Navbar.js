@@ -2,7 +2,7 @@ import { Link, useMatch, useResolvedPath, NavLink } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { Button } from "react-bootstrap";
-import ProfilePic from "./ProfilePic";
+import ProfilePic from "../pages/UserProfile/ProfilePic";
 import { RiUserLine } from "react-icons/ri";
 import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineForm } from "react-icons/ai";

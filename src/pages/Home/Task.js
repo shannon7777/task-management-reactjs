@@ -8,7 +8,7 @@ import { TbChecks } from "react-icons/tb";
 import { TiDeleteOutline } from "react-icons/ti";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
-import TaskIconSignal from "./TaskIconSignal";
+import TaskIconSignal from "../../components/TaskIconSignal";
 
 const Task = ({ active, setActive, task, deleteTask, editTask }) => {
   const [showEditTask, setShowEditTask] = useState(false);

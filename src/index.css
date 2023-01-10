@@ -196,3 +196,12 @@ body {
   height: 30px;
   margin-right: 0.5rem;
 }
+
+.dot {
+  height: 0.8rem;
+  width: 0.8rem;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}

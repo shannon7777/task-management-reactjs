@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
+import useFetchImg from "../../hooks/useFetchImg";
 import { Form, Button } from "react-bootstrap";
 import { FcCancel } from "react-icons/fc";
-import useFetchImg from "../hooks/useFetchImg";
 
 const ProfilePicUpload = ({ setShowUpload, setNotify, setError }) => {
   const [file, setFile] = useState();

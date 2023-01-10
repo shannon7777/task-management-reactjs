@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Home from "./components/Home";
-import Register from "./components/Register";
-import Login from "./components/Login";
+import Home from "./pages/Home";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import MissingPage from "./components/MissingPage";
-import UserProfile from "./components/UserProfile";
+import { UserProfile, EditProfile } from "./pages/UserProfile";
 import RequireAuth from "./components/RequireAuth";
 import PersistLogin from "./components/PersistLogin";
-import EditProfile from "./components/EditProfile";
 import CustomAlert from "./components/CustomAlert";
-import Dashboard from "./components/Dashboard";
-import ProjectList from "./components/ProjectList";
+import Dashboard from "./pages/Dashboard";
+import ProjectList from "./pages/Projectlist";
 import About from "./pages/About";
 
 import useAuth from "./hooks/useAuth";
@@ -40,7 +39,7 @@ const App = () => {
       credentials: "include",
     });
     const { tasks } = await result.json();
-    setTasks(prev => tasks);
+    setTasks((prev) => tasks);
   };
 
   useEffect(() => {
@@ -84,13 +83,21 @@ const App = () => {
 
   // Deleting a task
   const deleteTask = async (id) => {
-    await fetch(`http://localhost:5000/api/tasks/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: bearerToken,
-      },
-    });
-    setTasks(tasks.filter((task) => task._id !== id));
+    try {
+      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: bearerToken,
+        },
+      });
+      const { message } = await res.json();
+
+      res.status === 200 && setNotify({ text: message });
+      res.status === 401 && new Error(message);
+      setTasks(tasks.filter((task) => task._id !== id));
+    } catch (error) {
+      setError({ text: error.message });
+    }
   };
 
   // Editing a specific task and/or a date
@@ -107,11 +114,17 @@ const App = () => {
 
       const {
         message,
-        updatedTask: { text, description, dateToComplete, progress, completedDate },
+        updatedTask: {
+          text,
+          description,
+          dateToComplete,
+          progress,
+          completedDate,
+        },
       } = await res.json();
 
       if (res.status === 401) throw Error({ text: message });
-      setNotify({ text: `Task has been edited` });
+      setNotify({ text: message });
       setTasks(
         tasks.map((task) => {
           if (task._id === id) {
@@ -225,13 +238,12 @@ const App = () => {
             </Route>
 
             <Route element={<RequireAuth />}>
-              <Route path="/dashboard" element={<Dashboard tasks={tasks} />} /> 
+              <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
             </Route>
 
             <Route element={<RequireAuth />}>
               <Route path="/team-projects" element={<ProjectList />} />
             </Route>
-
           </Route>
 
           <Route path="/about" element={<About />} />

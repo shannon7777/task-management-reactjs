@@ -11,7 +11,11 @@ const Dashboard = ({ tasks }) => {
   const totalInProgress = tasks.filter(
     (task) => task.progress === "In progress"
   );
-  const notCompleted = tasks.filter((task) => task.progress !== "Completed");
+  const incomplete = tasks.filter((task) => task.progress !== "Completed");
+  const dateToday = new Date().setHours(0, 0, 0, 0);
+  const totalOverdue = incomplete.filter(
+    (task) => new Date(task.dateToComplete) < dateToday
+  ).length;
   const completed = tasks.filter((task) => task.progress === "Completed");
   const totalStuck = tasks.filter((task) => task.progress === "Stuck");
 
@@ -42,25 +46,25 @@ const Dashboard = ({ tasks }) => {
   );
 
   // ---- BAR CHART DATA (TASKS DUE VS TASKS) -----
-  const dueThisWeek = notCompleted.filter(
+  const dueThisWeek = incomplete.filter(
     (task) =>
       thisWeekMonday < new Date(task.dateToComplete) &&
       new Date(task.dateToComplete) < thisWeekend
   );
 
-  const dueNextWeekend = notCompleted.filter(
+  const dueNextWeekend = incomplete.filter(
     (task) =>
       thisWeekend < new Date(task.dateToComplete) &&
       new Date(task.dateToComplete) < nextWeekend
   );
 
-  const dueTwoWeeksFromNow = notCompleted.filter(
+  const dueTwoWeeksFromNow = incomplete.filter(
     (task) =>
       nextWeekend < new Date(task.dateToComplete) &&
       new Date(task.dateToComplete) < twoWeeksFromNow
   );
 
-  const dueThreeWeeksFromNow = notCompleted.filter(
+  const dueThreeWeeksFromNow = incomplete.filter(
     (task) =>
       twoWeeksFromNow < new Date(task.dateToComplete) &&
       new Date(task.dateToComplete) < threeWeeksFromNow
@@ -137,12 +141,35 @@ const Dashboard = ({ tasks }) => {
     { name: "2 Weeks ago", "Completed Tasks": completedTwoWeeksAgo.length },
   ];
 
+  const colors = [
+    { value: "New Task", color: "#92a8d1" },
+    { value: "In progress", color: "#feb236" },
+    { value: "Stuck", color: "#c94c4c" },
+    { value: "Completed", color: "#82b74b" },
+  ];
+
   return (
     <Card className="p-3 m-4 bg-white">
       <Card.Title className="text-uppercase text-center">
-        Analytics for Personal Tasks
+        Analytics for Personal Tasks - Overview
       </Card.Title>
-      <Card.Title className="pl-5">Total tasks: {tasks.length}</Card.Title>
+      <Row>
+        <Col>
+          {colors.map((i, index) => {
+            return (
+              <div key={`index-${index}`}>
+                <span className="dot" style={{ backgroundColor: i.color }}></span>
+                {i.value}
+              </div>
+            );
+          })}
+        </Col>
+        <Col>
+          <Card.Title className="pl-5">Total tasks: {tasks.length}</Card.Title>
+          <Card.Title>Total Tasks Due : {incomplete.length}</Card.Title>
+          <Card.Title>Tasks overdue: {totalOverdue}</Card.Title>
+        </Col>
+      </Row>
 
       <Row>
         {/* PIE CHART */}
@@ -154,7 +181,6 @@ const Dashboard = ({ tasks }) => {
         </Col>
         {/* BAR CHART FOR DUE TASKS & STUCK TASKS */}
         <Col className="border border-muted rounded shadow m-3">
-          <Card.Title>Total Tasks Due : {notCompleted.length}</Card.Title>
           <BarChartDueTasks barChartDataTasksDue={barChartDataTasksDue} />
         </Col>
       </Row>

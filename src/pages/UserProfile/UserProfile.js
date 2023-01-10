@@ -1,10 +1,10 @@
 import { useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import EditProfile from "./EditProfile";
 import ProfilePicUpload from "./ProfilePicUpload";
-import ProfilePic from "./ProfilePic";
 import { Button, Card, Row, Col } from "react-bootstrap";
+import ProfilePic from "./ProfilePic";
 import RemovePic from "./RemovePic";
 
 const UserProfile = ({ setError, setNotify }) => {

@@ -3,7 +3,7 @@ import { Col, Row } from "react-bootstrap";
 
 import Header from "./Header";
 import AddTask from "./AddTask";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import Task from "./Task";
 
 const Home = ({
