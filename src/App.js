@@ -12,7 +12,7 @@ import PersistLogin from "./components/PersistLogin";
 import CustomAlert from "./components/CustomAlert";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/Projectlist";
-import About from "./pages/About";
+import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
 import useFetchImg from "./hooks/useFetchImg";

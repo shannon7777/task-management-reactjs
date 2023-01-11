@@ -10,7 +10,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import TaskIconSignal from "../../components/TaskIconSignal";
 
-const Task = ({ active, setActive, task, deleteTask, editTask }) => {
+const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) => {
   const [showEditTask, setShowEditTask] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [status, setStatus] = useState(0);
@@ -30,13 +30,6 @@ const Task = ({ active, setActive, task, deleteTask, editTask }) => {
     e.preventDefault();
     editTask(task._id, { progress: status });
     setConfirmStatus((prev) => !prev);
-  };
-
-  const colorStatus = {
-    "New Task": "#92a8d1",
-    "In progress": "#feb236",
-    Stuck: "#c94c4c",
-    Completed: "#82b74b",
   };
 
   const selectOptions = [

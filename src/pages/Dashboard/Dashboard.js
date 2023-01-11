@@ -18,7 +18,7 @@ const Dashboard = ({ tasks }) => {
   ).length;
   const completed = tasks.filter((task) => task.progress === "Completed");
   const totalStuck = tasks.filter((task) => task.progress === "Stuck");
-
+  
   const pieChartData = [
     { name: "New Tasks", value: totalNew.length },
     { name: "In Progress", value: totalInProgress.length },
