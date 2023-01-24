@@ -3,13 +3,7 @@ import { Button, Modal, Form, Col } from "react-bootstrap";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DatePicker from "react-datepicker";
 
-const EditTask = ({
-  task,
-  editTask,
-  onShowEdit,
-  showEditTask,
-  setShowEditTask,
-}) => {
+const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
   const [formData, setFormData] = useState({
     text: "",
     description: "",
@@ -29,11 +23,15 @@ const EditTask = ({
 
   const onSubmit = (e) => {
     e.preventDefault();
-    // if there are no changes made in the edit task window, clear modal and return function
-    // if(!text && !description && dateToComplete.toDateString() === task.dateToComplete) return onShowEdit();
+    // Making a new Object with ONLY the Updated Properties, omitting the unchanged properties
+    //Convert formData obj to arrays using Object.entries, then filter each array for empty string
+    // Convert arrays back into object and POST it over
+    const editedObj = Object.fromEntries(
+      Object.entries(formData).filter((value) => value[1] !== "")
+    );
 
     editTask(task._id, {
-      ...formData,
+      ...editedObj,
       dateToComplete: dateToComplete
         ? dateToComplete.toDateString()
         : `No completion date has been set`,
@@ -41,6 +39,7 @@ const EditTask = ({
     setShowEditTask((prev) => !prev);
     setFormData({ text: "", description: "" });
   };
+
   return (
     <>
       <Modal
@@ -110,7 +109,10 @@ const EditTask = ({
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={onShowEdit}>
+          <Button
+            variant="danger"
+            onClick={() => setShowEditTask(!showEditTask)}
+          >
             Close
           </Button>
           <Button variant="outline-success" type="submit" onClick={onSubmit}>

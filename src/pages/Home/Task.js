@@ -28,7 +28,8 @@ const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) =>
 
   const onSubmit = (e) => {
     e.preventDefault();
-    editTask(task._id, { progress: status });
+    const completedDate = status === "Completed" ? new Date().toDateString() : ""
+    editTask(task._id, { progress: status, completedDate: completedDate });
     setConfirmStatus((prev) => !prev);
   };
 

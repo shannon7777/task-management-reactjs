@@ -35,7 +35,7 @@ const RemovePic = ({
           credentials: "include",
         }
       );
-      const { message, updatedUser } = await result.json();
+      const { message } = await result.json();
       if (result.status === 400) {
         throw Error(message);
       }

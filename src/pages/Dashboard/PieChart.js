@@ -1,21 +1,43 @@
 import { PieChart as PieChartApi, Pie, Cell, Tooltip } from "recharts";
 
-const PieChart = ({ pieChartData, pieChartColors }) => {
+const PieChart = ({
+  pieChartData,
+  pieChartColors,
+  pieChartData2,
+  pieChartColors2,
+}) => {
   return (
-    <PieChartApi width={400} height={400}>
+    <PieChartApi width={600} height={400}>
       <Pie
         data={pieChartData}
-        cx={200}
+        cx={120}
         cy={200}
         labelLine={false}
-        outerRadius={110}
+        outerRadius={100}
         dataKey="value"
         label={renderCustomizedLabel}
       >
         {pieChartData.map((entry, i) => (
           <Cell
-            key={`cell-${i}`}
+            key={`cell-1-${i}`}
             fill={pieChartColors[i % pieChartColors.length]}
+          />
+        ))}
+      </Pie>
+      <Pie
+        data={pieChartData2}
+        cx={420}
+        cy={200}
+        labelLine={false}
+        outerRadius={100}
+        dataKey="value"
+        label={renderCustomizedLabel}
+        startAngle={180}
+      >
+        {pieChartData2.map((entry, i) => (
+          <Cell
+            key={`cell-2-${i}`}
+            fill={pieChartColors2[i % pieChartColors2.length]}
           />
         ))}
       </Pie>

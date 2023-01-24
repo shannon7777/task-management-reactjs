@@ -17,9 +17,6 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
 
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
 
-  const uniqueProgress = [...new Set(tasks.map(({ progress }) => progress))];
-  console.log(tasks);
-
   const colorStatus = {
     "New Task": "#92a8d1",
     "In progress": "#feb236",
@@ -35,6 +32,9 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
     colorStatus,
   };
 
+  // getting each progress by creating a Set to only have unique items
+  const uniqueProgress = [...new Set(tasks.map(({ progress }) => progress))];
+
   const allTasks = uniqueProgress.map((progress, index) => (
     <Col md={6} className="my-3">
       <span
@@ -46,8 +46,8 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
       </span>
       {tasks
         .filter((task) => task.progress === progress)
-        .map((filteredTask, i) => (
-          <Task key={`task-${i}`} task={filteredTask} {...taskProps} />
+        .map((filteredTask, index) => (
+          <Task key={`task-${index}`} task={filteredTask} {...taskProps} />
         ))}
     </Col>
   ));
