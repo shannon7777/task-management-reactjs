@@ -10,9 +10,11 @@ const Header = ({ totalTasks, title, onAdd, showAddTask }) => {
         <h1>
           <Badge bg="dark">{title}</Badge>
         </h1>
-        <h5 className="title-bubble mx-3">
-          <span>{totalTasks}</span>
-        </h5>
+        {totalTasks && (
+          <h5 className="title-bubble mx-3">
+            <span>{totalTasks}</span>
+          </h5>
+        )}
       </Col>
 
       <Col>

@@ -1,22 +1,12 @@
-import { useState } from "react";
 import { Col, Row } from "react-bootstrap";
 
 import Header from "./Header";
 import AddTask from "./AddTask";
-import useAuth from "../../hooks/useAuth";
 import Task from "./Task";
 
 const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
-  const {
-    auth: {
-      user: { username },
-    },
-  } = useAuth();
-
-  const [active, setActive] = useState(null);
 
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
-
   const colorStatus = {
     "New Task": "#92a8d1",
     "In progress": "#feb236",
@@ -25,8 +15,6 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
   };
 
   const taskProps = {
-    active,
-    setActive,
     deleteTask,
     editTask,
     colorStatus,

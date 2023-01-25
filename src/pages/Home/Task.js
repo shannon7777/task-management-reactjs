@@ -12,8 +12,6 @@ import { GoCheck } from "react-icons/go";
 import TaskIconSignal from "../../components/TaskIconSignal";
 
 const Task = ({
-  active,
-  setActive,
   task,
   deleteTask,
   editTask,
@@ -23,6 +21,7 @@ const Task = ({
   const [isHovering, setIsHovering] = useState(false);
   const [status, setStatus] = useState(0);
   const [confirmStatus, setConfirmStatus] = useState(false);
+  const [active, setActive] = useState(null);
 
   const onChange = (e) => {
     setStatus(e.target.value);
