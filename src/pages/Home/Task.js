@@ -8,9 +8,17 @@ import { TbChecks } from "react-icons/tb";
 import { TiDeleteOutline } from "react-icons/ti";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
+import { GoCheck } from "react-icons/go";
 import TaskIconSignal from "../../components/TaskIconSignal";
 
-const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) => {
+const Task = ({
+  active,
+  setActive,
+  task,
+  deleteTask,
+  editTask,
+  colorStatus,
+}) => {
   const [showEditTask, setShowEditTask] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [status, setStatus] = useState(0);
@@ -28,7 +36,8 @@ const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) =>
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const completedDate = status === "Completed" ? new Date().toDateString() : ""
+    const completedDate =
+      status === "Completed" ? new Date().toDateString() : "";
     editTask(task._id, { progress: status, completedDate: completedDate });
     setConfirmStatus((prev) => !prev);
   };
@@ -83,7 +92,7 @@ const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) =>
 
               <p className="completion-date">
                 <span className="mx-2">
-                  <BsFillCalendarCheckFill color="white" size={20}/>
+                  <BsFillCalendarCheckFill color="white" size={20} />
                 </span>
                 Due date:{" "}
                 <Badge
@@ -91,12 +100,23 @@ const Task = ({ active, setActive, task, deleteTask, editTask, colorStatus }) =>
                   bg={
                     task.dateToComplete === `No completion date has been set`
                       ? `warning`
-                      : `success`
+                      : `primary`
                   }
                 >
                   {task.dateToComplete}
                 </Badge>
               </p>
+              {task.completedDate && (
+                <p className="completion-date">
+                  <span>
+                    <GoCheck color="black" size={20} />
+                  </span>
+                  Completed on:{" "}
+                  <Badge className="border shadow" bg="success">
+                    {task.completedDate}
+                  </Badge>
+                </p>
+              )}
             </Card.Body>
           </Col>
 

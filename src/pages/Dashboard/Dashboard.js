@@ -7,16 +7,18 @@ import ProgressBar from "./ProgressBar";
 
 const Dashboard = ({ tasks }) => {
   //  ----- DATA ANALYTICS ----
+
   // ---- PIE CHART DATA -----
   const totalNew = tasks.filter(({ progress }) => progress === "New Task");
   const totalInProgress = tasks.filter(
     ({ progress }) => progress === "In progress"
   );
-  const incomplete = tasks.filter(({ progress }) => progress !== "Completed");
   const dateToday = new Date().setHours(0, 0, 0, 0);
+  const incomplete = tasks.filter(({ progress }) => progress !== "Completed");
   const totalOverdue = incomplete.filter(
     (task) => new Date(task.dateToComplete) < dateToday
   ).length;
+  const pending = incomplete.length - totalOverdue;
   const completed = tasks.filter(({ progress }) => progress === "Completed");
   const totalStuck = tasks.filter(({ progress }) => progress === "Stuck");
   const totalDueToday = tasks.filter(
@@ -37,7 +39,7 @@ const Dashboard = ({ tasks }) => {
       name: "Due Today",
       value: totalDueToday,
     },
-    { name: "Pending", value: incomplete.length },
+    { name: "Pending", value: pending },
   ];
 
   const pieChartColors2 = ["#f18973", "#f4e1d2", "#b2b2b2"];
@@ -192,7 +194,8 @@ const Dashboard = ({ tasks }) => {
       <Row>
         <Col>
           <Card.Title className="pl-5">Total tasks: {tasks.length}</Card.Title>
-          <Card.Title>Total Pending : {incomplete.length}</Card.Title>
+          <Card.Title>Pending : {pending}</Card.Title>
+          <Card.Title>Total Due : {incomplete.length}</Card.Title>
           <Card.Title>Tasks overdue: {totalOverdue}</Card.Title>
         </Col>
       </Row>
