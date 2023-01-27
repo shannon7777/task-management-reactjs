@@ -34,7 +34,7 @@ const App = () => {
   const fetchImg = useFetchImg();
 
   const fetchAllTasks = async () => {
-    const result = await fetch("http://localhost:5000/api/tasks", {
+    const result = await fetch(`http://localhost:5000/api/tasks/${user._id}`, {
       headers: { Authorization: bearerToken },
       credentials: "include",
     });
@@ -92,9 +92,11 @@ const App = () => {
       });
       const { message } = await res.json();
 
-      res.status === 200 && setNotify({ text: message });
+      if (res.status === 200) {
+        setNotify({ text: message });
+        return setTasks(tasks.filter((task) => task._id !== id));
+      }
       res.status === 401 && new Error(message);
-      setTasks(tasks.filter((task) => task._id !== id));
     } catch (error) {
       setError({ text: error.message });
     }
@@ -242,7 +244,10 @@ const App = () => {
             </Route>
 
             <Route element={<RequireAuth />}>
-              <Route path="/team-projects" element={<ProjectList />} />
+              <Route
+                path="/team-projects"
+                element={<ProjectList setNotifications={setNotifications} />}
+              />
             </Route>
           </Route>
 

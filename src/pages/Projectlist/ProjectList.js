@@ -6,7 +6,7 @@ import useAuth from "../../hooks/useAuth";
 import Project from "./Project";
 import AddProjectForm from "./AddProjectForm";
 
-const ProjectList = () => {
+const ProjectList = ({ setNotify, setError, setInfo }) => {
   const {
     auth: { user, accessToken },
   } = useAuth();
@@ -22,10 +22,13 @@ const ProjectList = () => {
   const bearerToken = `Bearer ${accessToken}`;
 
   const fetchProjects = async () => {
-    const result = await fetch(`http://localhost:5000/api/projects`, {
-      headers: { Authorization: bearerToken },
-      credentials: "include",
-    });
+    const result = await fetch(
+      `http://localhost:5000/api/projects/${user._id}`,
+      {
+        headers: { Authorization: bearerToken },
+        credentials: "include",
+      }
+    );
     const { projects } = await result.json();
     setProjects((prev) => projects);
   };
@@ -53,8 +56,24 @@ const ProjectList = () => {
     setProjects([...projects, newProject]);
   };
 
-  const editProject = async (updatedObj) => {
-    
+  const editProject = async (updatedObj) => {};
+
+  const deleteProject = async (id) => {
+    try {
+      const result = await fetch(`http://localhost:5000/api/projects/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: bearerToken },
+      });
+      const { message } = await result.json();
+
+      if (result.status === 200) {
+        setNotify({ text: message });
+        setProjects(projects.filter((project) => project._id !== id));
+      }
+      if (result.status === 400) setError({ text: message });
+    } catch (error) {
+      setError({ text: error.message });
+    }
   };
 
   const onSubmit = (e) => {
@@ -84,7 +103,12 @@ const ProjectList = () => {
           />
         )}
         {projects.map((project, index) => (
-          <Project project={project} key={`project-${index}`} />
+          <Project
+            key={`project-${index}`}
+            project={project}
+            deleteProject={deleteProject}
+            editProject={editProject}
+          />
         ))}
       </Card>
     </div>
