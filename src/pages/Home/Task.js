@@ -148,14 +148,13 @@ const Task = ({
             {isHovering && (
               <>
                 <FaRegEdit
-                  className="edit-button"
                   color="black"
                   onClick={() => setShowEditTask((prev) => !prev)}
                   size={25}
                   style={{ cursor: "pointer" }}
                 />
                 <RiDeleteBin5Line
-                  className="delete-button mt-auto"
+                  className="mt-auto"
                   color="darkred"
                   onClick={() => deleteTask(task._id)}
                   style={{ cursor: "pointer" }}

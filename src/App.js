@@ -125,7 +125,7 @@ const App = () => {
         },
       } = await res.json();
 
-      if (res.status === 401) throw Error({ text: message });
+      if (res.status === 401) throw setError({ text: message });
       setNotify({ text: message });
       setTasks(
         tasks.map((task) => {
@@ -246,7 +246,7 @@ const App = () => {
             <Route element={<RequireAuth />}>
               <Route
                 path="/team-projects"
-                element={<ProjectList setNotifications={setNotifications} />}
+                element={<ProjectList {...setNotifications} />}
               />
             </Route>
           </Route>
