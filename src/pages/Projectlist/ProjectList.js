@@ -17,6 +17,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
     user_id: user._id,
   });
   const [showProjectForm, setShowProjectForm] = useState(false);
+  const [showInviteForm, setShowInviteForm] = useState(false);
   const [completionDate, setCompletionDate] = useState(new Date());
 
   const bearerToken = `Bearer ${accessToken}`;
@@ -42,18 +43,41 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   };
 
   const createProject = async (project) => {
-    if (!formData.title || !formData.description) return;
-    const result = await fetch(`http://localhost:5000/api/projects`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: bearerToken,
-      },
-      credentials: "include",
-      body: JSON.stringify(project),
-    });
-    const { newProject } = await result.json();
-    setProjects([...projects, newProject]);
+    if (!formData.title || !formData.description)
+      return setError({ text: `Please fill in all fields` });
+    try {
+      const result = await fetch(`http://localhost:5000/api/projects`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: bearerToken,
+        },
+        credentials: "include",
+        body: JSON.stringify(project),
+      });
+      const { newProject, message } = await result.json();
+      if (result.status === 200) setNotify({ text: message });
+      if (result.status === 400) throw setError({ text: message });
+      setProjects([...projects, newProject]);
+    } catch (error) {
+      setError({ text: error.message });
+    }
+  };
+
+  const addMember = async (email, project_id) => {
+    const result = await fetch(
+      `http://localhost:5000/api/projects/${project_id}/${email}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: bearerToken,
+        },
+        credentials: "include",
+      }
+    );
+    const { message } = await result.json();
+    if (result.status === 200) setNotify({ text: message });
   };
 
   const editProject = async (updatedObj) => {};
@@ -66,11 +90,11 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       });
       const { message } = await result.json();
 
+      if (result.status === 400) throw setError({ text: message });
       if (result.status === 200) {
         setNotify({ text: message });
-        setProjects(projects.filter((project) => project._id !== id));
       }
-      if (result.status === 400) setError({ text: message });
+      setProjects(projects.filter((project) => project._id !== id));
     } catch (error) {
       setError({ text: error.message });
     }
@@ -90,7 +114,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
         <h1>
           <Badge bg="dark">Projects List</Badge>
         </h1>
-        {/* <Header title="Projects List" /> */}
         <Button onClick={() => setShowProjectForm((prev) => !prev)}>
           Create
         </Button>
@@ -108,6 +131,9 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
             project={project}
             deleteProject={deleteProject}
             editProject={editProject}
+            addMember={addMember}
+            showInviteForm={showInviteForm}
+            setShowInviteForm={setShowInviteForm}
           />
         ))}
       </Card>
