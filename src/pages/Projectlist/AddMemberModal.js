@@ -8,10 +8,9 @@ const AddMemberModal = ({
   project_id,
 }) => {
   const [email, setEmail] = useState("");
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    // addMember(email, project_id);
-    console.log(project_id);
+    addMember(email, project_id);
     setShowInviteForm((prev) => !prev);
     setEmail("");
   };

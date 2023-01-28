@@ -17,7 +17,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
     user_id: user._id,
   });
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [showInviteForm, setShowInviteForm] = useState(false);
   const [completionDate, setCompletionDate] = useState(new Date());
 
   const bearerToken = `Bearer ${accessToken}`;
@@ -125,15 +124,14 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
             setCompletionDate={setCompletionDate}
           />
         )}
-        {projects.map((project, index) => (
+
+        {projects.map((project) => (
           <Project
-            key={`project-${index}`}
+            key={`project-${project._id}`}
             project={project}
             deleteProject={deleteProject}
             editProject={editProject}
-            addMember={addMember}
-            showInviteForm={showInviteForm}
-            setShowInviteForm={setShowInviteForm}
+            addMember={addMember}            
           />
         ))}
       </Card>

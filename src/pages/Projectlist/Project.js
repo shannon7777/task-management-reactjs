@@ -1,17 +1,13 @@
 import { Row, Col, Card } from "react-bootstrap";
+import AddMemberModal from "./AddMemberModal";
+import { useState } from "react";
+
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { TiUserAdd } from "react-icons/ti";
 
-import AddMemberModal from "./AddMemberModal";
+const Project = ({ project, deleteProject, editProject, addMember }) => {
+  const [showInviteForm, setShowInviteForm] = useState(false);
 
-const Project = ({
-  project,
-  deleteProject,
-  editProject,
-  addMember,
-  showInviteForm,
-  setShowInviteForm,
-}) => {
   return (
     <Card className="">
       <Row>
@@ -29,22 +25,19 @@ const Project = ({
           />
           <TiUserAdd
             className="mt-auto"
-            onClick={() => {
-              setShowInviteForm((prev) => !prev);
-              console.log("clicked", project._id);
-            }}
+            onClick={() => setShowInviteForm((prev) => !prev)}
             style={{ cursor: "pointer" }}
             size={20}
           />
+          {showInviteForm && (
+            <AddMemberModal
+              project_id={project._id}
+              addMember={addMember}
+              showInviteForm={showInviteForm}
+              setShowInviteForm={setShowInviteForm}
+            />
+          )}
         </Col>
-        {showInviteForm && (
-          <AddMemberModal
-            project_id={project._id}
-            addMember={addMember}
-            showInviteForm={showInviteForm}
-            setShowInviteForm={setShowInviteForm}
-          />
-        )}
       </Row>
     </Card>
   );
