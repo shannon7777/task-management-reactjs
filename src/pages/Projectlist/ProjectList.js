@@ -30,13 +30,13 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
         credentials: "include",
       }
     );
-    const { projects } = await result.json();
+    const { projects, members } = await result.json();
     setProjects((prev) => projects);
-    // setMembers((prev) => members);
+    setMembers((prev) => members);
   };
 
   useEffect(() => {
-    if (user) fetchProjects();
+    fetchProjects();
   }, []);
 
   const onChange = (e) => {
@@ -60,7 +60,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       if (result.status === 200) setNotify({ text: message });
       if (result.status === 400) throw setError({ text: message });
       setProjects([...projects, newProject]);
-  
     } catch (error) {
       setError({ text: error.message });
     }
@@ -79,11 +78,12 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
           credentials: "include",
         }
       );
-      const { message, member } = await result.json();
+      const { message, user } = await result.json();
       if (result.status === 401) throw setError({ text: message });
+      if (result.status === 201) throw setInfo({ text: message });
       if (result.status === 200) setNotify({ text: message });
-      if (result.status === 201) setInfo({ text: message });
-      setMembers([...members, member]);
+      setMembers([...members, user]);
+      console.log(members);
     } catch (error) {
       setError({ text: error.message });
     }
@@ -115,6 +115,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       ...formData,
       completion_date: completionDate.toDateString(),
     });
+    setFormData({ title: "", description: "", user_id: user._id });
   };
 
   return (
@@ -132,6 +133,8 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
             onChange={onChange}
             completionDate={completionDate}
             setCompletionDate={setCompletionDate}
+            createProject={createProject}
+            formData={formData}
           />
         )}
 

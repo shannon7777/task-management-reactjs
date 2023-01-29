@@ -1,4 +1,5 @@
 import { Col, Row, Form, Button } from "react-bootstrap";
+
 import DatePicker from "react-datepicker";
 
 const AddProjectForm = ({
@@ -6,6 +7,7 @@ const AddProjectForm = ({
   onSubmit,
   completionDate,
   setCompletionDate,
+  formData
 }) => {
   return (
     <Form className="border border-secondary shadow p-4 m-5 rounded">
@@ -16,6 +18,7 @@ const AddProjectForm = ({
           className="shadow"
           type="title"
           name="title"
+          value={formData.title}
           placeholder="Enter a title for your project"
           onChange={onChange}
         />
@@ -27,6 +30,7 @@ const AddProjectForm = ({
           className="shadow"
           type="description"
           name="description"
+          value={formData.description}
           placeholder="Describe this project"
           onChange={onChange}
         />

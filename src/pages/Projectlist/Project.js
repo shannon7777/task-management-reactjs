@@ -5,9 +5,14 @@ import { useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { TiUserAdd } from "react-icons/ti";
 
-const Project = ({ project, deleteProject, editProject, addMember, members }) => {
+const Project = ({
+  project,
+  deleteProject,
+  editProject,
+  addMember,
+  members,
+}) => {
   const [showInviteForm, setShowInviteForm] = useState(false);
-  // console.log(members);
   return (
     <Card className="">
       <Row>
@@ -19,9 +24,11 @@ const Project = ({ project, deleteProject, editProject, addMember, members }) =>
 
         <Col md={3} className="border">
           <span>
-          {/* {members?.filter(member => !project.members.includes(member?._id)).map((member, index) => (
-            <span key={`member-${index}`}>{member?.username}</span>
-          ))} */}
+            {members
+              ?.filter((member) => project.members.includes(member._id))
+              .map((member, index) => (
+                <span key={index}>{member.username}</span>
+              ))}
           </span>
         </Col>
 
