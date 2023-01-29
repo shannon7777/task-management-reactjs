@@ -18,6 +18,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   });
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [completionDate, setCompletionDate] = useState(new Date());
+  const [members, setMembers] = useState([]);
 
   const bearerToken = `Bearer ${accessToken}`;
 
@@ -31,6 +32,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
     );
     const { projects } = await result.json();
     setProjects((prev) => projects);
+    // setMembers((prev) => members);
   };
 
   useEffect(() => {
@@ -58,25 +60,33 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       if (result.status === 200) setNotify({ text: message });
       if (result.status === 400) throw setError({ text: message });
       setProjects([...projects, newProject]);
+  
     } catch (error) {
       setError({ text: error.message });
     }
   };
 
   const addMember = async (email, project_id) => {
-    const result = await fetch(
-      `http://localhost:5000/api/projects/${project_id}/${email}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: bearerToken,
-        },
-        credentials: "include",
-      }
-    );
-    const { message } = await result.json();
-    if (result.status === 200) setNotify({ text: message });
+    try {
+      const result = await fetch(
+        `http://localhost:5000/api/projects/${project_id}/${email}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: bearerToken,
+          },
+          credentials: "include",
+        }
+      );
+      const { message, member } = await result.json();
+      if (result.status === 401) throw setError({ text: message });
+      if (result.status === 200) setNotify({ text: message });
+      if (result.status === 201) setInfo({ text: message });
+      setMembers([...members, member]);
+    } catch (error) {
+      setError({ text: error.message });
+    }
   };
 
   const editProject = async (updatedObj) => {};
@@ -131,7 +141,8 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
             project={project}
             deleteProject={deleteProject}
             editProject={editProject}
-            addMember={addMember}            
+            addMember={addMember}
+            members={members}
           />
         ))}
       </Card>
