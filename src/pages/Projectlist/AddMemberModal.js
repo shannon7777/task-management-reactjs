@@ -1,4 +1,4 @@
-import { Modal, Button, Form, Col } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import { useState } from "react";
 
 const AddMemberModal = ({
@@ -10,6 +10,7 @@ const AddMemberModal = ({
   const [email, setEmail] = useState("");
   const onSubmit = (e) => {
     e.preventDefault();
+    if (!email) return;
     addMember(email, project_id);
     setShowInviteForm((prev) => !prev);
     setEmail("");

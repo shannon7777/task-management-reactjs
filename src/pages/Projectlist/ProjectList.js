@@ -18,7 +18,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   });
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [completionDate, setCompletionDate] = useState(new Date());
-  const [members, setMembers] = useState([]);
 
   const bearerToken = `Bearer ${accessToken}`;
 
@@ -30,14 +29,13 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
         credentials: "include",
       }
     );
-    const { projects, members } = await result.json();
-    setProjects((prev) => projects);
-    setMembers((prev) => members);
+    const { projects } = await result.json();
+    setProjects(projects);
   };
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [projects]);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,35 +57,46 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       const { newProject, message } = await result.json();
       if (result.status === 200) setNotify({ text: message });
       if (result.status === 400) throw setError({ text: message });
-      setProjects([...projects, newProject]);
+      setProjects((prev) => [...prev, newProject]);
     } catch (error) {
       setError({ text: error.message });
     }
   };
 
-  const addMember = async (email, project_id) => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}/${email}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          credentials: "include",
-        }
-      );
-      const { message, user } = await result.json();
-      if (result.status === 401) throw setError({ text: message });
-      if (result.status === 201) throw setInfo({ text: message });
-      if (result.status === 200) setNotify({ text: message });
-      setMembers([...members, user]);
-      console.log(members);
-    } catch (error) {
-      setError({ text: error.message });
-    }
-  };
+  // Updating the teamMembers state to include new added member after firing addMember()
+  //
+
+  // const addMember = async (email, project_id) => {
+  //   try {
+  //     const result = await fetch(
+  //       `http://localhost:5000/api/projects/${project_id}/${email}`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: bearerToken,
+  //         },
+  //         credentials: "include",
+  //       }
+  //     );
+  //     const { message, user } = await result.json();
+  //     if (result.status === 401) throw setError({ text: message });
+  //     if (result.status === 400) throw setError({ text: message });
+  //     if (result.status === 201) throw setInfo({ text: message });
+  //     if (result.status === 200) setNotify({ text: message });
+
+  //     setProjects((prev) =>
+  //       prev.map((project) => {
+  //         if (project._id === project_id) {
+  //           project.members = [...project.members, user._id];
+  //         }
+  //         return project;
+  //       })
+  //     );
+  //   } catch (error) {
+  //     setError({ text: error.message });
+  //   }
+  // };
 
   const editProject = async (updatedObj) => {};
 
@@ -100,9 +109,8 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       const { message } = await result.json();
 
       if (result.status === 400) throw setError({ text: message });
-      if (result.status === 200) {
-        setNotify({ text: message });
-      }
+      if (result.status === 200) setNotify({ text: message });
+
       setProjects(projects.filter((project) => project._id !== id));
     } catch (error) {
       setError({ text: error.message });
@@ -144,8 +152,12 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
             project={project}
             deleteProject={deleteProject}
             editProject={editProject}
-            addMember={addMember}
-            members={members}
+            setError={setError}
+            setNotify={setNotify}
+            setInfo={setInfo}
+            // addMember={addMember}
+            // teamMembers={teamMembers}
+            // setTeamMembers={setTeamMembers}
           />
         ))}
       </Card>

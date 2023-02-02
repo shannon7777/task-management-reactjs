@@ -24,8 +24,9 @@ const useFetchImg = () => {
         throw new Error(message);
       }
       localStorage.setItem("userImg", JSON.stringify(imageUrl));
+      // return imageUrl;
     } catch (error) {
-      console.log(error.message)
+      console.log(error.message);
     }
   };
   return fetchImg;

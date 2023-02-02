@@ -32,6 +32,7 @@ const App = () => {
 
   const bearerToken = `Bearer ${accessToken}`;
   const fetchImg = useFetchImg();
+  // console.log(fetchImg)
 
   const fetchAllTasks = async () => {
     const result = await fetch(`http://localhost:5000/api/tasks/${user._id}`, {
@@ -46,6 +47,7 @@ const App = () => {
     if (user) {
       fetchAllTasks();
       fetchImg();
+      // localStorage.setItem("userImg", JSON.stringify(fetchImg()));
     }
   }, [auth]);
 
@@ -220,7 +222,6 @@ const App = () => {
                     deleteTask={deleteTask}
                     editTask={editTask}
                     tasks={tasks}
-                    // fetchAllTasks={fetchAllTasks}
                   />
                 }
               />

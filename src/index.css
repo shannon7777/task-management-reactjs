@@ -190,11 +190,15 @@ body {
   height: 120px;
 }
 
-.profilePicNavbar {
+.profilePicNavbar, .teamMemberpic {
   border-radius: 50%;
   width: 30px;
   height: 30px;
   margin-right: 0.5rem;
+}
+
+.teamMemberpic:hover {
+  opacity: 0.7;
 }
 
 .dot {
