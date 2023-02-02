@@ -35,7 +35,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
 
   useEffect(() => {
     fetchProjects();
-  }, [projects]);
+  }, []);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
