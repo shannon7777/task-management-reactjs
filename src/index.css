@@ -209,3 +209,21 @@ body {
   display: inline-block;
   margin-right: 0.5rem;
 }
+
+.project {
+  transition: transform 0.2s;
+}
+
+.project:hover {
+  -webkit-transform: scale(1.02);
+  transform: scale(1.02);
+}
+
+.project-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-link:hover {
+  color: darkolivegreen;
+}

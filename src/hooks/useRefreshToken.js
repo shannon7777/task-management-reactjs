@@ -7,9 +7,9 @@ const useRefreshToken = () => {
     const result = await fetch(`http://localhost:5000/api/auth/refresh`, {
       credentials: "include",
     });
-    const data = await result.json();
+    const { accessToken } = await result.json();
     setAuth((auth) => {
-      return { ...auth, accessToken: data.accessToken };
+      return { ...auth, accessToken: accessToken };
     });
   };
   return refresh;

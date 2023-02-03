@@ -7,7 +7,7 @@ import { FcCancel } from "react-icons/fc";
 const ProfilePicUpload = ({ setShowUpload, setNotify, setError }) => {
   const [file, setFile] = useState();
   const {
-    auth: { user, accessToken, imgUrl },
+    auth: { user, accessToken },
   } = useAuth();
   const bearerToken = `Bearer ${accessToken}`;
   const inputRef = useRef(null);

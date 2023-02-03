@@ -15,7 +15,8 @@ import ProjectList from "./pages/Projectlist";
 import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
-import useFetchImg from "./hooks/useFetchImg";
+import ProjectPage from "./pages/Projectlist/ProjectPage";
+// import useFetchImg from "./hooks/useFetchImg";
 
 const App = () => {
   const [showAddTask, setShowAddTask] = useState(false);
@@ -31,8 +32,7 @@ const App = () => {
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
-  const fetchImg = useFetchImg();
-  // console.log(fetchImg)
+  // const fetchImg = useFetchImg();
 
   const fetchAllTasks = async () => {
     const result = await fetch(`http://localhost:5000/api/tasks/${user._id}`, {
@@ -44,11 +44,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchAllTasks();
-      fetchImg();
-      // localStorage.setItem("userImg", JSON.stringify(fetchImg()));
-    }
+    if(user)
+    fetchAllTasks();
+    // fetchImg();
   }, [auth]);
 
   // Add Task
@@ -71,7 +69,6 @@ const App = () => {
       });
 
       const { newTask, message } = await res.json();
-      // maybe i don't need the two lines above ???? please check !! ---
       setTasks([...tasks, newTask]);
       if (res.status === 200) {
         setNotify({ text: message });
@@ -222,6 +219,7 @@ const App = () => {
                     deleteTask={deleteTask}
                     editTask={editTask}
                     tasks={tasks}
+                    fetchAllTasks={fetchAllTasks}
                   />
                 }
               />
@@ -249,6 +247,10 @@ const App = () => {
                 path="/team-projects"
                 element={<ProjectList {...setNotifications} />}
               />
+            </Route>
+
+            <Route element={<RequireAuth />}>
+              <Route path={`/team-projects/:project_id`} element={<ProjectPage />} />
             </Route>
           </Route>
 

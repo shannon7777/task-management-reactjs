@@ -2,6 +2,7 @@ import useAuth from "./useAuth";
 
 const useFetchImg = () => {
   const {
+    setAuth,
     auth: { user, accessToken },
   } = useAuth();
   const bearerToken = `Bearer ${accessToken}`;
@@ -11,7 +12,6 @@ const useFetchImg = () => {
       const result = await fetch(
         `http://localhost:5000/api/users/img/${user._id}`,
         {
-          method: "GET",
           headers: {
             Authorization: bearerToken,
           },
@@ -23,8 +23,13 @@ const useFetchImg = () => {
       if (result.status === 401) {
         throw new Error(message);
       }
+      // setAuth((prev) => {
+      //   return {
+      //     ...prev,
+      //     user: { ...prev.user, imgUrl: imageUrl },
+      //   };
+      // });
       localStorage.setItem("userImg", JSON.stringify(imageUrl));
-      // return imageUrl;
     } catch (error) {
       console.log(error.message);
     }

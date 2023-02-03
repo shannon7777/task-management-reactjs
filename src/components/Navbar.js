@@ -1,4 +1,5 @@
 import { Link, useMatch, useResolvedPath, NavLink } from "react-router-dom";
+import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { Button } from "react-bootstrap";
@@ -15,13 +16,13 @@ const Navbar = ({ setNotify }) => {
     auth: { user },
   } = useAuth();
 
-  let imageUrl = JSON.parse(localStorage.getItem("userImg"));
-
   const logout = useLogout();
   const signout = async () => {
     await logout();
     setNotify({ text: "You have signed out" });
   };
+
+  let imageUrl = JSON.parse(localStorage.getItem("userImg"));
 
   const CustomLink = ({ to, children }) => {
     // comparing the path name and "to" name , if they are equal then set active class on li element
@@ -54,7 +55,7 @@ const Navbar = ({ setNotify }) => {
 
             <CustomLink to="/team-projects">
               <RiTeamLine size={20} color="white" />
-               Team Projects
+              Team Projects
             </CustomLink>
 
             <CustomLink to="/profile">

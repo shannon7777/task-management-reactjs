@@ -10,7 +10,7 @@ import RemovePic from "./RemovePic";
 const UserProfile = ({ setError, setNotify }) => {
   const {
     auth: {
-      user: { firstName, lastName, email, username, roles },
+      user: { firstName, lastName, email, username, roles, imgUrl },
     },
   } = useAuth();
   const [showUpload, setShowUpload] = useState(false);
@@ -31,7 +31,7 @@ const UserProfile = ({ setError, setNotify }) => {
 
   let imageUrl = JSON.parse(localStorage.getItem("userImg"));
 
-  const text = !imageUrl ? "Upload a picture" : "Change Picture";
+  const text = !localStorage.getItem("userImg") ? "Upload a picture" : "Change Picture";
 
   return (
     <Card className="border border-secondary shadow p-3 m-4 bg-white">
@@ -54,7 +54,7 @@ const UserProfile = ({ setError, setNotify }) => {
           >
             {showUpload ? "Cancel" : text}
           </Button>
-          {!showUpload && (
+          {!showUpload && localStorage.getItem("userImg") && (
             <>
               <Button
                 className="mt-auto"

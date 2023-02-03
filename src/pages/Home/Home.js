@@ -1,10 +1,14 @@
+import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 
 import Header from "./Header";
 import AddTask from "./AddTask";
 import Task from "./Task";
 
-const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
+import useFetchImg from "../../hooks/useFetchImg";
+
+
+const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask, fetchAllTasks }) => {
 
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
   const colorStatus = {
@@ -19,6 +23,13 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
     editTask,
     colorStatus,
   };
+
+  const fetchImg = useFetchImg();
+
+  useEffect(() => {
+    // fetchAllTasks();
+    fetchImg();
+}, []);
 
   // getting each progress by creating a Set to only have unique items
   const uniqueProgress = [...new Set(tasks.map(({ progress }) => progress))];

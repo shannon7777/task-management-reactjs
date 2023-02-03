@@ -1,7 +1,7 @@
 import { useState } from "react";
-import useAuth from "../../hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import LoginForm from "./LoginForm";
+import useAuth from "../../hooks/useAuth";
 
 const Login = ({ setNotify, setError }) => {
   const { setAuth } = useAuth();
@@ -44,7 +44,7 @@ const Login = ({ setNotify, setError }) => {
       }
 
       const { user, accessToken } = await res.json();
-      setAuth({ user, accessToken });
+      setAuth({ user, accessToken });  
       localStorage.setItem("user", JSON.stringify(user));
       navigate(from, { replace: true });
       setFormData({ email: "", password: "" });

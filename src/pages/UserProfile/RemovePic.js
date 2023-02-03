@@ -9,7 +9,6 @@ const RemovePic = ({
 }) => {
   const {
     auth: { user, accessToken },
-    setAuth,
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
@@ -17,12 +16,12 @@ const RemovePic = ({
   const removeDisplayPic = async (e) => {
     e.preventDefault();
 
-    if (!localStorage.getItem("userImg")) {
-      setShowDeletePic(!showDeletePic);
-      return setNotify({
-        text: `You do not have a display picture, please upload one`,
-      });
-    }
+    // if (!localStorage.getItem("userImg")) {
+    //   setShowDeletePic(!showDeletePic);
+    //   return setNotify({
+    //     text: `You do not have a display picture, please upload one`,
+    //   });
+    // }
 
     try {
       const result = await fetch(
