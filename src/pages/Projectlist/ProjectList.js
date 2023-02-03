@@ -146,20 +146,21 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
           />
         )}
 
-        {projects.map((project) => (
-          <Project
-            key={`project-${project._id}`}
-            project={project}
-            deleteProject={deleteProject}
-            editProject={editProject}
-            setError={setError}
-            setNotify={setNotify}
-            setInfo={setInfo}
-            // addMember={addMember}
-            // teamMembers={teamMembers}
-            // setTeamMembers={setTeamMembers}
-          />
-        ))}
+        <Row>
+          {projects.map((project) => (
+            <Col md={6} className="">
+              <Project
+                key={`project-${project._id}`}
+                project={project}
+                deleteProject={deleteProject}
+                editProject={editProject}
+                setError={setError}
+                setNotify={setNotify}
+                setInfo={setInfo}
+              />
+            </Col>
+          ))}
+        </Row>
       </Card>
     </div>
   );
