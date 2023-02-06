@@ -250,7 +250,7 @@ const App = () => {
             </Route>
 
             <Route element={<RequireAuth />}>
-              <Route path={`/team-projects/:project_id`} element={<ProjectPage />} />
+              <Route path={`/team-projects/:project_id`} element={<ProjectPage {...setNotifications}/>} />
             </Route>
           </Route>
 

@@ -1,4 +1,4 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Col, Row, Badge } from "react-bootstrap";
 import { useState } from "react";
 
 const AddMemberModal = ({
@@ -6,15 +6,45 @@ const AddMemberModal = ({
   setShowInviteForm,
   showInviteForm,
   project_id,
+  projectMembers,
 }) => {
   const [email, setEmail] = useState("");
+  const [members, setMembers] = useState([]);
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!email) return;
-    addMember(email, project_id);
+    if (members.length === 0 && !email) return;
+    // addMember(email ? members.concat(email) : members, project_id);
+    addMember(members, project_id);
     setShowInviteForm((prev) => !prev);
     setEmail("");
   };
+
+  const add = (email) => {
+    if (!email) return;
+    setMembers((prev) => [...prev, email]);
+    setEmail("");
+  };
+
+  const remove = (email) => {
+    setMembers((prev) => prev.filter((member) => member !== email));
+  };
+
+  const memberBadges = members?.map((email, index) => (
+    <Badge
+      className="m-1"
+      key={`member-${index}`}
+      pill
+      bg="dark"
+      style={{ cursor: "pointer" }}
+    >
+      {email}
+      <Badge bg="danger" className="mx-1" onClick={() => remove(email)}>
+        X
+      </Badge>
+    </Badge>
+  ));
+
   return (
     <>
       <Modal
@@ -23,19 +53,37 @@ const AddMemberModal = ({
         onHide={() => setShowInviteForm((prev) => !prev)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Invite a Team Member</Modal.Title>
+          <Modal.Title>Invite Team Members</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={email}
-                // placeholder={}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Row className="my-3">
+                <Col md="10">
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    value={email}
+                    placeholder="Add a team member/s"
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoFocus
+                  />
+                </Col>
+                <Col md="2">
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      add(email);
+                    }}
+                    type="submit"
+                  >
+                    select
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col>{memberBadges}</Col>
+              </Row>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -46,9 +94,11 @@ const AddMemberModal = ({
           >
             Cancel
           </Button>
-          <Button variant="outline-success" type="submit" onClick={onSubmit}>
-            Invite
-          </Button>
+          {members.length > 0 && (
+            <Button variant="outline-success" type="submit" onClick={onSubmit}>
+              Invite
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     </>

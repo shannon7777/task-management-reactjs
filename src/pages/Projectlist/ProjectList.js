@@ -148,9 +148,8 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
 
         <Row>
           {projects.map((project) => (
-            <Col md={6} className="">
+            <Col key={`project-${project._id}`} md={6}>
               <Project
-                key={`project-${project._id}`}
                 project={project}
                 deleteProject={deleteProject}
                 editProject={editProject}

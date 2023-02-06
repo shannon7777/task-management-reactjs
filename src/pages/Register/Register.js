@@ -56,6 +56,9 @@ const Register = ({ setError, setNotify, setInfo }) => {
       if (res.status === 409) {
         throw Error(message);
       }
+      if (res.status === 408) {
+        throw setError({ text: message });
+      }
       setNotify({ show: true, text: message });
       navigate("/login");
     } catch (error) {

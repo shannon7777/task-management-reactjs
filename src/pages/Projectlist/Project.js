@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Row, Col, Card, Modal, Button, Form, Badge } from "react-bootstrap";
+import { Row, Col, Card, Modal, Button, ProgressBar } from "react-bootstrap";
 import AddMemberModal from "./AddMemberModal";
 import TeamMembers from "./TeamMember";
 import useAuth from "../../hooks/useAuth";
 
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { TiUserAdd } from "react-icons/ti";
-import { BsCalendar2Date } from "react-icons/bs";
+import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Project = ({
   project,
@@ -26,33 +27,6 @@ const Project = ({
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
-
-  const deleteProjectModal = (
-    <Modal
-      centered
-      show={showDeleteProject}
-      onHide={() => setShowDeleteProject((prev) => !prev)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>{`Do you want to delete project: ${project.title}?`}</Modal.Title>
-      </Modal.Header>
-      <Modal.Footer>
-        <Button
-          variant="danger"
-          onClick={() => setShowDeleteProject(!showDeleteProject)}
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="outline-success"
-          type="submit"
-          onClick={() => deleteProject(project._id)}
-        >
-          Delete
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
 
   const getMembers = async () => {
     try {
@@ -102,56 +76,106 @@ const Project = ({
     }
   };
 
+  const deleteProjectModal = (
+    <Modal
+      centered
+      show={showDeleteProject}
+      onHide={() => setShowDeleteProject((prev) => !prev)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>{`Do you want to delete project: ${project.title}?`}</Modal.Title>
+      </Modal.Header>
+      <Modal.Footer>
+        <Button
+          variant="danger"
+          onClick={() => setShowDeleteProject(!showDeleteProject)}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="outline-success"
+          type="submit"
+          onClick={() => deleteProject(project._id)}
+        >
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
+  const addProjectModal = showInviteForm && (
+    <AddMemberModal
+      project_id={project._id}
+      addMember={addMember}
+      showInviteForm={showInviteForm}
+      setShowInviteForm={setShowInviteForm}
+    />
+  );
+
   return (
     <Card
-      className="project border-dark p-3 my-3"
+      className="project p-3 my-3 shadow"
       onMouseOver={() => setIsHovering(true)}
       onMouseOut={() => setIsHovering(false)}
     >
       <Row>
-      <Col md={8}>
-        <Link className="project-link" to={`/team-projects/${project._id}`}>
-          <Card.Title>{project.title}</Card.Title>
-          <BsCalendar2Date size={20} className="m-1" />
-          {`${project.completion_date}`}
-          <Row><p>Priority rating and Progress bar</p></Row>
-
-          <span>
-            {teamMembers.map((member, index) => (
-              <span key={index}>
-                <TeamMembers className="profilePicNavbar" member={member} />
+        <Col md={10}>
+          <Link className="project-link" to={`/team-projects/${project._id}`}>
+            <section>
+              <Card.Title>{project.title}</Card.Title>
+              <span className="d-flex">
+                <FontAwesomeIcon
+                  size="lg"
+                  icon={faCalendarCheck}
+                  className="m-1"
+                />
+                <p className="m-1">{`${project.completion_date}`}</p>
               </span>
-            ))}
-          </span>
-        </Link>
-      </Col>
+              <Row className="my-2">
+                <span>
+                  <ProgressBar
+                    className="w-50"
+                    animated
+                    now={45}
+                    variant="success"
+                  />
+                </span>
+              </Row>
 
-      <Col md={4} className="border d-flex flex-column mr-0">
-        {isHovering && (
-          <>
-            <RiDeleteBin5Line
-              onClick={() => setShowDeleteProject((prev) => !prev)}
-              size={20}
-              style={{ cursor: "pointer" }}
-            />
-            <TiUserAdd
-              className=""
-              onClick={() => setShowInviteForm((prev) => !prev)}
-              style={{ cursor: "pointer" }}
-              size={20}
-            />
-          </>
-        )}
-        {showInviteForm && (
-          <AddMemberModal
-            project_id={project._id}
-            addMember={addMember}
-            showInviteForm={showInviteForm}
-            setShowInviteForm={setShowInviteForm}
-          />
-        )}
-        {deleteProjectModal}
-      </Col>
+              <span>
+                {teamMembers.map((member, index) => (
+                  <span key={index}>
+                    <TeamMembers className="profilePicNavbar" member={member} />
+                  </span>
+                ))}
+              </span>
+            </section>
+          </Link>
+        </Col>
+
+        <Col md={2} className="d-flex align-items-end flex-column">
+          {isHovering && (
+            <>
+              <FontAwesomeIcon
+                icon={faTrashCan}
+                className="trashcan m-1"
+                onClick={() => {
+                  setShowDeleteProject((prev) => !prev);
+                }}
+                style={{ cursor: "pointer" }}
+                size="lg"
+              />
+              <FontAwesomeIcon
+                icon={faUserPlus}
+                className="adduser mt-auto"
+                onClick={() => setShowInviteForm((prev) => !prev)}
+                style={{ cursor: "pointer" }}
+              />
+            </>
+          )}
+          {addProjectModal}
+          {deleteProjectModal}
+        </Col>
       </Row>
     </Card>
   );

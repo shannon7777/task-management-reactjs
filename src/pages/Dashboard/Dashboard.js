@@ -6,7 +6,6 @@ import PieChart from "./PieChart";
 import ProgressBar from "./ProgressBar";
 
 const Dashboard = ({ tasks }) => {
-  console.log(`dashboard`, tasks);
   //  ----- DATA ANALYTICS ----
 
   // ---- PIE CHART DATA -----

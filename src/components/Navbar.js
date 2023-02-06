@@ -9,7 +9,14 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineForm } from "react-icons/ai";
 import { BsQuestion } from "react-icons/bs";
 import { BiLogOut } from "react-icons/bi";
-import { RiTeamLine } from "react-icons/ri";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPeopleGroup,
+  faChartLine,
+  faArrowRightFromBracket,
+  faHouseChimney,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ setNotify }) => {
   const {
@@ -42,20 +49,20 @@ const Navbar = ({ setNotify }) => {
 
   const navbar = (
     <nav className="navbar sticky-top">
-      <Link className="site-title mx-4" to="/">
-        Task Tracker
+      <Link className="site-title mx-5" to="/">
+        <FontAwesomeIcon icon={faHouseChimney} size="lg" />
       </Link>
       <ul className="mx-4">
         {user ? (
           <>
             <CustomLink to="/dashboard">
-              <MdOutlineDashboard size={20} color="white" />
-              Dashboard
+              <FontAwesomeIcon icon={faChartLine} size="lg" />
+              <p className="m-2">Dashboard</p>
             </CustomLink>
 
             <CustomLink to="/team-projects">
-              <RiTeamLine size={20} color="white" />
-              Team Projects
+              <FontAwesomeIcon icon={faPeopleGroup} size="lg" />
+              <p className="m-2">Team Projects</p>
             </CustomLink>
 
             <CustomLink to="/profile">
@@ -68,8 +75,8 @@ const Navbar = ({ setNotify }) => {
               variant="outline-success"
               onClick={signout}
             >
-              <BiLogOut size={20} />
-              Sign Out
+              <FontAwesomeIcon icon={faArrowRightFromBracket} size="lg" /> Sign
+              Out
             </Button>
           </>
         ) : (

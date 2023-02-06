@@ -190,13 +190,19 @@ body {
   height: 120px;
 }
 
-.profilePicNavbar, .teamMemberpic {
+.profilePicNavbar {
   border-radius: 50%;
   width: 30px;
   height: 30px;
   margin-right: 0.5rem;
 }
 
+.teamMemberpic{
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  /* margin-right: 0.5rem; */
+}
 .teamMemberpic:hover {
   opacity: 0.7;
 }
@@ -215,8 +221,9 @@ body {
 }
 
 .project:hover {
-  -webkit-transform: scale(1.02);
-  transform: scale(1.02);
+  border: 1px solid darkolivegreen;
+  -webkit-transform: scale(1.01);
+  transform: scale(1.01);
 }
 
 .project-link {
@@ -227,3 +234,18 @@ body {
 .project-link:hover {
   color: darkolivegreen;
 }
+
+.back-button {
+  transition: transform 0.2s;
+}
+
+.back-button:hover {
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+}
+
+/* .trashcan {
+  transition: transform 0.2s;
+}
+
+.trashcan: */

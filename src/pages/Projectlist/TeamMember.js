@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Overlay, Tooltip } from "react-bootstrap";
 import { Image } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 
@@ -13,12 +13,6 @@ const TeamMembers = ({ member }) => {
   const bearerToken = `Bearer ${accessToken}`;
 
   const placeholderPic = `https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
-
-  const renderTooltip = (props) => (
-    <Tooltip id="button-tooltip" {...props}>
-      {member.username}
-    </Tooltip>
-  );
 
   const fetchImg = async () => {
     const result = await fetch(
@@ -40,11 +34,7 @@ const TeamMembers = ({ member }) => {
   }, []);
 
   return (
-    <OverlayTrigger
-      placement="right"
-      delay={{ show: 250, hide: 400 }}
-      overlay={renderTooltip}
-    >
+    <>
       <span
         ref={target}
         onMouseOver={() => setIsHovering(true)}
@@ -55,7 +45,10 @@ const TeamMembers = ({ member }) => {
           src={imageUrl || placeholderPic}
         ></Image>
       </span>
-    </OverlayTrigger>
+      <Overlay target={target.current} show={isHovering} placement="right">
+        {(props) => <Tooltip {...props}>{member.username}</Tooltip>}
+      </Overlay>
+    </>
   );
 };
 
