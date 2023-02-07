@@ -244,8 +244,7 @@ body {
   transform: scale(1.2);
 }
 
-/* .trashcan {
-  transition: transform 0.2s;
+.edit-project-button {
+  opacity: 0.7;
+  cursor: pointer;
 }
-
-.trashcan: */

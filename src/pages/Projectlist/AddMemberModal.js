@@ -6,7 +6,6 @@ const AddMemberModal = ({
   setShowInviteForm,
   showInviteForm,
   project_id,
-  projectMembers,
 }) => {
   const [email, setEmail] = useState("");
   const [members, setMembers] = useState([]);
@@ -20,8 +19,12 @@ const AddMemberModal = ({
     setEmail("");
   };
 
-  const add = (email) => {
+  const add = (email) => { 
     if (!email) return;
+    // function to check if user has already been added to project
+    if(members.includes(email)) {
+      return setEmail("") 
+    } 
     setMembers((prev) => [...prev, email]);
     setEmail("");
   };

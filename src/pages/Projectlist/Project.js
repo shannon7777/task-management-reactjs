@@ -51,26 +51,28 @@ const Project = ({
     getMembers();
   }, []);
 
-  const addMember = async (email, project_id) => {
+  const addMember = async (membersArr, project_id) => {
+    console.log(membersArr, project_id);
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}/${email}`,
+        `http://localhost:5000/api/projects/${project_id}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: bearerToken,
           },
+          body: JSON.stringify(membersArr),
           credentials: "include",
         }
       );
-      const { message, user } = await result.json();
+      const { message, users } = await result.json();
       if (result.status === 401) throw setError({ text: message });
       if (result.status === 400) throw setError({ text: message });
-      if (result.status === 201) throw setInfo({ text: message });
+      if (result.status === 202) throw setInfo({ text: message });
       if (result.status === 200) setNotify({ text: message });
 
-      setTeamMembers([...teamMembers, user]);
+      setTeamMembers([...teamMembers, ...users]);
     } catch (error) {
       setError({ text: error.message });
     }

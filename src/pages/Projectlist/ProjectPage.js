@@ -4,19 +4,22 @@ import useAuth from "../../hooks/useAuth";
 import TeamMembers from "./TeamMember";
 import AddMemberModal from "./AddMemberModal";
 
-import { Card } from "react-bootstrap";
+import { Card, Col } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleArrowLeft,
-  faPeopleGroup,
   faUserPlus,
+  faPenToSquare,
+  faUsersLine,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showInviteForm, setShowInviteForm] = useState(false);
+  const [hoveringOverTitle, setHoveringOverTitle] = useState(false);
+  const [hoveringOverUsers, setHoveringOverUsers] = useState(false);
   const {
     auth: { user, accessToken },
   } = useAuth();
@@ -26,15 +29,23 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const navigate = useNavigate();
 
   const fetchProject = async () => {
-    const result = await fetch(
-      `http://localhost:5000/api/projects/one/${project_id}`,
-      {
-        headers: { Authorization: bearerToken },
-        credentials: "include",
+    try {
+      const result = await fetch(
+        `http://localhost:5000/api/projects/one/${project_id}`,
+        {
+          headers: { Authorization: bearerToken },
+          credentials: "include",
+        }
+      );
+      if (result.status === 400) {
+        navigate("/team-projects");
+        throw setError({ text: `Project does not exist` });
       }
-    );
-    const [project] = await result.json();
-    setProject(project);
+      const [project] = await result.json();
+      setProject(project);
+    } catch (error) {
+      throw setError({ text: error.message });
+    }
   };
 
   const addMember = async (membersArr, project_id) => {
@@ -54,12 +65,13 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       );
       const { message, users } = await result.json();
       if (result.status === 400) throw setError({ text: message });
-      if (result.status === 202) throw setError({ text: message });
+      if (result.status === 401) throw setError({ text: message });
+      if (result.status === 403) throw setInfo({ text: message });
       if (result.status === 200) setNotify({ text: message });
 
       setTeamMembers([...teamMembers, ...users]);
     } catch (error) {
-      setError({ text: error.message });
+      //   setError({ text: error });
     }
   };
 
@@ -105,20 +117,41 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   return (
     <Card className="m-3">
       <h2>
-        <Card.Header className="d-flex text-uppercase">
-          <FontAwesomeIcon
-            className="back-button p-2"
-            icon={faCircleArrowLeft}
-            onClick={() => navigate("/team-projects")}
-            style={{ cursor: "pointer" }}
-          />
-          <h6 className="p-3">projects list</h6>
-          <p className="mx-auto">{project.title}</p>
+        <Card.Header
+          className="d-flex"
+          onMouseOver={() => setHoveringOverTitle(true)}
+          onMouseOut={() => setHoveringOverTitle(false)}
+        >
+          <Col className="d-flex text-uppercase">
+            <FontAwesomeIcon
+              className="back-button p-2"
+              icon={faCircleArrowLeft}
+              onClick={() => navigate("/team-projects")}
+              style={{ cursor: "pointer" }}
+            />
+            <h6 className="p-3">projects list</h6>
+          </Col>
+          <Col className="d-flex mx-auto">
+            <p className="">
+              {project.title}{" "}
+              {hoveringOverTitle && (
+                <FontAwesomeIcon
+                  className="edit-project-button"
+                  icon={faPenToSquare}
+                  size="sm"
+                />
+              )}
+            </p>
+          </Col>
         </Card.Header>
       </h2>
 
-      <Card.Header className="d-flex mb-3">
-        <FontAwesomeIcon className=" p-2" icon={faPeopleGroup} size="xl" />
+      <Card.Header
+        className="d-flex mb-3"
+        onMouseOver={() => setHoveringOverUsers(true)}
+        onMouseOut={() => setHoveringOverUsers(false)}
+      >
+        <FontAwesomeIcon className="p-2" icon={faUsersLine} size="xl" />
         <span className="p-2">
           {teamMembers.map((member, index) => (
             <span key={index}>
@@ -126,12 +159,14 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
             </span>
           ))}
         </span>
-        <FontAwesomeIcon
-          className="p-2 mt-1"
-          icon={faUserPlus}
-          onClick={() => setShowInviteForm((prev) => !prev)}
-          style={{ cursor: "pointer" }}
-        />
+        {hoveringOverUsers && (
+          <FontAwesomeIcon
+            className="p-2 mt-1"
+            icon={faUserPlus}
+            onClick={() => setShowInviteForm((prev) => !prev)}
+            style={{ cursor: "pointer", opacity: 0.8 }}
+          />
+        )}
         {addProjectModal}
         <p className="ms-auto">
           <strong>Project Owner:</strong> {projectOwner}{" "}
