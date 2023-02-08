@@ -55,7 +55,7 @@ const Project = ({
     console.log(membersArr, project_id);
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}`,
+        `http://localhost:5000/api/projects/members/${project_id}`,
         {
           method: "POST",
           headers: {

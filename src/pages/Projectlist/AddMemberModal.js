@@ -1,39 +1,53 @@
-import { Modal, Button, Form, Col, Row, Badge } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Form,
+  Col,
+  Row,
+  Badge,
+  Tabs,
+  Tab,
+} from "react-bootstrap";
 import { useState } from "react";
 
 const AddMemberModal = ({
   addMember,
-  setShowInviteForm,
-  showInviteForm,
+  removeMember,
   project_id,
+  setShowEditMember,
+  showEditMember,
+  teamMembers,
 }) => {
   const [email, setEmail] = useState("");
-  const [members, setMembers] = useState([]);
+  const [membersToAdd, setMembersToAdd] = useState([]);
 
-  const onSubmit = (e) => {
+  const [membersList, setMembersList] = useState(teamMembers);
+  const [membersToRemove, setMembersToRemove] = useState([]);
+
+  // --- INSIDE INVITE MEMBERS TAB ---
+
+  const onInvite = (e) => {
     e.preventDefault();
-    if (members.length === 0 && !email) return;
-    // addMember(email ? members.concat(email) : members, project_id);
-    addMember(members, project_id);
-    setShowInviteForm((prev) => !prev);
+    if (membersToAdd.length === 0 && !email) return;
+    addMember(membersToAdd, project_id);
+    setShowEditMember((prev) => !prev);
     setEmail("");
   };
 
-  const add = (email) => { 
+  const add = (email) => {
     if (!email) return;
-    // function to check if user has already been added to project
-    if(members.includes(email)) {
-      return setEmail("") 
-    } 
-    setMembers((prev) => [...prev, email]);
+    if (membersToAdd.includes(email)) {
+      return setEmail("");
+    }
+    setMembersToAdd((prev) => [...prev, email]);
     setEmail("");
   };
 
   const remove = (email) => {
-    setMembers((prev) => prev.filter((member) => member !== email));
+    setMembersToAdd((prev) => prev.filter((member) => member !== email));
   };
 
-  const memberBadges = members?.map((email, index) => (
+  const membersToBeInvited = membersToAdd?.map((email, index) => (
     <Badge
       className="m-1"
       key={`member-${index}`}
@@ -48,61 +62,148 @@ const AddMemberModal = ({
     </Badge>
   ));
 
+  // --- INSIDE REMOVE MEMBERS TAB ---
+
+  const onRemove = (e) => {
+    e.preventDefault();
+    removeMember(membersToRemove, project_id);
+    setShowEditMember((prev) => !prev);
+  };
+
+  const removeFromCurrentMembersArr = (email) => {
+    setMembersList((prev) => prev.filter((member) => member !== email));
+    setMembersToRemove((prev) => [...prev, email]);
+  };
+
+  const removeFromArr = (email) => {
+    setMembersToRemove((prev) => prev.filter((member) => member !== email));
+    setMembersList((prev) => [...prev, email]);
+  };
+
+  const currentMembersList = membersList?.map((member, index) => (
+    <Badge bg="dark" key={`member-${index}`}>
+      {member}{" "}
+      <Badge
+        bg="danger"
+        className="mx-1"
+        style={{ cursor: "pointer" }}
+        onClick={(e) => {
+          e.preventDefault();
+          removeFromCurrentMembersArr(member);
+        }}
+      >
+        X
+      </Badge>
+    </Badge>
+  ));
+
+  const membersToBeRemoved = membersToRemove.map((email, index) => (
+    <Badge bg="danger" key={`member-${index}`}>
+      {email}{" "}
+      <Badge
+        bg="dark"
+        className="mx-1"
+        style={{ cursor: "pointer" }}
+        onClick={(e) => {
+          e.preventDefault();
+          removeFromArr(email);
+        }}
+      >
+        X
+      </Badge>
+    </Badge>
+  ));
+
   return (
     <>
       <Modal
         centered
-        show={showInviteForm}
-        onHide={() => setShowInviteForm((prev) => !prev)}
+        show={showEditMember}
+        onHide={() => setShowEditMember((prev) => !prev)}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Invite Team Members</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Row className="my-3">
-                <Col md="10">
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={email}
-                    placeholder="Add a team member/s"
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoFocus
-                  />
+        <Tabs className="justify-content-center">
+          <Tab eventKey="tab-invite" title="Invite Members">
+            <Modal.Header>
+              <Modal.Title>Invite Team Members</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Row className="my-3">
+                    <Col md="10">
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={email}
+                        placeholder="Add a team member/s"
+                        onChange={(e) => setEmail(e.target.value)}
+                        autoFocus
+                      />
+                    </Col>
+                    <Col md="2">
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          add(email);
+                        }}
+                        type="submit"
+                      >
+                        select
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>{membersToBeInvited}</Col>
+                  </Row>
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="danger"
+                onClick={() => setShowEditMember(!showEditMember)}
+              >
+                Cancel
+              </Button>
+              {membersToAdd.length > 0 && (
+                <Button
+                  variant="outline-success"
+                  type="submit"
+                  onClick={onInvite}
+                >
+                  Invite
+                </Button>
+              )}
+            </Modal.Footer>
+          </Tab>
+          <Tab eventKey="tab-remove" title="Remove Members">
+            <Modal.Header>
+              <Modal.Title>Remove Members from This Project</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form className="d-flex">
+                <Col>
+                  <span>Current Team Members: </span>
+                  {currentMembersList}
                 </Col>
-                <Col md="2">
-                  <Button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      add(email);
-                    }}
-                    type="submit"
-                  >
-                    select
-                  </Button>
+                <div className="vr" />
+                <Col className="mx-3">
+                  <span>To Be Removed:</span>
+                  {membersToBeRemoved}
                 </Col>
-              </Row>
-              <Row>
-                <Col>{memberBadges}</Col>
-              </Row>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="danger"
-            onClick={() => setShowInviteForm(!showInviteForm)}
-          >
-            Cancel
-          </Button>
-          {members.length > 0 && (
-            <Button variant="outline-success" type="submit" onClick={onSubmit}>
-              Invite
-            </Button>
-          )}
-        </Modal.Footer>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="danger"
+                onClick={() => setShowEditMember((prev) => !prev)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={onRemove}>Remove</Button>
+            </Modal.Footer>
+          </Tab>
+        </Tabs>
       </Modal>
     </>
   );

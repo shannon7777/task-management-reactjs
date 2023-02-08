@@ -7,14 +7,14 @@ const Header = ({ totalTasks, title, onAdd, showAddTask }) => {
   return (
     <Row className="justify-content-between mt-5" xs="auto">
       <Col className="d-flex">
-        <h1>
-          <Badge bg="dark">{title}</Badge>
-        </h1>
-        {totalTasks && (
-          <h5 className="title-bubble mx-3">
-            <span>{totalTasks}</span>
-          </h5>
-        )}
+        <h2>
+          <Badge className="px-3" bg="dark">
+            {title}
+            <Badge className="mx-3" bg="success">
+              {totalTasks}
+            </Badge>{" "}
+          </Badge>
+        </h2>
       </Col>
 
       <Col>

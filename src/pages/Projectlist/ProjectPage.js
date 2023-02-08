@@ -12,12 +12,13 @@ import {
   faUserPlus,
   faPenToSquare,
   faUsersLine,
+  faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
-  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [showEditMember, setShowEditMember] = useState(false);
   const [hoveringOverTitle, setHoveringOverTitle] = useState(false);
   const [hoveringOverUsers, setHoveringOverUsers] = useState(false);
   const {
@@ -52,7 +53,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     console.log(membersArr, project_id);
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}`,
+        `http://localhost:5000/api/projects/members/${project_id}`,
         {
           method: "POST",
           headers: {
@@ -75,6 +76,33 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
+  const removeMember = async (membersArr, project_id) => {
+    console.log(membersArr);
+    try {
+      const result = await fetch(
+        `http://localhost:5000/api/projects/${project_id}`,
+        {
+          method: "",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: bearerToken,
+          },
+          body: JSON.stringify(membersArr),
+          credentials: "include",
+        }
+      );
+
+      const { message } = await result.json();
+      if (result.status === 200) setNotify({ text: message });
+      if (result.status === 400) setError({ text: message });
+      setTeamMembers((prev) =>
+        prev.filter((member) => !membersArr.includes(member))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getMembers = async () => {
     try {
       const result = await fetch(
@@ -94,12 +122,14 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
-  const addProjectModal = showInviteForm && (
+  const addProjectModal = showEditMember && (
     <AddMemberModal
       project_id={project_id}
       addMember={addMember}
-      showInviteForm={showInviteForm}
-      setShowInviteForm={setShowInviteForm}
+      removeMember={removeMember}
+      showEditMember={showEditMember}
+      setShowEditMember={setShowEditMember}
+      teamMembers={teamMembers.map((member) => member.email)}
     />
   );
 
@@ -162,9 +192,10 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         {hoveringOverUsers && (
           <FontAwesomeIcon
             className="p-2 mt-1"
-            icon={faUserPlus}
-            onClick={() => setShowInviteForm((prev) => !prev)}
-            style={{ cursor: "pointer", opacity: 0.8 }}
+            icon={faUserGear}
+            onClick={() => setShowEditMember((prev) => !prev)}
+            style={{ cursor: "pointer" }}
+            // size="lg"
           />
         )}
         {addProjectModal}
