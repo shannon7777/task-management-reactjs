@@ -14,6 +14,8 @@ import {
   faUsersLine,
   faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
+import { TbChevronsDownLeft } from "react-icons/tb";
+import { MdOutlineWifiTetheringErrorRounded } from "react-icons/md";
 
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
@@ -76,18 +78,26 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
+  const [owner] = teamMembers?.filter(
+    (member) => member._id === project.creator
+  );
+
   const removeMember = async (membersArr, project_id) => {
-    console.log(membersArr);
+    // to make sure owner doesn't get removed from his/her project
+    let newMembersArr = [...membersArr];
+    if (membersArr.includes(owner.email))
+      newMembersArr = membersArr.filter((member) => member !== owner.email);
+
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}`,
+        `http://localhost:5000/api/projects/members/${project_id}`,
         {
-          method: "",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: bearerToken,
           },
-          body: JSON.stringify(membersArr),
+          body: JSON.stringify(newMembersArr),
           credentials: "include",
         }
       );
@@ -96,7 +106,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       if (result.status === 200) setNotify({ text: message });
       if (result.status === 400) setError({ text: message });
       setTeamMembers((prev) =>
-        prev.filter((member) => !membersArr.includes(member))
+        prev.filter((member) => !newMembersArr.includes(member.email))
       );
     } catch (error) {
       console.log(error);
@@ -125,6 +135,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const addProjectModal = showEditMember && (
     <AddMemberModal
       project_id={project_id}
+      owner_email={owner.email}
       addMember={addMember}
       removeMember={removeMember}
       showEditMember={showEditMember}

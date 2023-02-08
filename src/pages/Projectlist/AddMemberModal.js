@@ -9,8 +9,10 @@ import {
   Tab,
 } from "react-bootstrap";
 import { useState } from "react";
+import userEvent from "@testing-library/user-event";
 
 const AddMemberModal = ({
+  owner_email,
   addMember,
   removeMember,
   project_id,
@@ -80,22 +82,24 @@ const AddMemberModal = ({
     setMembersList((prev) => [...prev, email]);
   };
 
-  const currentMembersList = membersList?.map((member, index) => (
-    <Badge bg="dark" key={`member-${index}`}>
-      {member}{" "}
-      <Badge
-        bg="danger"
-        className="mx-1"
-        style={{ cursor: "pointer" }}
-        onClick={(e) => {
-          e.preventDefault();
-          removeFromCurrentMembersArr(member);
-        }}
-      >
-        X
+  const currentMembersList = membersList
+    .filter((member) => member !== owner_email)
+    .map((member, index) => (
+      <Badge bg="dark" key={`member-${index}`}>
+        {member}{" "}
+        <Badge
+          bg="danger"
+          className="mx-1"
+          style={{ cursor: "pointer" }}
+          onClick={(e) => {
+            e.preventDefault();
+            removeFromCurrentMembersArr(member);
+          }}
+        >
+          X
+        </Badge>
       </Badge>
-    </Badge>
-  ));
+    ));
 
   const membersToBeRemoved = membersToRemove.map((email, index) => (
     <Badge bg="danger" key={`member-${index}`}>
@@ -200,7 +204,9 @@ const AddMemberModal = ({
               >
                 Cancel
               </Button>
-              <Button onClick={onRemove}>Remove</Button>
+              {membersToRemove.length > 0 && (
+                <Button onClick={onRemove}>Remove</Button>
+              )}
             </Modal.Footer>
           </Tab>
         </Tabs>
