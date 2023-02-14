@@ -9,9 +9,8 @@ import {
   Tab,
 } from "react-bootstrap";
 import { useState } from "react";
-import userEvent from "@testing-library/user-event";
 
-const AddMemberModal = ({
+const EditMembersModal = ({
   owner_email,
   addMember,
   removeMember,
@@ -83,7 +82,7 @@ const AddMemberModal = ({
   };
 
   const currentMembersList = membersList
-    .filter((member) => member !== owner_email)
+    ?.filter((member) => member !== owner_email)
     .map((member, index) => (
       <Badge bg="dark" key={`member-${index}`}>
         {member}{" "}
@@ -215,4 +214,4 @@ const AddMemberModal = ({
   );
 };
 
-export default AddMemberModal;
+export default EditMembersModal;

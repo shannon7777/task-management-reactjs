@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from "react";
 import { Overlay, Tooltip } from "react-bootstrap";
-import { Image } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 
 const TeamMembers = ({ member }) => {
@@ -26,7 +25,7 @@ const TeamMembers = ({ member }) => {
       }
     );
     const { imageUrl } = await result.json();
-    setImageUrl((prev) => imageUrl);
+    setImageUrl(imageUrl);
   };
 
   useEffect(() => {
@@ -40,10 +39,11 @@ const TeamMembers = ({ member }) => {
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
       >
-        <Image
+        <img
+          alt="member"
           className="teamMemberpic"
           src={imageUrl || placeholderPic}
-        ></Image>
+        />
       </span>
       <Overlay target={target.current} show={isHovering} placement="right">
         {(props) => <Tooltip {...props}>{member.username}</Tooltip>}

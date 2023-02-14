@@ -1,32 +1,36 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Modal, Button, ProgressBar } from "react-bootstrap";
-import AddMemberModal from "./AddMemberModal";
 import TeamMembers from "./TeamMember";
+import StarRating from "./StarRating";
 import useAuth from "../../hooks/useAuth";
 
-import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
-import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarCheck,
+  faTrashCan,
+} from "@fortawesome/free-regular-svg-icons";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
-const Project = ({
-  project,
-  deleteProject,
-  editProject,
-  setError,
-  setNotify,
-  setInfo,
-}) => {
-  const [showInviteForm, setShowInviteForm] = useState(false);
+const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
+  // const [showEditMember, setShowEditMember] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showDeleteProject, setShowDeleteProject] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const [hoverOverDiv, setHoverOverDiv] = useState(false);
+  const [rating, setRating] = useState(0);
   const {
     auth: { accessToken },
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
+
+  const ratingColors = {
+    1: "grey",
+    2: "brown",
+    3: "blue",
+    4: "green",
+    5: "red",
+  };
 
   const getMembers = async () => {
     try {
@@ -49,34 +53,8 @@ const Project = ({
 
   useEffect(() => {
     getMembers();
+    setRating(project.priority);
   }, []);
-
-  const addMember = async (membersArr, project_id) => {
-    console.log(membersArr, project_id);
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/members/${project_id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          body: JSON.stringify(membersArr),
-          credentials: "include",
-        }
-      );
-      const { message, users } = await result.json();
-      if (result.status === 401) throw setError({ text: message });
-      if (result.status === 400) throw setError({ text: message });
-      if (result.status === 202) throw setInfo({ text: message });
-      if (result.status === 200) setNotify({ text: message });
-
-      setTeamMembers([...teamMembers, ...users]);
-    } catch (error) {
-      setError({ text: error.message });
-    }
-  };
 
   const deleteProjectModal = (
     <Modal
@@ -105,23 +83,23 @@ const Project = ({
     </Modal>
   );
 
-  const addProjectModal = showInviteForm && (
-    <AddMemberModal
-      project_id={project._id}
-      addMember={addMember}
-      showInviteForm={showInviteForm}
-      setShowInviteForm={setShowInviteForm}
-    />
-  );
+  // const editMembersModal = editMembersModal && (
+  //   <EditMembersModal
+  //     project_id={project._id}
+  //     addMember={addMember}
+  //     showEditMember={showEditMember}
+  //     setShowEditMember={setShowEditMember}
+  //   />
+  // );
 
   return (
     <Card
       className="project p-3 my-3 shadow"
-      onMouseOver={() => setIsHovering(true)}
-      onMouseOut={() => setIsHovering(false)}
+      onMouseOver={() => setHoverOverDiv(true)}
+      onMouseOut={() => setHoverOverDiv(false)}
     >
       <Row>
-        <Col md={10}>
+        <Col md={8}>
           <Link className="project-link" to={`/team-projects/${project._id}`}>
             <section>
               <Card.Title>{project.title}</Card.Title>
@@ -155,27 +133,37 @@ const Project = ({
           </Link>
         </Col>
 
-        <Col md={2} className="d-flex align-items-end flex-column">
-          {isHovering && (
+        <Col className="" md={3}>
+          {[...Array(rating)].map((star, index) => (
+            <FontAwesomeIcon
+              icon={faStar}
+              key={index}
+              color={ratingColors[rating]}
+            />
+          ))}
+        </Col>
+
+        <Col md={1} className="d-flex align-items-end flex-column">
+          {hoverOverDiv && (
             <>
               <FontAwesomeIcon
                 icon={faTrashCan}
-                className="trashcan m-1"
+                className="trashcan m-1 mt-auto"
                 onClick={() => {
                   setShowDeleteProject((prev) => !prev);
                 }}
                 style={{ cursor: "pointer" }}
                 size="lg"
               />
-              <FontAwesomeIcon
+              {/* <FontAwesomeIcon
                 icon={faUserPlus}
                 className="adduser mt-auto"
-                onClick={() => setShowInviteForm((prev) => !prev)}
+                onClick={() => setShowEditMember((prev) => !prev)}
                 style={{ cursor: "pointer" }}
-              />
+              /> */}
             </>
           )}
-          {addProjectModal}
+          {/* {editMembersModal} */}
           {deleteProjectModal}
         </Col>
       </Row>

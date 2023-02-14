@@ -14,10 +14,11 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    completion_date: new Date(),
     user_id: user._id,
   });
   const [showProjectForm, setShowProjectForm] = useState(false);
-  const [completionDate, setCompletionDate] = useState(new Date());
+  const [rating, setRating] = useState(0);
 
   const bearerToken = `Bearer ${accessToken}`;
 
@@ -42,6 +43,7 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   };
 
   const createProject = async (project) => {
+    console.log(project);
     if (!formData.title || !formData.description)
       return setError({ text: `Please fill in all fields` });
     try {
@@ -62,43 +64,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
       setError({ text: error.message });
     }
   };
-
-  // Updating the teamMembers state to include new added member after firing addMember()
-  //
-
-  // const addMember = async (email, project_id) => {
-  //   try {
-  //     const result = await fetch(
-  //       `http://localhost:5000/api/projects/${project_id}/${email}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: bearerToken,
-  //         },
-  //         credentials: "include",
-  //       }
-  //     );
-  //     const { message, user } = await result.json();
-  //     if (result.status === 401) throw setError({ text: message });
-  //     if (result.status === 400) throw setError({ text: message });
-  //     if (result.status === 201) throw setInfo({ text: message });
-  //     if (result.status === 200) setNotify({ text: message });
-
-  //     setProjects((prev) =>
-  //       prev.map((project) => {
-  //         if (project._id === project_id) {
-  //           project.members = [...project.members, user._id];
-  //         }
-  //         return project;
-  //       })
-  //     );
-  //   } catch (error) {
-  //     setError({ text: error.message });
-  //   }
-  // };
-
-  const editProject = async (updatedObj) => {};
 
   const deleteProject = async (id) => {
     try {
@@ -121,9 +86,11 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
     e.preventDefault();
     createProject({
       ...formData,
-      completion_date: completionDate.toDateString(),
+      completion_date: formData.completion_date.toDateString(),
+      rating
     });
     setFormData({ title: "", description: "", user_id: user._id });
+    setRating(0)
   };
 
   return (
@@ -139,10 +106,12 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
           <AddProjectForm
             onSubmit={onSubmit}
             onChange={onChange}
-            completionDate={completionDate}
-            setCompletionDate={setCompletionDate}
+            setFormData={setFormData}
             createProject={createProject}
             formData={formData}
+            rating={rating}
+            setRating={setRating}
+            ratingColors={ratingColors}
           />
         )}
 
@@ -152,10 +121,10 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
               <Project
                 project={project}
                 deleteProject={deleteProject}
-                editProject={editProject}
                 setError={setError}
                 setNotify={setNotify}
                 setInfo={setInfo}
+                ratingColors={ratingColors}
               />
             </Col>
           ))}
@@ -166,3 +135,11 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
 };
 
 export default ProjectList;
+
+const ratingColors = {
+  1: "grey",
+  2: "brown",
+  3: "blue",
+  4: "green",
+  5: "red",
+};

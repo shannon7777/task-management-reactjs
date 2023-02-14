@@ -1,13 +1,16 @@
-import { Col, Row, Form, Button } from "react-bootstrap";
+import { Form, Button, Col } from "react-bootstrap";
 
 import DatePicker from "react-datepicker";
+import StarRating from "./StarRating";
 
 const AddProjectForm = ({
   onChange,
   onSubmit,
-  completionDate,
-  setCompletionDate,
-  formData
+  setFormData,
+  formData,
+  rating,
+  setRating,
+  ratingColors
 }) => {
   return (
     <Form className="border border-secondary shadow p-4 m-5 rounded">
@@ -36,18 +39,28 @@ const AddProjectForm = ({
         />
       </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formDateOfCompletion">
-        <Form.Label>Date of completion</Form.Label>
-        <DatePicker
-          className="btn btn-outline-success shadow"
-          selected={completionDate}
-          value={completionDate}
-          onChange={(date) => setCompletionDate(date)}
-          dateFormat="MMMM d, yyyy"
-          minDate={new Date()}
-          showPopperArrow={false}
-          placeholderText="No completion date set"
-        />
+      <Form.Group className="d-flex mb-3" controlId="formDateOfCompletion">
+        <Col className="d-flex">
+          <Form.Label>Date of completion</Form.Label>
+          <DatePicker
+            className="btn btn-outline-success shadow m-2"
+            selected={formData.completion_date}
+            value={formData.completion_date}
+            onChange={(date) =>
+              setFormData({ ...formData, completion_date: date })
+            }
+            dateFormat="MMMM d, yyyy"
+            minDate={new Date()}
+            showPopperArrow={false}
+            placeholderText="No completion date set"
+          />
+        </Col>
+        <div className="vr" />
+
+        <Col className="p-3">
+          <Form.Label className="mx-3">Priority rating</Form.Label>
+          <StarRating rating={rating} setRating={setRating} ratingColors={ratingColors}/>
+        </Col>
       </Form.Group>
       <Button variant="primary" type="submit" onClick={onSubmit}>
         Create
