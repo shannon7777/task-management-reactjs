@@ -39,6 +39,8 @@ const ProjectItems = () => {
   };
 
   const createProjectItem = async (item) => {
+    if (!item) return;
+    const itemObj = { item: item };
     try {
       const result = await fetch(
         `http://localhost:5000/api/projectItems/${project_id}`,
@@ -48,42 +50,44 @@ const ProjectItems = () => {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(item),
+          body: JSON.stringify(itemObj),
           credentials: "include",
         }
       );
       const { projectItem } = await result.json();
+      console.log(projectItem);
       setProjectItems([...projectItems, projectItem]);
     } catch (error) {}
   };
 
   useEffect(() => {
-    // fetchProjectItems();
+    fetchProjectItems();
   }, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
     createProjectItem(item);
+    setShowAddProjectItem((prev) => !prev);
+    setItem("");
   };
 
   return (
     <>
-      {/* <Card className="m-3">
-        <Card.Header className="d-flex"> */}
       <span className="d-flex m-3">
         <FontAwesomeIcon className="px-2" icon={faRectangleList} size="xl" />
         <p>Item</p>
       </span>
-      {/* </Card.Header>
-      </Card> */}
+
       {showAddProjectItem && (
         <ProjectItemForm
           setShowAddProjectItem={setShowAddProjectItem}
           onSubmit={onSubmit}
+          item={item}
+          setItem={setItem}
         />
       )}
-      {projectItems.map((projectItem) => (
-        <ProjectItem projectItem={projectItem} />
+      {projectItems?.map((projectItem, index) => (
+        <ProjectItem key={index} projectItem={projectItem} />
       ))}
       <span className="border d-flex m-3">
         <FontAwesomeIcon

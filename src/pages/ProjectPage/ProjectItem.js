@@ -1,10 +1,10 @@
 import { Col, Row } from "react-bootstrap";
 
-const ProjectItem = ({ ProjectItem }) => {
+const ProjectItem = ({ projectItem }) => {
   return(
     <Row>
       <Col>
-        {ProjectItem.item}
+        {projectItem?.item}
       </Col>
     </Row>
   );
