@@ -47,12 +47,12 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
         show={showEditTask}
         onHide={() => setShowEditTask((prev) => !prev)}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
+        <Form>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Task</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group className="mb-3" controlId="formTask">
               <Form.Label>Task</Form.Label>
               <Form.Control
                 type="text"
@@ -63,7 +63,7 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3" controlId="formDescription">
               <Form.Label>Description</Form.Label>
               <Form.Control
                 as="textarea"
@@ -82,7 +82,7 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
                 : `Set a date of completion`}{" "}
               :{" "}
             </Form.Label>
-            <Form.Group className="d-flex">
+            <Form.Group className="d-flex" controlId="datePicker">
               <Col>
                 <DatePicker
                   className="btn btn-outline-success shadow"
@@ -106,19 +106,20 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
                 )}
               </Col>
             </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="danger"
-            onClick={() => setShowEditTask(!showEditTask)}
-          >
-            Close
-          </Button>
-          <Button variant="outline-success" type="submit" onClick={onSubmit}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => setShowEditTask(!showEditTask)}
+            >
+              Close
+            </Button>
+            <Button variant="outline-success" type="submit" onClick={onSubmit}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </>
   );

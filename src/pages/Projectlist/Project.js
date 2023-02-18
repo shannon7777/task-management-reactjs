@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
+import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Modal, Button, ProgressBar } from "react-bootstrap";
 import TeamMembers from "./TeamMember";
-import StarRating from "./StarRating";
-import useAuth from "../../hooks/useAuth";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarCheck,
   faTrashCan,
 } from "@fortawesome/free-regular-svg-icons";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
-  // const [showEditMember, setShowEditMember] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [hoverOverDiv, setHoverOverDiv] = useState(false);
@@ -23,14 +24,6 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
-
-  const ratingColors = {
-    1: "grey",
-    2: "brown",
-    3: "blue",
-    4: "green",
-    5: "red",
-  };
 
   const getMembers = async () => {
     try {
@@ -44,6 +37,7 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
           credentials: "include",
         }
       );
+      if (result.status === 400) return;
       const { users } = await result.json();
       return setTeamMembers(users);
     } catch (error) {
@@ -55,6 +49,39 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
     getMembers();
     setRating(project.priority);
   }, []);
+
+  const isOverdue = () => {
+    let today = new Date();
+    let completion_date = new Date(project.completion_date);
+    return completion_date < today;
+  };
+
+  const overdueIcon = isOverdue() && (
+    <FontAwesomeIcon className="mx-2" icon={faTriangleExclamation} size="lg" />
+  );
+
+  const timelineBar = () => {
+    let totalDays =
+      (new Date(project.completion_date) - new Date(project.createdAt)) /
+      1000 /
+      60 /
+      60 /
+      24;
+    let daysPassed =
+      (new Date() - new Date(project.createdAt)) / 1000 / 60 / 60 / 24;
+    let percentage = (daysPassed / totalDays) * 100;
+    if (percentage < 0) return 100;
+    return Math.round(percentage);
+  };
+
+  const progressDateColors = () => {
+    if (timelineBar() <= 25) return "primary";
+    if (timelineBar() > 25 && timelineBar() <= 50) return "info";
+    if (timelineBar() > 50 && timelineBar() <= 75) return "warning";
+    if (timelineBar() > 75) return "danger";
+  };
+
+  const completionBar = () => {};
 
   const deleteProjectModal = (
     <Modal
@@ -83,15 +110,6 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
     </Modal>
   );
 
-  // const editMembersModal = editMembersModal && (
-  //   <EditMembersModal
-  //     project_id={project._id}
-  //     addMember={addMember}
-  //     showEditMember={showEditMember}
-  //     setShowEditMember={setShowEditMember}
-  //   />
-  // );
-
   return (
     <Card
       className="project p-3 my-3 shadow"
@@ -112,13 +130,14 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
                 <p className="m-1">{`${project.completion_date}`}</p>
               </span>
               <Row className="my-2">
-                <span>
+                <span className="d-flex">
                   <ProgressBar
                     className="w-50"
                     animated
-                    now={45}
-                    variant="success"
+                    now={timelineBar()}
+                    variant={progressDateColors()}
                   />
+                  {overdueIcon}
                 </span>
               </Row>
 
@@ -155,15 +174,8 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
                 style={{ cursor: "pointer" }}
                 size="lg"
               />
-              {/* <FontAwesomeIcon
-                icon={faUserPlus}
-                className="adduser mt-auto"
-                onClick={() => setShowEditMember((prev) => !prev)}
-                style={{ cursor: "pointer" }}
-              /> */}
             </>
           )}
-          {/* {editMembersModal} */}
           {deleteProjectModal}
         </Col>
       </Row>
@@ -172,3 +184,11 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
 };
 
 export default Project;
+
+const ratingColors = {
+  1: "grey",
+  2: "brown",
+  3: "blue",
+  4: "green",
+  5: "red",
+};

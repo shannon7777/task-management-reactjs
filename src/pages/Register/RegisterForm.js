@@ -1,4 +1,4 @@
-import { Form, Button, Row, Col} from "react-bootstrap";
+import { Form, Button, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const Register = ({ navigate, onChange, onSubmit }) => {
@@ -95,7 +95,6 @@ const Register = ({ navigate, onChange, onSubmit }) => {
       </Form>
     </>
   );
-}
+};
 
 export default Register;
-{}

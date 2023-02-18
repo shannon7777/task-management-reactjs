@@ -13,10 +13,9 @@ import CustomAlert from "./components/CustomAlert";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/Projectlist";
 import About from "./components/About";
+import ProjectPage from "./pages/ProjectPage";
 
 import useAuth from "./hooks/useAuth";
-import ProjectPage from "./pages/Projectlist/ProjectPage";
-// import useFetchImg from "./hooks/useFetchImg";
 
 const App = () => {
   const [showAddTask, setShowAddTask] = useState(false);
@@ -32,7 +31,6 @@ const App = () => {
   } = useAuth();
 
   const bearerToken = `Bearer ${accessToken}`;
-  // const fetchImg = useFetchImg();
 
   const fetchAllTasks = async () => {
     const result = await fetch(`http://localhost:5000/api/tasks/${user._id}`, {
@@ -44,8 +42,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    if(user)
-    fetchAllTasks();
+    if (user) fetchAllTasks();
     // fetchImg();
   }, [auth]);
 
@@ -150,6 +147,41 @@ const App = () => {
     setShowAddTask(!showAddTask);
   };
 
+  //  -------- FOR PROJECTS -------------
+  // const fetchProjects = async () => {
+  //   const result = await fetch(
+  //     `http://localhost:5000/api/projects/${user._id}`,
+  //     {
+  //       headers: { Authorization: bearerToken },
+  //       credentials: "include",
+  //     }
+  //   );
+  //   const { projects } = await result.json();
+  //   // setProjects(projects);
+  //   return projects;
+  // };
+
+  // const getMembers = async () => {
+  //   try {
+  //     const result = await fetch(
+  //       `http://localhost:5000/api/projects/members/${project._id}`,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: bearerToken,
+  //         },
+  //         credentials: "include",
+  //       }
+  //     );
+  //     if (result.status === 400) return;
+  //     const { users } = await result.json();
+  //     // return setTeamMembers(users);
+  //     return users;
+  //   } catch (error) {
+  //     setError({ text: error.message });
+  //   }
+  // };
+
   const notificationMsg = (
     <CustomAlert
       bg="success"
@@ -224,33 +256,24 @@ const App = () => {
                 }
               />
             </Route>
-            <Route element={<RequireAuth />}>
+            <Route path="profile" element={<RequireAuth />}>
+              <Route index element={<UserProfile {...setNotifications} />} />
               <Route
-                path="/profile"
-                element={<UserProfile {...setNotifications} />}
-              />
-            </Route>
-
-            <Route element={<RequireAuth />}>
-              <Route
-                path="/profile/edit"
+                path="edit"
                 element={<EditProfile {...setNotifications} />}
               />
             </Route>
 
-            <Route element={<RequireAuth />}>
-              <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
-            </Route>
+            {/* <Route element={<RequireAuth />}> */}
+            <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
+            {/* </Route> */}
 
-            <Route element={<RequireAuth />}>
+            <Route path="team-projects" element={<RequireAuth />}>
+              <Route index element={<ProjectList {...setNotifications} />} />
               <Route
-                path="/team-projects"
-                element={<ProjectList {...setNotifications} />}
+                path=":project_id"
+                element={<ProjectPage {...setNotifications} />}
               />
-            </Route>
-
-            <Route element={<RequireAuth />}>
-              <Route path={`/team-projects/:project_id`} element={<ProjectPage {...setNotifications}/>} />
             </Route>
           </Route>
 

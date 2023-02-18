@@ -68,7 +68,10 @@ const AddTask = ({ addTask, showAddTask }) => {
               onChange={onChange}
               rows={3}
             />
-            <Form.Group className="my-3 d-flex justify-content-center" controlId="formDatePicker">
+            <Form.Group
+              className="my-3 d-flex justify-content-center"
+              controlId="formDatePicker"
+            >
               <Col>
                 <Form.Label>
                   Date of <strong>completion</strong> :{" "}
@@ -95,17 +98,6 @@ const AddTask = ({ addTask, showAddTask }) => {
                     size={25}
                   />
                 )}
-              </Col>
-              <Col>
-                {/* <Form.Check
-                  type="checkbox"
-                  label="Set Reminder"
-                  checked={formData.reminder}
-                  name="reminder"
-                  value={formData.reminder}
-                  onChange={onChange}
-                  size="md"
-                /> */}
               </Col>
             </Form.Group>
           </Form.Group>

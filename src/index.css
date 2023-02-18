@@ -152,7 +152,7 @@ body {
 .accordion-body.show {
   height: auto;
   opacity: 1;
-  border-radius: 0.5rem; 
+  border-radius: 0.5rem;
 }
 
 .completion-date {
@@ -246,5 +246,12 @@ body {
 
 .edit-project-button {
   /* opacity: 0.7; */
+  cursor: pointer;
+}
+
+.btn-star {
+  background-color: transparent;
+  border: none;
+  outline: none;
   cursor: pointer;
 }
