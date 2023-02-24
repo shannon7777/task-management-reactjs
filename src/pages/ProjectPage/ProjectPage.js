@@ -20,7 +20,6 @@ import {
   faSquarePen,
   faStar,
   faCircleCheck,
-  faListCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 
@@ -88,7 +87,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         `http://localhost:5000/api/projects/members/${project_id}`,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: bearerToken,
           },
           credentials: "include",
@@ -103,7 +101,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   };
 
   const editProject = async (project_id, editedObj) => {
-    console.log(editedObj);
     try {
       const result = await fetch(
         `http://localhost:5000/api/projects/${project_id}`,
@@ -158,8 +155,8 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     setFormData({ title: "", description: "", completion_date: "" });
   };
 
-  const addMember = async (membersArr, project_id) => {
-    // Check for duplicates by looping through both arrays
+  const addMember = async (membersArr) => {
+    // Check for duplicates by looping through both arrays for
     // members that already exist in the project
     let newMembersArr = [...membersArr];
     teamMembers.forEach((teamMember) =>
@@ -198,7 +195,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
-  const removeMember = async (membersArr, project_id) => {
+  const removeMember = async (membersArr) => {
     setTeamMembers([]);
     try {
       const result = await fetch(
@@ -215,8 +212,8 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       );
 
       const { message } = await result.json();
+      if (result.status === 400) throw setError({ text: message });
       if (result.status === 200) setNotify({ text: message });
-      if (result.status === 400) setError({ text: message });
 
       // setTeamMembers((prev) =>
       //   prev.filter((member) => !membersArr.includes(member.email))
@@ -499,7 +496,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           </Col>
         </Card.Body>
       </Card>
-      <ProjectItems />
+      <ProjectItems teamMembers={teamMembers.map((member) => member.email)} />
     </>
   );
 };

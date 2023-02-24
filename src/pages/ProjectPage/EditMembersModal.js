@@ -30,7 +30,7 @@ const EditMembersModal = ({
   const onInvite = (e) => {
     e.preventDefault();
     if (membersToAdd.length === 0 && !email) return;
-    addMember(membersToAdd, project_id);
+    addMember(membersToAdd);
     setShowEditMember((prev) => !prev);
     setEmail("");
   };

@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useParams } from "react-router-dom";
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
 
-// import { Card } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faRectangleList,
-  faSquarePlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 
-const ProjectItems = () => {
+const ProjectItems = ({ teamMembers }) => {
   const [projectItems, setProjectItems] = useState([]);
   const [showAddProjectItem, setShowAddProjectItem] = useState(false);
-  const [item, setItem] = useState("");
+  const [formData, setFormData] = useState({
+    item: "",
+    deadline: new Date(),
+  });
 
   const {
     auth: { accessToken },
@@ -40,7 +40,7 @@ const ProjectItems = () => {
 
   const createProjectItem = async (item) => {
     if (!item) return;
-    const itemObj = { item: item };
+
     try {
       const result = await fetch(
         `http://localhost:5000/api/projectItems/${project_id}`,
@@ -50,7 +50,7 @@ const ProjectItems = () => {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(itemObj),
+          body: JSON.stringify(item),
           credentials: "include",
         }
       );
@@ -64,32 +64,58 @@ const ProjectItems = () => {
     fetchProjectItems();
   }, []);
 
+  const onChange = (e) => {
+    e.preventDefault();
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    createProjectItem(item);
+    createProjectItem({
+      ...formData,
+      deadline: formData.deadline.toDateString(),
+    });
     setShowAddProjectItem((prev) => !prev);
-    setItem("");
+    setFormData({ item: "", deadline: "" });
   };
+
+  const projectHeaders = [
+    { title: "Project Item" },
+    { title: "Owners" },
+    { title: "Deadline" },
+    { title: "Notes" },
+    { title: "Status" },
+  ];
 
   return (
     <>
-      <span className="d-flex m-3">
-        <FontAwesomeIcon className="px-2" icon={faRectangleList} size="xl" />
-        <p>Item</p>
-      </span>
+      <Table className="mt-5 border" variant="" striped bordered hover>
+        <thead>
+          <tr>
+            {projectHeaders.map((header, index) => (
+              <th key={index}>{header.title}</th>
+            ))}
+          </tr>
+        </thead>
+        {projectItems?.map((projectItem, index) => (
+          <ProjectItem
+            key={index}
+            projectItem={projectItem}
+            teamMembers={teamMembers}
+          />
+        ))}
+      </Table>
 
       {showAddProjectItem && (
         <ProjectItemForm
           setShowAddProjectItem={setShowAddProjectItem}
           onSubmit={onSubmit}
-          item={item}
-          setItem={setItem}
+          onChange={onChange}
+          formData={formData}
+          setFormData={setFormData}
         />
       )}
-      {projectItems?.map((projectItem, index) => (
-        <ProjectItem key={index} projectItem={projectItem} />
-      ))}
-      <span className="border d-flex m-3">
+      <span className="d-flex m-3">
         <FontAwesomeIcon
           icon={faSquarePlus}
           size="xl"
