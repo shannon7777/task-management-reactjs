@@ -12,8 +12,8 @@ import PersistLogin from "./components/PersistLogin";
 import CustomAlert from "./components/CustomAlert";
 import Dashboard from "./pages/Dashboard";
 import ProjectList from "./pages/Projectlist";
-import About from "./components/About";
 import ProjectPage from "./pages/ProjectPage";
+import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
 
