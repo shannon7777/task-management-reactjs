@@ -1,6 +1,5 @@
 import { Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { useEffect, useState } from "react";
-// import Header from "../Home/Header";
 import useAuth from "../../hooks/useAuth";
 
 import Project from "./Project";

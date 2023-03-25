@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import TeamMembers from "../Projectlist/TeamMember";
+import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
 import ProjectItems from "./ProjectItems";
 import DatePicker from "react-datepicker";
@@ -251,7 +251,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [projectOwner] = teamMembers
     ?.filter((member) => member._id === project.creator)
     .map((member) => (
-      <TeamMembers className="profilePicNavbar" member={member} />
+      <TeamMembers className="profilePicNavbar" member_id={member._id} />
     ));
 
   return (
@@ -327,7 +327,10 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           <span className="p-2">
             {teamMembers.map((member, index) => (
               <span key={index}>
-                <TeamMembers className="profilePicNavbar" member={member} />
+                <TeamMembers
+                  className="profilePicNavbar"
+                  member_id={member._id}
+                />
               </span>
             ))}
           </span>
@@ -342,7 +345,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           {addProjectModal}
           <p className="ms-auto">
             <strong>Project Owner:</strong> {projectOwner}{" "}
-            {projectOwner?.props.member._id === user._id && "(You)"}
+            {projectOwner?.props.member_id === user._id && "(You)"}
           </p>
         </Card.Header>
 

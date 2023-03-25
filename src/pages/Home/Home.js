@@ -8,7 +8,7 @@ import Task from "./Task";
 import useFetchImg from "../../hooks/useFetchImg";
 
 
-const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask, fetchAllTasks }) => {
+const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
 
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
   const colorStatus = {
@@ -27,7 +27,6 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask, fetchA
   const fetchImg = useFetchImg();
 
   useEffect(() => {
-    // fetchAllTasks();
     fetchImg();
 }, []);
 

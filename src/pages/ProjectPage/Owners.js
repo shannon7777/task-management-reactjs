@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 
-import TeamMembers from "../Projectlist/TeamMember";
+import TeamMembers from "../../components/TeamMember";
 import EditOwnersModal from "./EditOwnersModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
 
-const Owners = ({ projectItem_id, teamMembers }) => {
+const Owners = ({ item_id, teamMembers }) => {
   const [owners, setOwners] = useState([]);
   const [hover, onHover] = useState(false);
   const [showEditOwner, setShowEditOwner] = useState(false);
@@ -18,7 +18,7 @@ const Owners = ({ projectItem_id, teamMembers }) => {
   const fetchOwners = async () => {
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${projectItem_id}`,
+        `http://localhost:5000/api/projectItems/owners/${item_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -35,7 +35,7 @@ const Owners = ({ projectItem_id, teamMembers }) => {
   const addOwners = async (ownerArr) => {
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${projectItem_id}`,
+        `http://localhost:5000/api/projectItems/owners/${item_id}`,
         {
           method: "POST",
           headers: {
@@ -56,7 +56,7 @@ const Owners = ({ projectItem_id, teamMembers }) => {
     setOwners([]);
     try {
       const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${projectItem_id}`,
+        `http://localhost:5000/api/projectItems/owners/${item_id}`,
         {
           method: "PUT",
           headers: {
@@ -107,7 +107,7 @@ const Owners = ({ projectItem_id, teamMembers }) => {
       </span>
       {owners?.map((owner, index) => (
         <span key={index}>
-          <TeamMembers member={owner} />
+          <TeamMembers member_id={owner._id} />
         </span>
       ))}
     </td>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Modal, Button, ProgressBar } from "react-bootstrap";
-import TeamMembers from "./TeamMember";
+import TeamMembers from "../../components/TeamMember";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -144,7 +144,7 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
               <span>
                 {teamMembers.map((member, index) => (
                   <span key={index}>
-                    <TeamMembers className="profilePicNavbar" member={member} />
+                    <TeamMembers className="profilePicNavbar" member_id={member._id} />
                   </span>
                 ))}
               </span>

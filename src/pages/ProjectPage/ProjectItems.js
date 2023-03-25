@@ -39,8 +39,6 @@ const ProjectItems = ({ teamMembers }) => {
   };
 
   const createProjectItem = async (item) => {
-    if (!item) return;
-
     try {
       const result = await fetch(
         `http://localhost:5000/api/projectItems/${project_id}`,
@@ -71,12 +69,41 @@ const ProjectItems = ({ teamMembers }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    if (!formData.item) return;
     createProjectItem({
       ...formData,
       deadline: formData.deadline.toDateString(),
     });
     setShowAddProjectItem((prev) => !prev);
     setFormData({ item: "", deadline: "" });
+  };
+
+  const editItem = async (editedObj, id) => {
+    console.log(editedObj, id);
+    const res = await fetch(`http://localhost:5000/api/projectItems/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editedObj),
+      credentials: "include",
+    });
+
+    const {
+      updatedItem: { item, deadline, progress, notes },
+    } = await res.json();
+    setProjectItems(
+      projectItems.map((projectItem) => {
+        if (projectItem._id === id) {
+          projectItem.item = item ? item : projectItem.item;
+          projectItem.deadline = deadline ? deadline : projectItem.deadline;
+          projectItem.progress = progress ? progress : projectItem.progress;
+          projectItem.notes = notes ? notes : projectItem.notes;
+        }
+        return projectItem;
+      })
+    );
   };
 
   const projectHeaders = [
@@ -90,7 +117,7 @@ const ProjectItems = ({ teamMembers }) => {
   return (
     <>
       <Table className="mt-5 border" variant="" striped bordered hover>
-        <thead>
+        <thead className="w-auto mw-100">
           <tr>
             {projectHeaders.map((header, index) => (
               <th key={index}>{header.title}</th>
@@ -102,6 +129,7 @@ const ProjectItems = ({ teamMembers }) => {
             key={index}
             projectItem={projectItem}
             teamMembers={teamMembers}
+            editItem={editItem}
           />
         ))}
       </Table>
