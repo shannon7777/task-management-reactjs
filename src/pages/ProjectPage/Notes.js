@@ -86,16 +86,18 @@ const Notes = ({ notes, item_id }) => {
         </span>
         {allNotes
           .filter(({ user_id }) => user_id === id)
-          .map(({ note, _id }, index) => (
+          .map(({ note, _id, user_id }, index) => (
             <p key={index}>
               {note}
-              <FontAwesomeIcon
-                className="mx-2"
-                style={{ cursor: "pointer" }}
-                size="sm"
-                icon={faX}
-                onClick={() => removeNote(_id)}
-              />
+              {user._id === user_id && (
+                <FontAwesomeIcon
+                  className="mx-2"
+                  style={{ cursor: "pointer" }}
+                  size="sm"
+                  icon={faX}
+                  onClick={() => removeNote(_id)}
+                />
+              )}
             </p>
           ))}
       </Card.Body>
