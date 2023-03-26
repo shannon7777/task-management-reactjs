@@ -3,9 +3,9 @@ import useAuth from "../../hooks/useAuth";
 
 import TeamMembers from "../../components/TeamMember";
 
-import { Modal, Form, Button, Col } from "react-bootstrap";
+import { Modal, Form, Button, Col, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStickyNote } from "@fortawesome/free-solid-svg-icons";
+import { faStickyNote, faX } from "@fortawesome/free-solid-svg-icons";
 
 const Notes = ({ notes, item_id }) => {
   const [showNotes, setShowNotes] = useState(false);
@@ -35,7 +35,24 @@ const Notes = ({ notes, item_id }) => {
     } catch (error) {}
   };
 
-  const deleteNote = async (id) => {};
+  const removeNote = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/projectItems/removeNote/${item_id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ note_id: id }),
+        }
+      );
+      if (res.status === 200)
+        return setAllNotes((prev) => prev.filter((note) => note._id !== id));
+    } catch (error) {}
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +75,32 @@ const Notes = ({ notes, item_id }) => {
       </Button>
     </Form>
   );
+
+  let projectOwners = [...new Set(allNotes.map(({ user_id }) => user_id))];
+
+  const itemNotes = projectOwners.map((id) => (
+    <Card key={`owner-${id}`}>
+      <Card.Body>
+        <span>
+          <TeamMembers member_id={id} />
+        </span>
+        {allNotes
+          .filter(({ user_id }) => user_id === id)
+          .map(({ note, _id }, index) => (
+            <p key={index}>
+              {note}
+              <FontAwesomeIcon
+                className="mx-2"
+                style={{ cursor: "pointer" }}
+                size="sm"
+                icon={faX}
+                onClick={() => removeNote(_id)}
+              />
+            </p>
+          ))}
+      </Card.Body>
+    </Card>
+  ));
 
   return (
     <td>
@@ -82,13 +125,7 @@ const Notes = ({ notes, item_id }) => {
           </Button>
         </Modal.Header>
         <Modal.Body className="">
-          {allNotes.map(({ note, user_id }, index) => (
-            <Col key={index} className="border my-2 d-flex">
-              <span><TeamMembers member_id={user_id}/></span>:
-              <p>{note}</p>
-            </Col>
-          ))}
-
+          {itemNotes}
           {showNoteForm && noteForm}
         </Modal.Body>
       </Modal>
