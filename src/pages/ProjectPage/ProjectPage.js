@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+
 import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
 import ProjectItems from "./ProjectItems";
@@ -26,7 +28,6 @@ import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
-
   const [hover, setHover] = useState({
     title: false,
     description: false,
@@ -45,120 +46,68 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     completion_date: "",
   });
 
-  const {
-    auth: { user, accessToken },
-  } = useAuth();
+  useEffect(() => {
+    fetchAllData();
+  }, []);
 
-  const [owner] = teamMembers?.filter(
-    (member) => member._id === project.creator
-  );
+  const {
+    auth: { user },
+  } = useAuth();
   const { project_id } = useParams();
-  const bearerToken = `Bearer ${accessToken}`;
   const navigate = useNavigate();
 
-  const fetchProject = async () => {
+  const owner = teamMembers?.filter(
+    (member) => member._id === project?.creator
+  );
+  const projectOwner = (
+    <TeamMembers className="profilePicNavbar" member_id={owner[0]?._id} />
+  );
+  const ownedByUser = owner[0]?._id === user._id ? "(You)" : null;
+
+  const fetchAllData = async () => {
     try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/one/${project_id}`,
-        {
-          headers: { Authorization: bearerToken },
-          credentials: "include",
-        }
-      );
-      if (result.status === 400) {
-        navigate("/team-projects");
-        throw setError({ text: `Project does not exist` });
-      }
-      if (result.status === 404) {
-        navigate("/team-projects");
-        throw setError({ text: `You dont belong to this project` });
-      }
-      const project = await result.json();
-      if (result.status === 200) return setProject(project);
+      const [fetchedProject, fetchedMembers] = await Promise.all([
+        axios(`projects/one/${project_id}`),
+        axios(`projects/members/${project_id}`),
+      ]);
+      setProject(fetchedProject.data);
+      setTeamMembers(fetchedMembers.data.users);
     } catch (error) {
-      // if (error.response.status === 400)
-      throw setError({ text: error.message });
+      setError({ text: error.response.data.message });
+      navigate("/team-projects");
     }
   };
 
-  const getMembers = async () => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/members/${project_id}`,
-        {
-          headers: {
-            Authorization: bearerToken,
-          },
-          credentials: "include",
-        }
-      );
-      if (result.status === 400) return;
-      const { users } = await result.json();
-      return setTeamMembers(users);
-    } catch (error) {
-      //   setError({ text: error.message });
-    }
-  };
-
-  const editProject = async (project_id, editedObj) => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/${project_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          body: JSON.stringify(editedObj),
-        }
-      );
-
-      const {
-        message,
-        updatedProject: { title, description, completion_date, priority },
-      } = await result.json();
-
-      if (result.status === 400) throw setError({ text: message });
-
-      setProject((prev) => {
-        prev.title = title ? title : prev.title;
-        prev.description = description ? description : prev.description;
-        prev.completion_date = completion_date
-          ? completion_date
-          : prev.completion_date;
-        prev.priority = priority ? priority : prev.priority;
-        return prev;
-      });
-      setShowEdit((prev) => !prev);
-    } catch (error) {
-      setError({ text: error.message });
-    }
-  };
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmitEdit = async (e) => {
+  const editProject = async (e) => {
     e.preventDefault();
-
     const editedObj = Object.fromEntries(
       Object.entries(formData).filter((value) => value[1] !== "")
     );
-    editProject(project._id, {
+    const editedProject = {
       ...editedObj,
-      completion_date: formData.completion_date
-        ? formData.completion_date.toDateString()
-        : project.completion_date,
-    });
-    setFormData({ title: "", description: "", completion_date: "" });
+      completion_date:
+        formData.completion_date && formData.completion_date.toDateString(),
+    };
+    try {
+      const { data } = await axios.put(
+        `projects/${project._id}`,
+        editedProject
+      );
+      setProject(data.updatedProject);
+      setShowEdit((prev) => !prev);
+      setFormData({
+        title: "",
+        description: "",
+        completion_date: new Date(data.updatedProject.completion_date),
+      });
+    } catch (error) {
+      setError({ text: error.response.data.message });
+    }
   };
 
   const addMember = async (membersArr) => {
-    // Check for duplicates by looping through both arrays for
-    // members that already exist in the project
-    let newMembersArr = [...membersArr];
+    // Check for members that already exist in the project
+    const newMembersArr = [...membersArr];
     teamMembers.forEach((teamMember) =>
       newMembersArr.forEach((member, index) => {
         if (member === teamMember.email) {
@@ -167,74 +116,45 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         return newMembersArr;
       })
     );
-
-    if (newMembersArr.length < 1)
-      return setInfo({ text: `${[...membersArr]} is already a team member` });
+    if (newMembersArr.length < 1) {
+      return setInfo({
+        text: `${[...membersArr]} is already a team member`,
+      });
+    }
     try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/members/${project_id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          body: JSON.stringify(newMembersArr),
-          credentials: "include",
-        }
-      );
-      const { message, users } = await result.json();
-      if (result.status === 400) throw setError({ text: message });
-      if (result.status === 401) throw setError({ text: message });
-      if (result.status === 403) throw setInfo({ text: message });
-      if (result.status === 200) setNotify({ text: message });
-
+      const {
+        data: { users, message },
+      } = await axios.post(`projects/members/${project_id}`, newMembersArr);
+      setNotify({ text: message });
       setTeamMembers([...teamMembers, ...users]);
     } catch (error) {
-      //   setError({ text: error });
-    }
-  };
-
-  const removeMember = async (membersArr) => {
-    setTeamMembers([]);
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/members/${project_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          body: JSON.stringify(membersArr),
-          credentials: "include",
-        }
-      );
-
-      const { message } = await result.json();
-      if (result.status === 400) throw setError({ text: message });
-      if (result.status === 200) setNotify({ text: message });
-
-      // setTeamMembers((prev) =>
-      //   prev.filter((member) => !membersArr.includes(member.email))
-      // );
-
-      // hacky way of doing it because the above way doesn't work properly
-      // images not being rendered properly, but user details are correct
-      // have to set teamMembers to an emtpy array first
-      const filteredMembers = teamMembers.filter(
-        (member) => !membersArr.includes(member.email)
-      );
-      setTeamMembers(filteredMembers);
-    } catch (error) {
       console.log(error);
+      throw setError({ text: error.response.data.message });
+    }
+  };
+  const removeMember = async (membersArr) => {
+    try {
+      const { data } = await axios.put(
+        `projects/members/${project_id}`,
+        membersArr
+      );
+      setNotify({ text: data.message });
+      setTeamMembers(
+        teamMembers.filter((member) => !membersArr.includes(member.email))
+      );
+    } catch (error) {
+      throw setError({ text: error.response.data.message });
     }
   };
 
-  const addProjectModal = showEdit.users && (
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const editMembersModal = showEdit.users && (
     <EditMembersModal
       project_id={project_id}
-      owner_email={owner.email}
+      owner_email={owner[0].email}
       addMember={addMember}
       removeMember={removeMember}
       showEditMember={showEdit.users}
@@ -242,17 +162,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       teamMembers={teamMembers.map((member) => member.email)}
     />
   );
-
-  useEffect(() => {
-    fetchProject();
-    getMembers();
-  }, []);
-
-  const [projectOwner] = teamMembers
-    ?.filter((member) => member._id === project.creator)
-    .map((member) => (
-      <TeamMembers className="profilePicNavbar" member_id={member._id} />
-    ));
 
   return (
     <>
@@ -284,7 +193,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                   <FontAwesomeIcon
                     className="my-auto mx-3"
                     icon={faCircleCheck}
-                    onClick={onSubmitEdit}
+                    onClick={editProject}
                     style={{ cursor: "pointer" }}
                     type="submit"
                   />
@@ -299,7 +208,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 </Form>
               ) : (
                 <p>
-                  {project.title}{" "}
+                  {project?.title}{" "}
                   {hover.title && (
                     <FontAwesomeIcon
                       className="edit-project-button"
@@ -321,18 +230,19 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         >
           <FontAwesomeIcon className="p-2" icon={faUsersLine} size="xl" />
           <Badge className="h-50 my-2" bg="success">
-            {teamMembers.length}
+            {teamMembers?.length}
           </Badge>
           <div className="vr mx-3" />
           <span className="p-2">
-            {teamMembers.map((member, index) => (
-              <span key={index}>
-                <TeamMembers
-                  className="profilePicNavbar"
-                  member_id={member._id}
-                />
-              </span>
-            ))}
+            {teamMembers &&
+              teamMembers.map((member, index) => (
+                <span key={index}>
+                  <TeamMembers
+                    className="profilePicNavbar"
+                    member_id={member._id}
+                  />
+                </span>
+              ))}
           </span>
           {hover.users && (
             <FontAwesomeIcon
@@ -342,10 +252,9 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
               style={{ cursor: "pointer" }}
             />
           )}
-          {addProjectModal}
+          {editMembersModal}
           <p className="ms-auto">
-            <strong>Project Owner:</strong> {projectOwner}{" "}
-            {projectOwner?.props.member_id === user._id && "(You)"}
+            <strong>Project Owner:</strong> {projectOwner} {ownedByUser}
           </p>
         </Card.Header>
 
@@ -376,7 +285,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 <FontAwesomeIcon
                   className="my-auto mx-3"
                   icon={faCircleCheck}
-                  onClick={onSubmitEdit}
+                  onClick={editProject}
                   style={{ cursor: "pointer" }}
                   size="lg"
                   type="submit"
@@ -391,7 +300,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
               </Form>
             ) : (
               <div className="d-flex">
-                <p>{project.description}</p>
+                <p>{project?.description}</p>
                 {hover.description && (
                   <FontAwesomeIcon
                     className="mx-3"
@@ -408,11 +317,11 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           <Col md={2}>
             <Badge bg="dark">Priority:</Badge>
             <span className="mx-2">
-              {[...Array(project.priority)].map((star, index) => (
+              {[...Array(project?.priority)].map((star, index) => (
                 <FontAwesomeIcon
                   icon={faStar}
                   key={index}
-                  color={ratingColors[project.priority]}
+                  color={ratingColors[project?.priority]}
                 />
               ))}
             </span>
@@ -455,7 +364,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                   onClick={() => setShowEdit({ datePicker: true })}
                   style={{ cursor: "pointer" }}
                 >
-                  {project.completion_date}
+                  {project?.completion_date}
                   {hover.datePicker && (
                     <FontAwesomeIcon
                       className="mx-2"
@@ -482,7 +391,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                   <FontAwesomeIcon
                     className="my-auto mx-3"
                     icon={faCircleCheck}
-                    onClick={onSubmitEdit}
+                    onClick={editProject}
                     style={{ cursor: "pointer" }}
                     size="lg"
                   />
@@ -499,7 +408,8 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           </Col>
         </Card.Body>
       </Card>
-      <ProjectItems teamMembers={teamMembers.map((member) => member.email)} />
+
+      <ProjectItems teamMembers={teamMembers?.map((member) => member.email)} />
     </>
   );
 };

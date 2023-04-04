@@ -1,5 +1,6 @@
 import { Collapse, Button } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 
 const RemovePic = ({
   showDeletePic,
@@ -8,41 +9,23 @@ const RemovePic = ({
   setError,
 }) => {
   const {
-    auth: { user, accessToken },
+    auth: { user },
   } = useAuth();
-
-  const bearerToken = `Bearer ${accessToken}`;
 
   const removeDisplayPic = async (e) => {
     e.preventDefault();
-
-    // if (!localStorage.getItem("userImg")) {
-    //   setShowDeletePic(!showDeletePic);
-    //   return setNotify({
-    //     text: `You do not have a display picture, please upload one`,
-    //   });
-    // }
-
     try {
-      const result = await fetch(
-        `http://localhost:5000/api/users/img/${user._id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: bearerToken,
-          },
-          credentials: "include",
-        }
-      );
-      const { message } = await result.json();
-      if (result.status === 400) {
-        throw Error(message);
-      }
+      const {
+        data: { message },
+      } = await axios.put(`users/img/${user._id}`);
       localStorage.removeItem("userImg");
       setNotify({ text: message });
-      setShowDeletePic(!showDeletePic);
+      setShowDeletePic((prev) => !prev);
     } catch (error) {
-      setError({ text: error.message });
+      if (error.response) throw setError({ text: error.response.data.message });
+      else {
+        setError({ text: error.message });
+      }
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
 
@@ -7,59 +8,49 @@ import { Modal, Form, Button, Col, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStickyNote, faX } from "@fortawesome/free-solid-svg-icons";
 
-const Notes = ({ notes, item_id }) => {
+const Notes = ({ editItem, projectItem }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [formData, setFormData] = useState("");
-  const [allNotes, setAllNotes] = useState(notes);
+  const [allNotes, setAllNotes] = useState(projectItem.notes);
+  const [hover, setHover] = useState(false);
   const {
-    auth: { user, accessToken },
+    auth: { user },
   } = useAuth();
 
-  const createNote = async (note) => {
-    const noteObj = { note, user_id: user._id };
+  const createNote = async (e) => {
+    e.preventDefault();
+    const noteObj = { note: formData, user_id: user._id };
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/projectItems/notes/${item_id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(noteObj),
-          credentials: "include",
-        }
-      );
-      if (res.status === 200) setAllNotes((prev) => [...prev, noteObj]);
-    } catch (error) {}
+      const {
+        data: { newNote, message },
+      } = await axios.put(`projectItems/notes/${projectItem._id}`, noteObj);
+      setAllNotes((prev) => [...prev, newNote]);
+      setShowNoteForm((prev) => !prev);
+      setFormData("");
+      console.log(message);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   const removeNote = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/projectItems/removeNote/${item_id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ note_id: id }),
-        }
+      const { data } = await axios.put(
+        `projectItems/removeNote/${projectItem._id}`,
+        { note_id: id }
       );
-      if (res.status === 200)
-        return setAllNotes((prev) => prev.filter((note) => note._id !== id));
-    } catch (error) {}
+      console.log(data.message);
+      return setAllNotes((prev) => prev.filter((note) => note._id !== id));
+    } catch (error) {
+      if (error.response) throw console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
+    }
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    createNote(formData);
-    setShowNoteForm((prev) => !prev);
-    setFormData("");
-  };
+  let owners = [...new Set(allNotes.map(({ user_id }) => user_id))];
 
   const noteForm = (
     <Form className="d-flex">
@@ -70,15 +61,13 @@ const Notes = ({ notes, item_id }) => {
         name="note"
         onChange={(e) => setFormData(e.target.value)}
       />
-      <Button className="mx-3" onClick={onSubmit} type="submit">
+      <Button className="mx-3" onClick={createNote} type="submit">
         add
       </Button>
     </Form>
   );
 
-  let projectOwners = [...new Set(allNotes.map(({ user_id }) => user_id))];
-
-  const itemNotes = projectOwners.map((id) => (
+  const itemNotes = owners.map((id) => (
     <Card key={`owner-${id}`}>
       <Card.Body>
         <span>
@@ -86,10 +75,14 @@ const Notes = ({ notes, item_id }) => {
         </span>
         {allNotes
           .filter(({ user_id }) => user_id === id)
-          .map(({ note, _id, user_id }, index) => (
-            <p key={index}>
+          .map(({ note, _id, user_id }) => (
+            <p
+              key={_id}
+              onMouseOver={() => setHover(_id)}
+              onMouseOut={() => setHover(null)}
+            >
               {note}
-              {user._id === user_id && (
+              {user._id === user_id && hover === _id && (
                 <FontAwesomeIcon
                   className="mx-2"
                   style={{ cursor: "pointer" }}
@@ -104,14 +97,20 @@ const Notes = ({ notes, item_id }) => {
     </Card>
   ));
 
+  const ableToViewNotes = projectItem.owners.some(
+    (user_id) => user_id === user._id
+  );
+
   return (
     <td>
-      <FontAwesomeIcon
-        icon={faStickyNote}
-        style={{ cursor: "pointer" }}
-        onClick={() => setShowNotes((prev) => !prev)}
-        size="lg"
-      />{" "}
+      {ableToViewNotes && (
+        <FontAwesomeIcon
+          icon={faStickyNote}
+          style={{ cursor: "pointer" }}
+          onClick={() => setShowNotes((prev) => !prev)}
+          size="lg"
+        />
+      )}
       <Modal
         centered
         show={showNotes}

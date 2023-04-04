@@ -1,4 +1,5 @@
 import useAuth from "./useAuth";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const useLogout = () => {
@@ -6,9 +7,7 @@ const useLogout = () => {
   const navigate = useNavigate();
   const logout = async () => {
     try {
-      await fetch(`http://localhost:5000/api/auth/logout`, {
-        credentials: "include",
-      });
+      await axios(`auth/logout`);
       setAuth({});
       localStorage.clear();
       navigate("/");

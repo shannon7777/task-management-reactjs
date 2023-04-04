@@ -1,22 +1,32 @@
 import Owners from "./Owners";
 import Item from "./Item";
 import Notes from "./Notes";
+import Deadline from "./Deadline";
 
-const ProjectItem = ({ projectItem, teamMembers, editItem, id }) => {
+const ProjectItem = ({
+  projectItem,
+  teamMembers,
+  editItem,
+  deleteItem,
+  onChange,
+}) => {
   return (
     <tbody>
       <tr>
         <Item
-          item={projectItem.item}
+          projectItem={projectItem}
           editItem={editItem}
-          item_id={projectItem._id}
+          deleteItem={deleteItem}
+          onChange={onChange}
         />
         <Owners item_id={projectItem._id} teamMembers={teamMembers} />
-        <td>{projectItem.deadline}</td>
+        <Deadline deadline={projectItem.deadline} />
         <Notes
-          notes={projectItem.notes}
+          projectItem={projectItem}
+          // notes={projectItem.notes}
           editItem={editItem}
-          item_id={projectItem._id}
+          // item_id={projectItem._id}
+          // itemOwners={projectItem.owners}
         />
         <td>{projectItem.progress}</td>
       </tr>

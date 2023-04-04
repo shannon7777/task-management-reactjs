@@ -3,33 +3,26 @@ import { Button, Modal, Form, Col } from "react-bootstrap";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DatePicker from "react-datepicker";
 
-const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
-  const [formData, setFormData] = useState({
-    text: "",
-    description: "",
-  });
-
+const EditTask = ({
+  task,
+  editTask,
+  showEditTask,
+  setShowEditTask,
+  formData,
+  setFormData,
+  onChange,
+}) => {
   const [dateToComplete, setDateToComplete] = useState(
     task.dateToComplete === "No completion date has been set"
       ? null
       : new Date(task.dateToComplete)
   );
 
-  const { text, description } = formData;
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const onSubmit = (e) => {
     e.preventDefault();
-    // Making a new Object with ONLY the Updated Properties, omitting the unchanged properties
-    //Convert formData obj to arrays using Object.entries, then filter each array for empty string
-    // Convert arrays back into object and POST it over
     const editedObj = Object.fromEntries(
       Object.entries(formData).filter((value) => value[1] !== "")
     );
-
     editTask(task._id, {
       ...editedObj,
       dateToComplete: dateToComplete
@@ -37,7 +30,7 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
         : `No completion date has been set`,
     });
     setShowEditTask((prev) => !prev);
-    setFormData({ text: "", description: "" });
+    setFormData({ text: "", description: "", progress: "" });
   };
 
   return (
@@ -57,7 +50,7 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
               <Form.Control
                 type="text"
                 name="text"
-                value={text}
+                value={formData.text}
                 placeholder={task.text}
                 onChange={onChange}
               />
@@ -69,7 +62,7 @@ const EditTask = ({ task, editTask, showEditTask, setShowEditTask }) => {
                 as="textarea"
                 type="text"
                 name="description"
-                value={description}
+                value={formData.description}
                 placeholder={task.description}
                 onChange={onChange}
                 rows={3}

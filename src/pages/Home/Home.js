@@ -7,9 +7,19 @@ import Task from "./Task";
 
 import useFetchImg from "../../hooks/useFetchImg";
 
-
-const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
-
+const Home = ({
+  onAdd,
+  showAddTask,
+  addTask,
+  tasks,
+  deleteTask,
+  editTask,
+  dateToComplete,
+  setDateToComplete,
+  formData,
+  setFormData,
+  onChange,
+}) => {
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
   const colorStatus = {
     "New Task": "#92a8d1",
@@ -22,18 +32,21 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
     deleteTask,
     editTask,
     colorStatus,
+    formData,
+    setFormData,
+    onChange,
   };
 
   const fetchImg = useFetchImg();
 
   useEffect(() => {
     fetchImg();
-}, []);
+  }, []);
 
   // getting each progress by creating a Set to only have unique items
-  const uniqueProgress = [...new Set(tasks.map(({ progress }) => progress))];
+  const uniqueProgress = [...new Set(tasks?.map(({ progress }) => progress))];
 
-  const allTasks = uniqueProgress.map((progress) => (
+  const allTasks = uniqueProgress?.map((progress) => (
     <Col md={6} className="my-3" key={`progress-${progress}`}>
       <span
         className="progress-title"
@@ -44,7 +57,11 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
       {tasks
         .filter((task) => task.progress === progress)
         .map((filteredTask) => (
-          <Task key={`task-${filteredTask._id}`} task={filteredTask} {...taskProps} />
+          <Task
+            key={`task-${filteredTask._id}`}
+            task={filteredTask}
+            {...taskProps}
+          />
         ))}
     </Col>
   ));
@@ -57,9 +74,17 @@ const Home = ({ onAdd, showAddTask, addTask, tasks, deleteTask, editTask }) => {
         totalTasks={tasks.length}
       />
 
-      <AddTask addTask={addTask} showAddTask={showAddTask} />
+      <AddTask
+        addTask={addTask}
+        showAddTask={showAddTask}
+        formData={formData}
+        setFormData={setFormData}
+        dateToComplete={dateToComplete}
+        setDateToComplete={setDateToComplete}
+        onChange={onChange}
+      />
 
-      {tasks.length > 0 ? (
+      {tasks?.length > 0 ? (
         <Row className="my-5">{allTasks}</Row>
       ) : (
         <h3>You have no tasks, please add some</h3>

@@ -16,6 +16,9 @@ const Task = ({
   deleteTask,
   editTask,
   colorStatus,
+  formData,
+  setFormData,
+  onChange,
 }) => {
   const [showEditTask, setShowEditTask] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -23,21 +26,16 @@ const Task = ({
   const [confirmStatus, setConfirmStatus] = useState(false);
   const [active, setActive] = useState(null);
 
-  const onChange = (e) => {
+  const onChangeStatus = (e) => {
     setStatus(e.target.value);
     setConfirmStatus(true);
-  };
-
-  const onCancel = (e) => {
-    e.preventDefault();
-    setConfirmStatus(false);
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
     const completedDate =
       status === "Completed" ? new Date().toDateString() : "";
-    editTask(task._id, { progress: status, completedDate: completedDate });
+    editTask(task._id, { progress: status, completedDate });
     setConfirmStatus((prev) => !prev);
   };
 
@@ -84,6 +82,9 @@ const Task = ({
                   showEditTask={showEditTask}
                   editTask={editTask}
                   task={task}
+                  formData={formData}
+                  setFormData={setFormData}
+                  onChange={onChange}
                 />
               )}
 
@@ -125,7 +126,7 @@ const Task = ({
               {isHovering && !confirmStatus && (
                 <SelectTaskStatus
                   selectOptions={selectOptions}
-                  onChange={onChange}
+                  onChange={onChangeStatus}
                   onSubmit={onSubmit}
                   progress={task.progress}
                 />
@@ -134,7 +135,7 @@ const Task = ({
                 <>
                   <p>{`Change task status to "${status}" ?`}</p>
                   <TiDeleteOutline
-                    onClick={onCancel}
+                    onClick={() => setConfirmStatus(false)}
                     size={30}
                     color="darkred"
                   />

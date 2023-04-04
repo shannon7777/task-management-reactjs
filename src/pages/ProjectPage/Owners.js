@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
 import EditOwnersModal from "./EditOwnersModal";
@@ -11,76 +11,52 @@ const Owners = ({ item_id, teamMembers }) => {
   const [owners, setOwners] = useState([]);
   const [hover, onHover] = useState(false);
   const [showEditOwner, setShowEditOwner] = useState(false);
-  const {
-    auth: { accessToken },
-  } = useAuth();
-
-  const fetchOwners = async () => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${item_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-        }
-      );
-      if (result.status === 400) return;
-      const { owners } = await result.json();
-      return setOwners(owners);
-    } catch (error) {}
-  };
-
-  const addOwners = async (ownerArr) => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${item_id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(ownerArr),
-          credentials: "include",
-        }
-      );
-      if (result.status === 400) return;
-      const { owners } = await result.json();
-      if (result.status === 200) setOwners((prev) => [...prev, ...owners]);
-    } catch (error) {}
-  };
-
-  const removeOwners = async (owner) => {
-    setOwners([]);
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projectItems/owners/${item_id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(owner),
-          credentials: "include",
-        }
-      );
-      const { message } = await result.json();
-      if (result.status === 400) return console.log(message);
-      if (result.status === 200) console.log(message);
-      //   setOwners((prev) => prev.filter((user) => !owner.includes(user.email)));
-      const filteredOwners = owners.filter((user) => user.email !== owner[0]);
-      setOwners(filteredOwners);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     fetchOwners();
   }, []);
+
+  const fetchOwners = async () => {
+    try {
+      const {
+        data: { owners },
+      } = await axios(`projectItems/owners/${item_id}`);
+      return setOwners(owners);
+    } catch (error) {
+      if (error.response) console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
+    }
+  };
+
+  const addOwners = async (ownerArr) => {
+    try {
+      const {
+        data: { owners },
+      } = await axios.post(`projectItems/owners/${item_id}`, ownerArr);
+      setOwners((prev) => [...prev, ...owners]);
+      console.log(owners);
+    } catch (error) {
+      if (error.response) console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
+    }
+  };
+
+  const removeOwners = async (owner) => {
+    try {
+      const { data } = await axios.put(`projectItems/owners/${item_id}`, owner);
+      setOwners((prev) => prev.filter((user) => !owner.includes(user.email)));
+      console.log(data.message);
+    } catch (error) {
+      if (error.response) console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
+    }
+  };
 
   return (
     <td onMouseOver={() => onHover(true)} onMouseOut={() => onHover(false)}>

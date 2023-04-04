@@ -1,12 +1,13 @@
 import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PasswordRetypeModal from "./PasswordRetypeModal";
 
 const EditProfile = ({ setError, setNotify, setInfo }) => {
   const {
-    auth: { user, accessToken },
+    auth: { user },
     setAuth,
   } = useAuth();
   const [formData, setFormData] = useState({
@@ -22,8 +23,6 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
 
   const { firstName, lastName, username, password, retypePassword } = formData;
 
-  const bearerToken = `Bearer ${accessToken}`;
-
   const onChange = (e) => {
     setFormData((formData) => ({
       ...formData,
@@ -36,38 +35,36 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
     navigate(-1);
   };
 
-  const onSubmit = async (e) => {
+  const editUser = async (e) => {
     e.preventDefault();
-    setError({ show: false });
-    setNotify({ show: false });
-
-    if (!firstName && !lastName && !username && !password && !retypePassword) return setError({ text: "No fields were filled in"});
-
+    if (!firstName && !lastName && !username && !password && !retypePassword)
+      return setInfo({ text: "No fields were filled in" });
     if (password !== retypePassword)
-      return setError({ text: "Passwords do not match!" });
+      return setInfo({ text: "Passwords do not match!" });
 
-    const result = await fetch(`http://localhost:5000/api/users/${user._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: bearerToken,
-      },
-      body: JSON.stringify(formData),
-      credentials: "include",
-    });
-    if (result.status === 200) {
-      setNotify({
-        text: password
-          ? `Your password has been updated`
-          : `Profile details successfully updated`,
+    const editedObj = Object.fromEntries(
+      Object.entries(formData).filter((value) => value[1] !== "")
+    );
+
+    try {
+      const { status, data } = await axios.put(`users/${user._id}`, editedObj);
+      if (status === 201) {
+        setNotify({ text: data.message });
+        navigate("/profile");
+        return;
+      }
+      setNotify({ text: data.message });
+      navigate("/profile");
+      setAuth((auth) => {
+        return { ...auth, user: data.editedUser };
       });
+      localStorage.setItem("user", JSON.stringify(data.editedUser));
+    } catch (error) {
+      if (error.response) setError({ text: error.response.data.message });
+      else {
+        setError({ text: error.message });
+      }
     }
-    const { editedUser } = await result.json();
-    setAuth((auth) => {
-      return { ...auth, user: editedUser };
-    });
-    localStorage.setItem("user", JSON.stringify(editedUser));
-    navigate("/profile");
   };
 
   const clearForm = () => {
@@ -150,7 +147,6 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
         />
       </Form.Group>
       <PasswordRetypeModal
-        editPassword={editPassword}
         setEditPassword={setEditPassword}
         setError={setError}
         setNotify={setNotify}
@@ -166,7 +162,7 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
       <Form className="border border-secondary rounded shadow p-4 m-4">
         {editPassword ? editPasswordForm : editProfileForm}
         <div className="d-flex justify-content-between">
-          <Button variant="primary" onClick={onSubmit}>
+          <Button variant="primary" onClick={editUser}>
             Submit
           </Button>
           <Button variant="outline-danger" onClick={goBack}>

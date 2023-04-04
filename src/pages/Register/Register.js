@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import RegisterForm from "./RegisterForm";
 
@@ -45,24 +46,17 @@ const Register = ({ setError, setNotify, setInfo }) => {
         return;
       }
 
-      const res = await fetch(`http://localhost:5000/api/users/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const { message } = await res.json();
-      if (res.status === 409) {
-        throw Error(message);
-      }
-      if (res.status === 408) {
-        throw setError({ text: message });
-      }
-      setNotify({ show: true, text: message });
+      const {
+        data: { message },
+      } = await axios.post(`http://localhost:5000/api/users/`, formData);
+
+      setNotify({ text: message });
       navigate("/login");
     } catch (error) {
-      setError({ text: error.message });
+      if (error.response) setError({ text: error.response.data.message });
+      else {
+        setError({ text: error.message });
+      }
     }
   };
 

@@ -8,14 +8,11 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Item = ({ item, editItem, item_id }) => {
+const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [hover, onHover] = useState(false);
-  const [itemForm, setItemForm] = useState("");
-
-  const onSubmitEdit = (e) => {
-    e.preventDefault();
-    editItem({ item: itemForm }, item_id);
+  const edit = (id) => {
+    editItem(id);
     setShowEdit((prev) => !prev);
   };
 
@@ -26,14 +23,12 @@ const Item = ({ item, editItem, item_id }) => {
           <Form.Control
             style={{ width: "50%", height: "20px" }}
             type="text"
-            name="itemForm"
-            value={itemForm}
-            onChange={(e) => setItemForm(e.target.value)}
-            onSubmit={onSubmitEdit}
+            name="item"
+            onChange={onChange}
           ></Form.Control>
           <FontAwesomeIcon
             icon={faCircleCheck}
-            onClick={onSubmitEdit}
+            onClick={() => edit(projectItem._id)}
             size="lg"
           />
           <FontAwesomeIcon
@@ -45,14 +40,24 @@ const Item = ({ item, editItem, item_id }) => {
         </Form>
       ) : (
         <div className="d-flex">
-          <p>{item}</p>
+          <p className="mr-auto">{projectItem.item}</p>
           {hover && (
-            <FontAwesomeIcon
-              className="mx-auto"
-              icon={faEdit}
-              onClick={() => setShowEdit((prev) => !prev)}
-              size="lg"
-            />
+            <span className="">
+              <FontAwesomeIcon
+                className=""
+                icon={faEdit}
+                onClick={() => setShowEdit((prev) => !prev)}
+                size="lg"
+                style={{ cursor: "pointer" }}
+              />
+              <FontAwesomeIcon
+                className="mx-3"
+                icon={faXmark}
+                onClick={() => deleteItem(projectItem._id)}
+                size="lg"
+                style={{ cursor: "pointer" }}
+              />
+            </span>
           )}
         </div>
       )}

@@ -13,35 +13,22 @@ import {
   faStar,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [hoverOverDiv, setHoverOverDiv] = useState(false);
   const [rating, setRating] = useState(0);
-  const {
-    auth: { accessToken },
-  } = useAuth();
-
-  const bearerToken = `Bearer ${accessToken}`;
 
   const getMembers = async () => {
     try {
-      const result = await fetch(
-        `http://localhost:5000/api/projects/members/${project._id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: bearerToken,
-          },
-          credentials: "include",
-        }
-      );
-      if (result.status === 400) return;
-      const { users } = await result.json();
+      const {
+        data: { users },
+      } = await axios(`projects/members/${project._id}`);
       return setTeamMembers(users);
     } catch (error) {
-      setError({ text: error.message });
+      setError({ text: error.response.data.message });
     }
   };
 
@@ -144,7 +131,10 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
               <span>
                 {teamMembers.map((member, index) => (
                   <span key={index}>
-                    <TeamMembers className="profilePicNavbar" member_id={member._id} />
+                    <TeamMembers
+                      className="profilePicNavbar"
+                      member_id={member._id}
+                    />
                   </span>
                 ))}
               </span>

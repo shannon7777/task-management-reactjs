@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
 
@@ -16,94 +16,68 @@ const ProjectItems = ({ teamMembers }) => {
     item: "",
     deadline: new Date(),
   });
-
-  const {
-    auth: { accessToken },
-  } = useAuth();
   const { project_id } = useParams();
-
-  const fetchProjectItems = async () => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projectItems/${project_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: "include",
-        }
-      );
-      const { projectItems } = await result.json();
-      setProjectItems(projectItems);
-    } catch (error) {}
-  };
-
-  const createProjectItem = async (item) => {
-    try {
-      const result = await fetch(
-        `http://localhost:5000/api/projectItems/${project_id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(item),
-          credentials: "include",
-        }
-      );
-      const { projectItem } = await result.json();
-      console.log(projectItem);
-      setProjectItems([...projectItems, projectItem]);
-    } catch (error) {}
-  };
 
   useEffect(() => {
     fetchProjectItems();
   }, []);
 
+  const fetchProjectItems = async () => {
+    try {
+      const { data } = await axios(`projectItems/${project_id}`);
+      setProjectItems(data.projectItems);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const createProjectItem = async (e) => {
+    e.preventDefault();
+    if (!formData.item) return;
+    const item = {
+      ...formData,
+      deadline: formData.deadline.toDateString(),
+    };
+    try {
+      const { data } = await axios.post(`projectItems/${project_id}`, item);
+      setShowAddProjectItem((prev) => !prev);
+      setFormData({ item: "", deadline: new Date() });
+      setProjectItems([...projectItems, data.projectItem]);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const editItem = async (id) => {
+    const editedItem = {
+      ...formData,
+      deadline: formData.deadline.toDateString(),
+    };
+    try {
+      const {
+        data: { updatedItem },
+      } = await axios.put(`projectItems/${id}`, editedItem);
+      setProjectItems(
+        projectItems.map((item) => (item._id === id ? updatedItem : item))
+      );
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const deleteItem = async (item_id) => {
+    try {
+      const { data } = await axios.delete(`/projectItems/${item_id}`);
+      setProjectItems(projectItems.filter((item) => item._id !== item_id));
+      console.log(data.message);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   const onChange = (e) => {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.item) return;
-    createProjectItem({
-      ...formData,
-      deadline: formData.deadline.toDateString(),
-    });
-    setShowAddProjectItem((prev) => !prev);
-    setFormData({ item: "", deadline: "" });
-  };
-
-  const editItem = async (editedObj, id) => {
-    console.log(editedObj, id);
-    const res = await fetch(`http://localhost:5000/api/projectItems/${id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(editedObj),
-      credentials: "include",
-    });
-
-    const {
-      updatedItem: { item, deadline, progress, notes },
-    } = await res.json();
-    setProjectItems(
-      projectItems.map((projectItem) => {
-        if (projectItem._id === id) {
-          projectItem.item = item ? item : projectItem.item;
-          projectItem.deadline = deadline ? deadline : projectItem.deadline;
-          projectItem.progress = progress ? progress : projectItem.progress;
-          projectItem.notes = notes ? notes : projectItem.notes;
-        }
-        return projectItem;
-      })
-    );
   };
 
   const projectHeaders = [
@@ -124,20 +98,23 @@ const ProjectItems = ({ teamMembers }) => {
             ))}
           </tr>
         </thead>
-        {projectItems?.map((projectItem, index) => (
-          <ProjectItem
-            key={index}
-            projectItem={projectItem}
-            teamMembers={teamMembers}
-            editItem={editItem}
-          />
-        ))}
+        {projectItems &&
+          projectItems?.map((projectItem, index) => (
+            <ProjectItem
+              key={index}
+              projectItem={projectItem}
+              teamMembers={teamMembers}
+              editItem={editItem}
+              deleteItem={deleteItem}
+              onChange={onChange}
+            />
+          ))}
       </Table>
 
       {showAddProjectItem && (
         <ProjectItemForm
           setShowAddProjectItem={setShowAddProjectItem}
-          onSubmit={onSubmit}
+          onSubmit={createProjectItem}
           onChange={onChange}
           formData={formData}
           setFormData={setFormData}

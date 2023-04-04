@@ -1,47 +1,30 @@
 import { useRef, useState, useEffect } from "react";
 import { Overlay, Tooltip } from "react-bootstrap";
-import useAuth from "../hooks/useAuth";
+import axios from "axios";
 
 const TeamMembers = ({ member_id }) => {
   const [user, setUser] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isHovering, setIsHovering] = useState(false);
   const target = useRef(null);
-  const {
-    auth: { accessToken },
-  } = useAuth();
-  const bearerToken = `Bearer ${accessToken}`;
-
   const placeholderPic = `https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
 
-  const fetchImg = async () => {
-    const result = await fetch(
-      `http://localhost:5000/api/users/img/${member_id}`,
-      {
-        headers: {
-          Authorization: bearerToken,
-        },
-        credentials: "include",
-      }
-    );
-    const { imageUrl } = await result.json();
-    setImageUrl(imageUrl);
-  };
-
-  const fetchUser = async () => {
-    const result = await fetch(`http://localhost:5000/api/users/${member_id}`, {
-      headers: {
-        Authorization: bearerToken,
-      },
-      credentials: "include",
-    });
-    const { user } = await result.json();
-    if (result.status === 200) return setUser(user);
+  const fetchTeamMember = async () => {
+    if (!member_id) return;
+    try {
+      const [imageResponse, userResponse] = await Promise.all([
+        axios(`users/img/${member_id}`),
+        axios(`users/${member_id}`),
+      ]);
+      setImageUrl(imageResponse.data.imageUrl);
+      setUser(userResponse.data.user);
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   useEffect(() => {
-    fetchUser();
-    fetchImg();
+    fetchTeamMember();
   }, [member_id]);
 
   return (

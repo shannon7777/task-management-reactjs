@@ -5,12 +5,12 @@ import StarRating from "./StarRating";
 
 const AddProjectForm = ({
   onChange,
-  onSubmit,
   setFormData,
   formData,
   rating,
   setRating,
-  ratingColors
+  ratingColors,
+  createProject
 }) => {
   return (
     <Form className="border border-secondary shadow p-4 m-5 rounded">
@@ -62,7 +62,7 @@ const AddProjectForm = ({
           <StarRating rating={rating} setRating={setRating} ratingColors={ratingColors}/>
         </Col>
       </Form.Group>
-      <Button variant="primary" type="submit" onClick={onSubmit}>
+      <Button variant="primary" type="submit" onClick={createProject}>
         Create
       </Button>
     </Form>

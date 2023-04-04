@@ -4,10 +4,11 @@ import useAuth from "../../hooks/useAuth";
 
 import Project from "./Project";
 import AddProjectForm from "./AddProjectForm";
+import axios from "axios";
 
 const ProjectList = ({ setNotify, setError, setInfo }) => {
   const {
-    auth: { user, accessToken },
+    auth: { user },
   } = useAuth();
   const [projects, setProjects] = useState([]);
   const [formData, setFormData] = useState({
@@ -19,17 +20,10 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [rating, setRating] = useState(0);
 
-  const bearerToken = `Bearer ${accessToken}`;
-
   const fetchProjects = async () => {
-    const result = await fetch(
-      `http://localhost:5000/api/projects/${user._id}`,
-      {
-        headers: { Authorization: bearerToken },
-        credentials: "include",
-      }
-    );
-    const { projects } = await result.json();
+    const {
+      data: { projects },
+    } = await axios(`projects/${user._id}`);
     setProjects(projects);
   };
 
@@ -41,55 +35,38 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const createProject = async (project) => {
-    console.log(project);
+  const createProject = async (e) => {
+    e.preventDefault();
+    const project = {
+      ...formData,
+      completion_date: formData.completion_date.toDateString(),
+      rating,
+    };
     if (!formData.title || !formData.description)
-      return setError({ text: `Please fill in all fields` });
+      return setInfo({ text: `Please fill in all fields` });
     try {
-      const result = await fetch(`http://localhost:5000/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: bearerToken,
-        },
-        credentials: "include",
-        body: JSON.stringify(project),
-      });
-      const { newProject, message } = await result.json();
-      if (result.status === 200) setNotify({ text: message });
-      if (result.status === 400) throw setError({ text: message });
+      const {
+        data: { newProject, message },
+      } = await axios.post(`projects`, project);
+      setNotify({ text: message });
+      setRating(0);
+      setFormData({ title: "", description: "", user_id: user._id });
       setProjects((prev) => [...prev, newProject]);
     } catch (error) {
-      setError({ text: error.message });
+      if (error.response.status === 400)
+        throw setError({ text: error.response.data.message });
     }
   };
 
   const deleteProject = async (id) => {
     try {
-      const result = await fetch(`http://localhost:5000/api/projects/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: bearerToken },
-      });
-      const { message } = await result.json();
-
-      if (result.status === 400) throw setError({ text: message });
-      if (result.status === 200) setNotify({ text: message });
-
+      const { data } = await axios.delete(`projects/${id}`);
+      setNotify({ text: data.message });
       setProjects(projects.filter((project) => project._id !== id));
     } catch (error) {
-      setError({ text: error.message });
+      if (error.response.status === 400)
+        throw setError({ text: error.response.data.message });
     }
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    createProject({
-      ...formData,
-      completion_date: formData.completion_date.toDateString(),
-      rating
-    });
-    setFormData({ title: "", description: "", user_id: user._id });
-    setRating(0)
   };
 
   return (
@@ -103,7 +80,6 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
         </Button>
         {showProjectForm && (
           <AddProjectForm
-            onSubmit={onSubmit}
             onChange={onChange}
             setFormData={setFormData}
             createProject={createProject}

@@ -16,171 +16,118 @@ import ProjectPage from "./pages/ProjectPage";
 import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
+import axios from "axios";
 
 const App = () => {
+  const {
+    auth,
+    auth: { user, accessToken },
+  } = useAuth();
   const [showAddTask, setShowAddTask] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   const [notify, setNotify] = useState({ show: false, text: "" });
   const [error, setError] = useState({ show: false, text: "" });
   const [info, setInfo] = useState({ show: false, text: "" });
+  const [formData, setFormData] = useState({
+    text: "",
+    description: "",
+    progress: "",
+    user_id: "",
+  });
+  const [dateToComplete, setDateToComplete] = useState(null);
 
-  const {
-    auth,
-    auth: { user, accessToken },
-  } = useAuth();
-
-  const bearerToken = `Bearer ${accessToken}`;
-
-  const fetchAllTasks = async () => {
-    const result = await fetch(`http://localhost:5000/api/tasks/${user._id}`, {
-      headers: { Authorization: bearerToken },
-      credentials: "include",
-    });
-    const { tasks } = await result.json();
-    setTasks((prev) => tasks);
+  axios.defaults.baseURL = `http://localhost:5000/api`;
+  axios.defaults.withCredentials = true;
+  axios.defaults.headers.common = {
+    Authorization: `Bearer ${accessToken}`,
+    credentials: "include",
   };
 
   useEffect(() => {
     if (user) fetchAllTasks();
-    // fetchImg();
   }, [auth]);
 
+  const fetchAllTasks = async () => {
+    try {
+      const {
+        status,
+        data: { tasks },
+      } = await axios(`/tasks/${user._id}`);
+      if (status === 200) setTasks(tasks);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   // Add Task
-  const addTask = async (task) => {
-    if (!task.text) {
-      return setError({
+  const addTask = async (e) => {
+    e.preventDefault();
+    const task = {
+      ...formData,
+      dateToComplete: dateToComplete
+        ? dateToComplete.toDateString()
+        : `No completion date has been set`,
+    };
+    if (!formData.text)
+      throw setInfo({
         text: `Fill in the task form in order to add a task`,
       });
-    }
-    console.log(task);
     try {
-      const res = await fetch("http://localhost:5000/api/tasks", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: bearerToken,
-        },
-        credentials: "include",
-        body: JSON.stringify(task),
-      });
-
-      const { newTask, message } = await res.json();
+      const {
+        data: { newTask, message },
+      } = await axios.post("/tasks", task);
       setTasks([...tasks, newTask]);
-      if (res.status === 200) {
-        setNotify({ text: message });
-      } else if (res.status === 400) {
-        throw Error(message);
-      }
+      setNotify({ text: message });
+      setFormData({ text: "", description: "", progress: "" });
     } catch (error) {
-      setError({ text: error.message });
+      setError({ text: error.response.data.message });
     }
   };
 
   // Deleting a task
   const deleteTask = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: bearerToken,
-        },
-      });
-      const { message } = await res.json();
-
-      if (res.status === 200) {
-        setNotify({ text: message });
-        return setTasks(tasks.filter((task) => task._id !== id));
-      }
-      res.status === 401 && new Error(message);
+      const {
+        data: { message },
+        status,
+      } = await axios.delete(`tasks/${id}`);
+      if (status === 401) throw setError({ text: message });
+      setNotify({ text: message });
+      return setTasks(tasks.filter((task) => task._id !== id));
     } catch (error) {
       setError({ text: error.message });
     }
   };
 
   // Editing a specific task and/or a date
-  const editTask = async (id, editedObj) => {
+  const editTask = async (id, editedTask) => {
+    console.log(editedTask);
     try {
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: bearerToken,
-        },
-        body: JSON.stringify(editedObj),
-      });
-
       const {
-        message,
-        updatedTask: {
-          text,
-          description,
-          dateToComplete,
-          progress,
-          completedDate,
-        },
-      } = await res.json();
-
-      if (res.status === 401) throw setError({ text: message });
+        status,
+        data: { updatedTask, message },
+      } = await axios.put(`/tasks/${id}`, editedTask);
+      if (status === 400) throw setError({ text: message });
       setNotify({ text: message });
-      setTasks(
-        tasks.map((task) => {
-          if (task._id === id) {
-            task.text = text ? text : task.text;
-            task.description = description ? description : task.description;
-            task.dateToComplete = dateToComplete
-              ? dateToComplete
-              : task.dateToComplete;
-            task.progress = progress ? progress : task.progress;
-            task.completedDate = completedDate ? completedDate : "";
-          }
-          return task;
-        })
-      );
+      setTasks(tasks.map((task) => (task._id === id ? updatedTask : task)));
     } catch (error) {
       setError(error.message);
     }
+  };
+
+  const onChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+      user_id: user._id,
+    });
   };
 
   // Toggling add task form
   const onAdd = () => {
     setShowAddTask(!showAddTask);
   };
-
-  //  -------- FOR PROJECTS -------------
-  // const fetchProjects = async () => {
-  //   const result = await fetch(
-  //     `http://localhost:5000/api/projects/${user._id}`,
-  //     {
-  //       headers: { Authorization: bearerToken },
-  //       credentials: "include",
-  //     }
-  //   );
-  //   const { projects } = await result.json();
-  //   // setProjects(projects);
-  //   return projects;
-  // };
-
-  // const getMembers = async () => {
-  //   try {
-  //     const result = await fetch(
-  //       `http://localhost:5000/api/projects/members/${project._id}`,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: bearerToken,
-  //         },
-  //         credentials: "include",
-  //       }
-  //     );
-  //     if (result.status === 400) return;
-  //     const { users } = await result.json();
-  //     // return setTeamMembers(users);
-  //     return users;
-  //   } catch (error) {
-  //     setError({ text: error.message });
-  //   }
-  // };
 
   const notificationMsg = (
     <CustomAlert
@@ -252,6 +199,11 @@ const App = () => {
                     editTask={editTask}
                     tasks={tasks}
                     fetchAllTasks={fetchAllTasks}
+                    formData={formData}
+                    setFormData={setFormData}
+                    dateToComplete={dateToComplete}
+                    setDateToComplete={setDateToComplete}
+                    onChange={onChange}
                   />
                 }
               />
