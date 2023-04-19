@@ -11,6 +11,7 @@ import {
 const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [hover, onHover] = useState(false);
+  const [item, setItem] = useState("");
   const edit = (id) => {
     editItem(id);
     setShowEdit((prev) => !prev);
@@ -24,7 +25,8 @@ const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
             style={{ width: "50%", height: "20px" }}
             type="text"
             name="item"
-            onChange={onChange}
+            value={item}
+            onChange={(e) => setItem(e.target.value)}
           ></Form.Control>
           <FontAwesomeIcon
             icon={faCircleCheck}
@@ -40,7 +42,7 @@ const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
         </Form>
       ) : (
         <div className="d-flex">
-          <p className="mr-auto">{projectItem.item}</p>
+          <p className="mr-auto">{projectItem?.item}</p>
           {hover && (
             <span className="">
               <FontAwesomeIcon

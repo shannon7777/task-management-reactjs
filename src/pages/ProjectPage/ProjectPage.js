@@ -43,7 +43,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    completion_date: "",
+    completion_date: project.completion_date,
   });
 
   useEffect(() => {
@@ -132,6 +132,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       throw setError({ text: error.response.data.message });
     }
   };
+  
   const removeMember = async (membersArr) => {
     try {
       const { data } = await axios.put(

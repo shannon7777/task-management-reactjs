@@ -16,8 +16,8 @@ const SelectTaskStatus = ({ selectOptions, onChange, progress }) => {
           >
             {selectOptions.map((option, index) => {
               return (
-                <option key={`option-${index}`} value={option.value}>
-                  {option.label}
+                <option key={`option-${index}`} value={option}>
+                  {option}
                 </option>
               );
             })}

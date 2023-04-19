@@ -13,7 +13,7 @@ const useFetchImg = () => {
       } = await axios(`users/img/${user._id}`);
       localStorage.setItem("userImg", JSON.stringify(imageUrl));
     } catch (error) {
-      if (error.response) console.log(error.response.data.message);
+      if (error.response) console.log(error.response.data);
       else {
         console.log(error.message);
       }

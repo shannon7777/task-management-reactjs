@@ -39,12 +39,7 @@ const Task = ({
     setConfirmStatus((prev) => !prev);
   };
 
-  const selectOptions = [
-    { value: "New Task", label: "New Task" },
-    { value: "In progress", label: "In progress" },
-    { value: "Stuck", label: "Stuck" },
-    { value: "Completed", label: "Completed" },
-  ];
+  const selectOptions = ["New Task", "In progress", "Stuck", "Completed"];
 
   return (
     <div

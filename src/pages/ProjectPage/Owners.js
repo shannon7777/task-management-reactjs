@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
@@ -7,28 +7,9 @@ import EditOwnersModal from "./EditOwnersModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
 
-const Owners = ({ item_id, teamMembers }) => {
-  const [owners, setOwners] = useState([]);
+const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
   const [hover, onHover] = useState(false);
   const [showEditOwner, setShowEditOwner] = useState(false);
-
-  useEffect(() => {
-    fetchOwners();
-  }, []);
-
-  const fetchOwners = async () => {
-    try {
-      const {
-        data: { owners },
-      } = await axios(`projectItems/owners/${item_id}`);
-      return setOwners(owners);
-    } catch (error) {
-      if (error.response) console.log(error.response.data.message);
-      else {
-        console.log(error.message);
-      }
-    }
-  };
 
   const addOwners = async (ownerArr) => {
     try {
@@ -36,7 +17,6 @@ const Owners = ({ item_id, teamMembers }) => {
         data: { owners },
       } = await axios.post(`projectItems/owners/${item_id}`, ownerArr);
       setOwners((prev) => [...prev, ...owners]);
-      console.log(owners);
     } catch (error) {
       if (error.response) console.log(error.response.data.message);
       else {

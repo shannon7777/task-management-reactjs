@@ -15,13 +15,12 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
     lastName: "",
     username: "",
     password: "",
-    retypePassword: "",
   });
-
+  const [retypePassword, setRetypePassword] = useState("");
   const [editPassword, setEditPassword] = useState(false);
   const [retypePwdModal, setRetypePwdModal] = useState(false);
 
-  const { firstName, lastName, username, password, retypePassword } = formData;
+  const { firstName, lastName, username, password } = formData;
 
   const onChange = (e) => {
     setFormData((formData) => ({
@@ -45,16 +44,11 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
     const editedObj = Object.fromEntries(
       Object.entries(formData).filter((value) => value[1] !== "")
     );
-
     try {
-      const { status, data } = await axios.put(`users/${user._id}`, editedObj);
-      if (status === 201) {
-        setNotify({ text: data.message });
-        navigate("/profile");
-        return;
-      }
+      const { data } = await axios.put(`users/${user._id}`, editedObj);
       setNotify({ text: data.message });
       navigate("/profile");
+      if (password) return;
       setAuth((auth) => {
         return { ...auth, user: data.editedUser };
       });
@@ -95,7 +89,7 @@ const EditProfile = ({ setError, setNotify, setInfo }) => {
           type="password"
           name="retypePassword"
           value={retypePassword}
-          onChange={onChange}
+          onChange={(e) => setRetypePassword(e.target.value)}
           placeholder="retype password"
         />
       </Form.Group>

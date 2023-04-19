@@ -4,19 +4,21 @@ import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
 
-import { Modal, Form, Button, Col, Card } from "react-bootstrap";
+import { Modal, Form, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStickyNote, faX } from "@fortawesome/free-solid-svg-icons";
 
-const Notes = ({ editItem, projectItem }) => {
+const Notes = ({ editItem, projectItem, ownerIds }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [formData, setFormData] = useState("");
-  const [allNotes, setAllNotes] = useState(projectItem.notes);
+  const [allNotes, setAllNotes] = useState(projectItem?.notes);
   const [hover, setHover] = useState(false);
   const {
     auth: { user },
   } = useAuth();
+
+  let ableToView = ownerIds.includes(user._id);
 
   const createNote = async (e) => {
     e.preventDefault();
@@ -28,10 +30,7 @@ const Notes = ({ editItem, projectItem }) => {
       setAllNotes((prev) => [...prev, newNote]);
       setShowNoteForm((prev) => !prev);
       setFormData("");
-      console.log(message);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    } catch (error) {}
   };
 
   const removeNote = async (id) => {
@@ -50,8 +49,6 @@ const Notes = ({ editItem, projectItem }) => {
     }
   };
 
-  let owners = [...new Set(allNotes.map(({ user_id }) => user_id))];
-
   const noteForm = (
     <Form className="d-flex">
       <Form.Control
@@ -67,6 +64,7 @@ const Notes = ({ editItem, projectItem }) => {
     </Form>
   );
 
+  let owners = [...new Set(allNotes.map(({ user_id }) => user_id))];
   const itemNotes = owners.map((id) => (
     <Card key={`owner-${id}`}>
       <Card.Body>
@@ -77,7 +75,7 @@ const Notes = ({ editItem, projectItem }) => {
           .filter(({ user_id }) => user_id === id)
           .map(({ note, _id, user_id }) => (
             <p
-              key={_id}
+              key={`note-${_id}`}
               onMouseOver={() => setHover(_id)}
               onMouseOut={() => setHover(null)}
             >
@@ -97,13 +95,9 @@ const Notes = ({ editItem, projectItem }) => {
     </Card>
   ));
 
-  const ableToViewNotes = projectItem.owners.some(
-    (user_id) => user_id === user._id
-  );
-
   return (
     <td>
-      {ableToViewNotes && (
+      {ableToView && (
         <FontAwesomeIcon
           icon={faStickyNote}
           style={{ cursor: "pointer" }}

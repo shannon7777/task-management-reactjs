@@ -12,10 +12,8 @@ import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 const ProjectItems = ({ teamMembers }) => {
   const [projectItems, setProjectItems] = useState([]);
   const [showAddProjectItem, setShowAddProjectItem] = useState(false);
-  const [formData, setFormData] = useState({
-    item: "",
-    deadline: new Date(),
-  });
+  const [item, setItem] = useState("");
+  const [deadline, setDeadline] = useState(new Date());
   const { project_id } = useParams();
 
   useEffect(() => {
@@ -33,26 +31,27 @@ const ProjectItems = ({ teamMembers }) => {
 
   const createProjectItem = async (e) => {
     e.preventDefault();
-    if (!formData.item) return;
-    const item = {
-      ...formData,
-      deadline: formData.deadline.toDateString(),
+    if (!item) return;
+    const createdItem = {
+      item,
+      deadline: deadline.toDateString(),
     };
     try {
-      const { data } = await axios.post(`projectItems/${project_id}`, item);
+      const { data } = await axios.post(
+        `projectItems/${project_id}`,
+        createdItem
+      );
       setShowAddProjectItem((prev) => !prev);
-      setFormData({ item: "", deadline: new Date() });
+      setItem("");
+      setDeadline(new Date());
       setProjectItems([...projectItems, data.projectItem]);
     } catch (error) {
       console.log(error.response.data.message);
     }
   };
 
-  const editItem = async (id) => {
-    const editedItem = {
-      ...formData,
-      deadline: formData.deadline.toDateString(),
-    };
+  const editItem = async (id, editedItem) => {
+    console.log(editedItem);
     try {
       const {
         data: { updatedItem },
@@ -60,6 +59,7 @@ const ProjectItems = ({ teamMembers }) => {
       setProjectItems(
         projectItems.map((item) => (item._id === id ? updatedItem : item))
       );
+      setItem("");
     } catch (error) {
       console.log(error.response.data.message);
     }
@@ -75,26 +75,21 @@ const ProjectItems = ({ teamMembers }) => {
     }
   };
 
-  const onChange = (e) => {
-    e.preventDefault();
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const projectHeaders = [
-    { title: "Project Item" },
-    { title: "Owners" },
-    { title: "Deadline" },
-    { title: "Notes" },
-    { title: "Status" },
+    "Project Item",
+    "Owners",
+    "Deadline",
+    "Notes",
+    "Status",
   ];
 
   return (
     <>
-      <Table className="mt-5 border" variant="" striped bordered hover>
+      <Table className="mt-5 border rounded" variant="" striped bordered hover>
         <thead className="w-auto mw-100">
           <tr>
             {projectHeaders.map((header, index) => (
-              <th key={index}>{header.title}</th>
+              <th key={index}>{header}</th>
             ))}
           </tr>
         </thead>
@@ -106,7 +101,6 @@ const ProjectItems = ({ teamMembers }) => {
               teamMembers={teamMembers}
               editItem={editItem}
               deleteItem={deleteItem}
-              onChange={onChange}
             />
           ))}
       </Table>
@@ -115,9 +109,10 @@ const ProjectItems = ({ teamMembers }) => {
         <ProjectItemForm
           setShowAddProjectItem={setShowAddProjectItem}
           onSubmit={createProjectItem}
-          onChange={onChange}
-          formData={formData}
-          setFormData={setFormData}
+          deadline={deadline}
+          setDeadline={setDeadline}
+          item={item}
+          setItem={setItem}
         />
       )}
       <span className="d-flex m-3">

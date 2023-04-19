@@ -2,6 +2,10 @@ import Owners from "./Owners";
 import Item from "./Item";
 import Notes from "./Notes";
 import Deadline from "./Deadline";
+import Status from "./Status";
+
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const ProjectItem = ({
   projectItem,
@@ -10,6 +14,24 @@ const ProjectItem = ({
   deleteItem,
   onChange,
 }) => {
+  const [owners, setOwners] = useState([]);
+  useEffect(() => {
+    fetchOwners();
+  }, []);
+
+  const fetchOwners = async () => {
+    try {
+      const {
+        data: { owners },
+      } = await axios(`projectItems/owners/${projectItem._id}`);
+      return setOwners(owners);
+    } catch (error) {
+      if (error.response) console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
+    }
+  };
   return (
     <tbody>
       <tr>
@@ -19,16 +41,27 @@ const ProjectItem = ({
           deleteItem={deleteItem}
           onChange={onChange}
         />
-        <Owners item_id={projectItem._id} teamMembers={teamMembers} />
-        <Deadline deadline={projectItem.deadline} />
+        <Owners
+          item_id={projectItem?._id}
+          teamMembers={teamMembers}
+          owners={owners}
+          setOwners={setOwners}
+        />
+        <Deadline
+          deadline={projectItem?.deadline}
+          editItem={editItem}
+          item_id={projectItem?._id}
+        />
+        <Status
+          progress={projectItem?.progress}
+          editItem={editItem}
+          item_id={projectItem?._id}
+        />
         <Notes
           projectItem={projectItem}
-          // notes={projectItem.notes}
           editItem={editItem}
-          // item_id={projectItem._id}
-          // itemOwners={projectItem.owners}
+          ownerIds={owners.map((owner) => owner._id)}
         />
-        <td>{projectItem.progress}</td>
       </tr>
     </tbody>
   );

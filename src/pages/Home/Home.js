@@ -4,7 +4,6 @@ import { Col, Row } from "react-bootstrap";
 import Header from "./Header";
 import AddTask from "./AddTask";
 import Task from "./Task";
-
 import useFetchImg from "../../hooks/useFetchImg";
 
 const Home = ({
@@ -56,10 +55,10 @@ const Home = ({
       </span>
       {tasks
         .filter((task) => task.progress === progress)
-        .map((filteredTask) => (
+        .map((task) => (
           <Task
-            key={`task-${filteredTask._id}`}
-            task={filteredTask}
+            key={`task-${task._id}`}
+            task={task}
             {...taskProps}
           />
         ))}

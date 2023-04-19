@@ -21,8 +21,6 @@ const Login = ({ setNotify, setError }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setNotify({ show: false });
-    setError({ show: false });
     const { email, password } = formData;
     if (!email || !password) {
       setError({ text: `Please type in your email or password!` });

@@ -1,12 +1,13 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
-import ReactDatePicker from "react-datepicker";
+import DatePicker from "react-datepicker";
 
 const ProjectItemForm = ({
-  formData,
-  setFormData,
+  deadline,
+  setDeadline,
   onSubmit,
-  onChange,
   setShowAddProjectItem,
+  item,
+  setItem
 }) => {
   return (
     <Form className="m-3">
@@ -16,10 +17,12 @@ const ProjectItemForm = ({
             <Form.Label>Project Item</Form.Label>
             <Form.Control
               className=""
-              value={formData.item}
+              // value={formData.item}
+              value={item}
               type="item"
               name="item"
-              onChange={onChange}
+              // onChange={onChange}
+              onChange={(e) => setItem(e.target.value)}
             />
           </Form.Group>
         </Col>
@@ -27,11 +30,13 @@ const ProjectItemForm = ({
         <Col>
           <Form.Group className="my-3" controlId="datePicker">
             <Form.Label>Set a deadline</Form.Label>
-            <ReactDatePicker
+            <DatePicker
               className="btn btn-outline-dark shadow"
-              onChange={(date) => setFormData({ ...formData, deadline: date })}
-              selected={formData.deadline}
-              value={formData.deadline}
+              // onChange={(date) => setFormData({ ...formData, deadline: date })}
+              onChange={(date) => setDeadline(date)}
+              // selected={formData.deadline}
+              selected={deadline}
+              value={deadline}
               dateFormat="MMMM d, yyyy"
               minDate={new Date()}
               showPopperArrow={false}
