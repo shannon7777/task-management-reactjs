@@ -2,17 +2,20 @@ import DatePicker from "react-datepicker";
 import { useState } from "react";
 import { Col, ProgressBar, Row } from "react-bootstrap";
 
+import { timelineBar, progressColors } from "../Projectlist/Project";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
 
-const Deadline = ({ editItem, deadline, item_id }) => {
+const Deadline = ({ editItem, projectItem, completion_date }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const { _id, deadline, createdAt } = projectItem;
   const edit = (date) => {
     setShowDatePicker(false);
     let editedDeadline = { deadline: date.toDateString() };
-    editItem(item_id, editedDeadline);
+    editItem(_id, editedDeadline);
   };
+
   return (
     <td onMouseLeave={() => setShowDatePicker(false)}>
       <Row className="d-flex">
@@ -24,6 +27,7 @@ const Deadline = ({ editItem, deadline, item_id }) => {
               selected={new Date(deadline)}
               value={new Date(deadline)}
               minDate={new Date()}
+              maxDate={new Date(completion_date)}
               showPopperArrow={false}
               dateFormat="MMMM d, yyyy"
               placeholderText="change deadline"
@@ -37,7 +41,11 @@ const Deadline = ({ editItem, deadline, item_id }) => {
               style={{ cursor: "pointer" }}
             >
               {deadline}
-              <ProgressBar variant="success" animated now={50} />
+              <ProgressBar
+                variant={progressColors(createdAt, deadline)}
+                animated
+                now={timelineBar(createdAt, deadline)}
+              />
             </Col>
             <Col md={4}>
               <FontAwesomeIcon className="mx-3" icon={faFlag} />

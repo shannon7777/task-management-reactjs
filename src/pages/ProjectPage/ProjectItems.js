@@ -9,7 +9,7 @@ import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 
-const ProjectItems = ({ teamMembers }) => {
+const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
   const [projectItems, setProjectItems] = useState([]);
   const [showAddProjectItem, setShowAddProjectItem] = useState(false);
   const [item, setItem] = useState("");
@@ -18,6 +18,9 @@ const ProjectItems = ({ teamMembers }) => {
 
   useEffect(() => {
     fetchProjectItems();
+    if (projectItems) {
+      completionPercentage();
+    }
   }, []);
 
   const fetchProjectItems = async () => {
@@ -75,12 +78,29 @@ const ProjectItems = ({ teamMembers }) => {
     }
   };
 
+  const completionPercentage = () => {
+    let completedItems = projectItems?.filter(
+      (item) => item?.progress === "Completed"
+    ).length;
+    let totalItems = projectItems?.length;
+    let percentage = Math.round((completedItems / totalItems) * 100);
+    console.log(percentage);
+    return setCompletionBar(percentage);
+    // return percentage;
+  };
+
+  // const completionPercentage = projectItems && Math.round((projectItems?.filter(
+  //   (item) => item?.progress === "Completed"
+  // ).length / projectItems?.length) * 100)
+
+  // console.log(completionPercentage);
+
   const projectHeaders = [
     "Project Item",
     "Owners",
     "Deadline",
-    "Notes",
     "Status",
+    "Notes",
   ];
 
   return (
@@ -101,6 +121,7 @@ const ProjectItems = ({ teamMembers }) => {
               teamMembers={teamMembers}
               editItem={editItem}
               deleteItem={deleteItem}
+              completion_date={completion_date}
             />
           ))}
       </Table>

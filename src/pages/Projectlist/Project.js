@@ -47,28 +47,14 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
     <FontAwesomeIcon className="mx-2" icon={faTriangleExclamation} size="lg" />
   );
 
-  const timelineBar = () => {
-    let totalDays =
-      (new Date(project.completion_date) - new Date(project.createdAt)) /
-      1000 /
-      60 /
-      60 /
-      24;
-    let daysPassed =
-      (new Date() - new Date(project.createdAt)) / 1000 / 60 / 60 / 24;
-    let percentage = (daysPassed / totalDays) * 100;
-    if (percentage < 0) return 100;
-    return Math.round(percentage);
-  };
+  // const progressColors = () => {
+  //   if (timelineBar() <= 25) return "primary";
+  //   if (timelineBar() > 25 && timelineBar() <= 50) return "info";
+  //   if (timelineBar() > 50 && timelineBar() <= 75) return "warning";
+  //   if (timelineBar() > 75) return "danger";
+  // };
 
-  const progressDateColors = () => {
-    if (timelineBar() <= 25) return "primary";
-    if (timelineBar() > 25 && timelineBar() <= 50) return "info";
-    if (timelineBar() > 50 && timelineBar() <= 75) return "warning";
-    if (timelineBar() > 75) return "danger";
-  };
-
-  const completionBar = () => {};
+  // const completionBar = () => {};
 
   const deleteProjectModal = (
     <Modal
@@ -121,8 +107,14 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
                   <ProgressBar
                     className="w-50"
                     animated
-                    now={timelineBar()}
-                    variant={progressDateColors()}
+                    now={timelineBar(
+                      project.createdAt,
+                      project.completion_date
+                    )}
+                    variant={progressColors(
+                      project.createdAt,
+                      project.completion_date
+                    )}
                   />
                   {overdueIcon}
                 </span>
@@ -173,8 +165,6 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
   );
 };
 
-export default Project;
-
 const ratingColors = {
   1: "grey",
   2: "brown",
@@ -182,3 +172,22 @@ const ratingColors = {
   4: "green",
   5: "red",
 };
+
+const timelineBar = (createdAt, completedDate) => {
+  let totalDays =
+    (new Date(completedDate) - new Date(createdAt)) / 1000 / 60 / 60 / 24;
+  let daysPassed = (new Date() - new Date(createdAt)) / 1000 / 60 / 60 / 24;
+  let percentage = (daysPassed / totalDays) * 100;
+  if (percentage < 0) return 100;
+  return Math.round(percentage);
+};
+
+const progressColors = (createdAt, completedDate) => {
+  let timeline = timelineBar(createdAt, completedDate);
+  if (timeline <= 25) return "primary";
+  if (timeline > 25 && timeline <= 50) return "info";
+  if (timeline > 50 && timeline <= 75) return "warning";
+  if (timeline > 75) return "danger";
+};
+
+export { Project, timelineBar, progressColors };

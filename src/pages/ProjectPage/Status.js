@@ -1,8 +1,8 @@
 import { useState } from "react";
-import SelectTaskStatus from "../Home/SelectTaskStatus";
+import SelectTaskStatus from "../../components/SelectTaskStatus";
 
 const Status = ({ progress, item_id, editItem }) => {
-  const [hover, setHover] = useState(false);
+  const [show, setShow] = useState(false);
   const selectOptions = [
     "Not Started",
     "In Progress",
@@ -11,14 +11,26 @@ const Status = ({ progress, item_id, editItem }) => {
     "Completed",
   ];
 
+  const progressColors = {
+    "Not Started": "#c9c7c1",
+    "In Progress": "#92a8d1",
+    Stuck: "#c94c4c",
+    "Awaiting Review": "#c4971a",
+    Completed: "#82b74b",
+  };
+
   const onSelect = (e) => {
     let editedObj = { progress: e.target.value };
     editItem(item_id, editedObj);
   };
 
   return (
-    <td onMouseOver={() => setHover(true)} onMouseOut={() => setHover(false)}>
-      {hover ? (
+    <td
+      onClick={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+      style={{ cursor: "pointer", backgroundColor: progressColors[progress] }}
+    >
+      {show ? (
         <span>
           <SelectTaskStatus
             selectOptions={selectOptions}

@@ -2,7 +2,7 @@ import { Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 
-import Project from "./Project";
+import { Project } from "./Project";
 import AddProjectForm from "./AddProjectForm";
 import axios from "axios";
 

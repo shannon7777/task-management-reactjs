@@ -17,11 +17,9 @@ const ProjectItemForm = ({
             <Form.Label>Project Item</Form.Label>
             <Form.Control
               className=""
-              // value={formData.item}
               value={item}
               type="item"
               name="item"
-              // onChange={onChange}
               onChange={(e) => setItem(e.target.value)}
             />
           </Form.Group>
@@ -32,9 +30,7 @@ const ProjectItemForm = ({
             <Form.Label>Set a deadline</Form.Label>
             <DatePicker
               className="btn btn-outline-dark shadow"
-              // onChange={(date) => setFormData({ ...formData, deadline: date })}
               onChange={(date) => setDeadline(date)}
-              // selected={formData.deadline}
               selected={deadline}
               value={deadline}
               dateFormat="MMMM d, yyyy"

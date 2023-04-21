@@ -1,6 +1,6 @@
 import { useState } from "react";
 import EditTask from "./EditTask";
-import SelectTaskStatus from "./SelectTaskStatus";
+import SelectTaskStatus from "../../components/SelectTaskStatus";
 import { Card, Row, Col, Badge } from "react-bootstrap";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";

@@ -13,6 +13,7 @@ const ProjectItem = ({
   editItem,
   deleteItem,
   onChange,
+  completion_date,
 }) => {
   const [owners, setOwners] = useState([]);
   useEffect(() => {
@@ -48,9 +49,9 @@ const ProjectItem = ({
           setOwners={setOwners}
         />
         <Deadline
-          deadline={projectItem?.deadline}
+          projectItem={projectItem}
           editItem={editItem}
-          item_id={projectItem?._id}
+          completion_date={completion_date}
         />
         <Status
           progress={projectItem?.progress}

@@ -45,6 +45,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     description: "",
     completion_date: project.completion_date,
   });
+  const [completionBar, setCompletionBar] = useState();
 
   useEffect(() => {
     fetchAllData();
@@ -132,7 +133,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       throw setError({ text: error.response.data.message });
     }
   };
-  
+
   const removeMember = async (membersArr) => {
     try {
       const { data } = await axios.put(
@@ -337,8 +338,8 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                   pathColor: "darkgreen",
                 })}
                 className="mx-5"
-                value={30}
-                text={`30%`}
+                value={completionBar}
+                text={`${completionBar} %`}
                 strokeWidth={12}
               />
             </div>
@@ -410,7 +411,11 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         </Card.Body>
       </Card>
 
-      <ProjectItems teamMembers={teamMembers?.map((member) => member.email)} />
+      <ProjectItems
+        teamMembers={teamMembers?.map((member) => member.email)}
+        completion_date={project.completion_date}
+        setCompletionBar={setCompletionBar}
+      />
     </>
   );
 };
