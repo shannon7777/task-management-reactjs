@@ -7,10 +7,10 @@ import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
 import ProjectItems from "./ProjectItems";
 import DatePicker from "react-datepicker";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-import { Badge, Card, Col, Form } from "react-bootstrap";
+import { Badge, Card, Col, Form, Row } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -153,6 +153,14 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const progressColors = () => {
+    if (completionBar <= 25) return "crimson";
+    if (completionBar > 25 && completionBar <= 50) return "Darkcyan";
+    if (completionBar > 50 && completionBar <= 75) return "Indianred";
+    if (completionBar > 75) return "olivedrab";
+    return "green";
+  };
+
   const editMembersModal = showEdit.users && (
     <EditMembersModal
       project_id={project_id}
@@ -167,7 +175,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
 
   return (
     <>
-      <Card className="m-3">
+      <Card className="my-3" style={{ borderColor: "white" }}>
         <h2>
           <Card.Header
             className="d-flex"
@@ -225,190 +233,217 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           </Card.Header>
         </h2>
 
-        <Card.Header
-          className="d-flex mb-3"
-          onMouseOver={() => setHover({ users: true })}
-          onMouseOut={() => setHover({ users: false })}
-        >
-          <FontAwesomeIcon className="p-2" icon={faUsersLine} size="xl" />
-          <Badge className="h-50 my-2" bg="success">
-            {teamMembers?.length}
-          </Badge>
-          <div className="vr mx-3" />
-          <span className="p-2">
-            {teamMembers &&
-              teamMembers.map((member, index) => (
-                <span key={index}>
-                  <TeamMembers
-                    className="profilePicNavbar"
-                    member_id={member._id}
-                  />
-                </span>
-              ))}
-          </span>
-          {hover.users && (
-            <FontAwesomeIcon
-              className="p-2 mt-1"
-              icon={faUserGear}
-              onClick={() => setShowEdit({ users: true })}
-              style={{ cursor: "pointer" }}
-            />
-          )}
-          {editMembersModal}
-          <p className="ms-auto">
-            <strong>Project Owner:</strong> {projectOwner} {ownedByUser}
-          </p>
-        </Card.Header>
-
-        <Card.Body className="d-flex my-auto">
-          <Col
-            md={4}
-            onMouseOver={() => setHover({ description: true })}
-            onMouseOut={() => setHover({ description: false })}
-          >
-            <h6>
-              <strong>
-                <Badge className="shadow" bg="dark">
-                  Project Description
+        <Row>
+          <Col className="m-3 rounded shadow">
+            {/* <Card> */}
+            <Card.Body className="p-4">
+              <Card.Title>TEAM MEMBERS</Card.Title>
+              <Card.Text
+                className="mt-3"
+                onMouseOver={() => setHover({ users: true })}
+                onMouseOut={() => setHover({ users: false })}
+              >
+                <FontAwesomeIcon
+                  className="px-2"
+                  icon={faUsersLine}
+                  size="xl"
+                />
+                <Badge className="h-50 my-2" bg="success">
+                  {teamMembers?.length}
                 </Badge>
-              </strong>
-            </h6>
-
-            {showEdit.description ? (
-              <Form className="d-flex">
-                <Form.Control
-                  className="w-100 h-50"
-                  type="text"
-                  name="description"
-                  value={formData.description}
-                  onChange={onChange}
-                  size="sm"
-                ></Form.Control>
-                <FontAwesomeIcon
-                  className="my-auto mx-3"
-                  icon={faCircleCheck}
-                  onClick={editProject}
-                  style={{ cursor: "pointer" }}
-                  size="lg"
-                  type="submit"
-                />
-                <FontAwesomeIcon
-                  className="my-auto"
-                  icon={faXmark}
-                  onClick={() => setShowEdit({ description: false })}
-                  style={{ cursor: "pointer" }}
-                  size="lg"
-                />
-              </Form>
-            ) : (
-              <div className="d-flex">
-                <p>{project?.description}</p>
-                {hover.description && (
+                <span className="vr mx-3" />
+                <span className="p-2">
+                  {teamMembers &&
+                    teamMembers.map((member, index) => (
+                      <span key={index}>
+                        <TeamMembers
+                          className="profilePicNavbar"
+                          member_id={member._id}
+                        />
+                      </span>
+                    ))}
+                </span>
+                {hover.users && (
                   <FontAwesomeIcon
-                    className="mx-3"
-                    icon={faPenToSquare}
-                    onClick={() => setShowEdit({ description: true })}
-                    size="lg"
+                    className=""
+                    icon={faUserGear}
+                    onClick={() => setShowEdit({ users: true })}
                     style={{ cursor: "pointer" }}
                   />
                 )}
-              </div>
-            )}
-          </Col>
-
-          <Col md={2}>
-            <Badge bg="dark">Priority:</Badge>
-            <span className="mx-2">
-              {[...Array(project?.priority)].map((star, index) => (
-                <FontAwesomeIcon
-                  icon={faStar}
-                  key={index}
-                  color={ratingColors[project?.priority]}
-                />
-              ))}
-            </span>
-          </Col>
-
-          <Col md={2}>
-            <div style={{ width: "20%" }}>
-              <CircularProgressbar
-                styles={buildStyles({
-                  textColor: "black",
-                  textSize: "2rem",
-                  pathColor: "darkgreen",
-                })}
-                className="mx-5"
-                value={completionBar}
-                text={`${completionBar} %`}
-                strokeWidth={12}
-              />
-            </div>
-          </Col>
-
-          <Col
-            md={4}
-            onMouseOver={() => setHover({ datePicker: true })}
-            onMouseOut={() => setHover({ datePicker: false })}
-          >
-            <h6 className="mx-2">
-              <strong>
-                <Badge className="shadow" bg="success">
-                  Date of completion
+                {editMembersModal}
+              </Card.Text>
+              <Card.Text>
+                <Badge bg="dark" className="ms-auto">
+                  Project Owner:
                 </Badge>
-                <FontAwesomeIcon
-                  className="mx-1"
-                  icon={faCalendarCheck}
-                  onClick={() => setShowEdit({ datePicker: true })}
-                  size="lg"
-                />
-                <span
-                  className="mx-2"
-                  onClick={() => setShowEdit({ datePicker: true })}
-                  style={{ cursor: "pointer" }}
-                >
-                  {project?.completion_date}
-                  {hover.datePicker && (
+                {projectOwner} {ownedByUser}
+              </Card.Text>
+            </Card.Body>
+            {/* </Card> */}
+          </Col>
+
+          <Col className="m-3 rounded shadow">
+            {/* <Card> */}
+            <Card.Body className="p-4">
+              <Card.Title>PROJECT DETAILS</Card.Title>
+              <Card.Text
+                className="d-flex justify-content-between"
+                onMouseOver={() => setHover({ description: true })}
+                onMouseOut={() => setHover({ description: false })}
+              >
+                <span className="d-flex">
+                  <Badge bg="dark">Description :</Badge>
+
+                  {hover.description && (
                     <FontAwesomeIcon
-                      className="mx-2"
-                      icon={faSquarePen}
+                      className="mx-3"
+                      icon={faPenToSquare}
+                      onClick={() => setShowEdit({ description: true })}
                       size="lg"
+                      style={{ cursor: "pointer" }}
                     />
                   )}
                 </span>
-              </strong>
-              {showEdit.datePicker && (
-                <>
-                  <DatePicker
-                    className="btn btn-outline-success shadow my-2"
-                    selected={formData.completion_date}
-                    value={formData.completion_date}
-                    onChange={(date) =>
-                      setFormData({ ...formData, completion_date: date })
-                    }
-                    dateFormat="MMMM d, yyyy"
-                    minDate={new Date()}
-                    showPopperArrow={false}
-                    placeholderText="Change project date"
-                  />
+
+                <span className="d-flex">
+                  <Badge className="mx-3" bg="dark">
+                    Priority :
+                  </Badge>
+                  {[...Array(project?.priority)].map((star, index) => (
+                    <FontAwesomeIcon
+                      icon={faStar}
+                      key={index}
+                      color={ratingColors[project?.priority]}
+                    />
+                  ))}
+                </span>
+              </Card.Text>
+
+              {showEdit.description ? (
+                <Form className="d-flex mb-3">
+                  <Form.Control
+                    className="w-100 h-50"
+                    type="text"
+                    name="description"
+                    value={formData.description}
+                    onChange={onChange}
+                    size="sm"
+                  ></Form.Control>
                   <FontAwesomeIcon
                     className="my-auto mx-3"
                     icon={faCircleCheck}
                     onClick={editProject}
                     style={{ cursor: "pointer" }}
                     size="lg"
+                    type="submit"
                   />
                   <FontAwesomeIcon
                     className="my-auto"
                     icon={faXmark}
-                    onClick={() => setShowEdit({ datePicker: false })}
+                    onClick={() => setShowEdit({ description: false })}
                     style={{ cursor: "pointer" }}
                     size="lg"
                   />
-                </>
+                </Form>
+              ) : (
+                <p>{project.description}</p>
               )}
-            </h6>
+
+              {/* <div style={{ width: "25%" }}>
+                  <CircularProgressbar
+                    styles={buildStyles({
+                      textColor: "black",
+                      textSize: "2rem",
+                      pathColor: progressColors(),
+                    })}
+                    className="mx-5"
+                    value={completionBar}
+                    text={`${completionBar} %`}
+                    strokeWidth={12}
+                  />
+                </div> */}
+
+              <span
+                className=""
+                onMouseOver={() => setHover({ datePicker: true })}
+                onMouseOut={() => setHover({ datePicker: false })}
+              >
+                <strong>
+                  <Badge className="shadow" bg="dark">
+                    Date of completion :
+                  </Badge>
+                  <FontAwesomeIcon
+                    className="mx-2"
+                    icon={faCalendarCheck}
+                    onClick={() => setShowEdit({ datePicker: true })}
+                    size="lg"
+                  />
+                  <span
+                    className="mx-2"
+                    onClick={() => setShowEdit({ datePicker: true })}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {project?.completion_date}
+                    {hover.datePicker && (
+                      <FontAwesomeIcon
+                        className="mx-2"
+                        icon={faSquarePen}
+                        size="lg"
+                      />
+                    )}
+                  </span>
+                </strong>
+
+                {/* <div style={{ width: "10%" }}>
+                  <CircularProgressbar
+                    styles={buildStyles({
+                      textColor: "black",
+                      textSize: "1.8rem",
+                      pathColor: progressColors(),
+                    })}
+                    // className="mx-5"
+                    value={completionBar}
+                    text={`${completionBar} %`}
+                    strokeWidth={12}
+                  />
+                </div> */}
+
+                {showEdit.datePicker && (
+                  <span>
+                    <DatePicker
+                      className="btn btn-outline-success shadow my-2"
+                      selected={formData.completion_date}
+                      value={formData.completion_date}
+                      onChange={(date) =>
+                        setFormData({ ...formData, completion_date: date })
+                      }
+                      dateFormat="MMMM d, yyyy"
+                      minDate={new Date()}
+                      showPopperArrow={false}
+                      placeholderText="Change project date"
+                    />
+                    <FontAwesomeIcon
+                      className="my-auto mx-3"
+                      icon={faCircleCheck}
+                      onClick={editProject}
+                      style={{ cursor: "pointer" }}
+                      size="lg"
+                    />
+                    <FontAwesomeIcon
+                      className="my-auto"
+                      icon={faXmark}
+                      onClick={() => setShowEdit({ datePicker: false })}
+                      style={{ cursor: "pointer" }}
+                      size="lg"
+                    />
+                  </span>
+                )}
+              </span>
+            </Card.Body>
+            {/* </Card> */}
           </Col>
-        </Card.Body>
+        </Row>
       </Card>
 
       <ProjectItems

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Modal, Button, ProgressBar } from "react-bootstrap";
 import TeamMembers from "../../components/TeamMember";
@@ -47,15 +46,6 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
     <FontAwesomeIcon className="mx-2" icon={faTriangleExclamation} size="lg" />
   );
 
-  // const progressColors = () => {
-  //   if (timelineBar() <= 25) return "primary";
-  //   if (timelineBar() > 25 && timelineBar() <= 50) return "info";
-  //   if (timelineBar() > 50 && timelineBar() <= 75) return "warning";
-  //   if (timelineBar() > 75) return "danger";
-  // };
-
-  // const completionBar = () => {};
-
   const deleteProjectModal = (
     <Modal
       centered
@@ -91,7 +81,7 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
     >
       <Row>
         <Col md={8}>
-          <Link className="project-link" to={`/team-projects/${project._id}`}>
+          <Link className="project-link" to={`${project._id}`}>
             <section>
               <Card.Title>{project.title}</Card.Title>
               <span className="d-flex">

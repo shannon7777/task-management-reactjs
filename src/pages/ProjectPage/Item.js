@@ -8,12 +8,12 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
+const Item = ({ projectItem, editItem, deleteItem }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [hover, onHover] = useState(false);
   const [item, setItem] = useState("");
   const edit = (id) => {
-    editItem(id);
+    editItem(id, { item });
     setShowEdit((prev) => !prev);
   };
 
@@ -41,19 +41,18 @@ const Item = ({ projectItem, editItem, deleteItem, onChange }) => {
           />
         </Form>
       ) : (
-        <div className="d-flex">
-          <p className="mr-auto">{projectItem?.item}</p>
+        <div className="d-flex justify-content-between">
+          <p>{projectItem?.item}</p>
           {hover && (
             <span className="">
               <FontAwesomeIcon
-                className=""
+                className="mx-2"
                 icon={faEdit}
                 onClick={() => setShowEdit((prev) => !prev)}
                 size="lg"
                 style={{ cursor: "pointer" }}
               />
               <FontAwesomeIcon
-                className="mx-3"
                 icon={faXmark}
                 onClick={() => deleteItem(projectItem._id)}
                 size="lg"

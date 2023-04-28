@@ -5,10 +5,10 @@ import TeamMembers from "../../components/TeamMember";
 import EditOwnersModal from "./EditOwnersModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsersLine } from "@fortawesome/free-solid-svg-icons";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
 
 const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
-  const [hover, onHover] = useState(false);
+  const [hover, setHover] = useState(false);
   const [showEditOwner, setShowEditOwner] = useState(false);
 
   const addOwners = async (ownerArr) => {
@@ -39,17 +39,11 @@ const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
   };
 
   return (
-    <td onMouseOver={() => onHover(true)} onMouseOut={() => onHover(false)}>
-      {hover && (
-        <span>
-          <FontAwesomeIcon
-            icon={faUsersLine}
-            onClick={() => setShowEditOwner(true)}
-            style={{ cursor: "pointer" }}
-          />
-        </span>
-      )}
-      <span className="">
+    <td
+      onMouseOver={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <span className="d-flex justify-content-between">
         {showEditOwner && (
           <EditOwnersModal
             owners={owners?.map((owner) => owner.email)}
@@ -60,12 +54,20 @@ const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
             removeOwners={removeOwners}
           />
         )}
-      </span>
-      {owners?.map((owner, index) => (
-        <span key={index}>
-          <TeamMembers member_id={owner._id} />
+        <span>
+          {owners?.map((owner, index) => (
+            <span key={index}>
+              <TeamMembers member_id={owner._id} />
+            </span>
+          ))}
         </span>
-      ))}
+        <FontAwesomeIcon
+          className="mt-2"
+          icon={faUsers}
+          onClick={() => setShowEditOwner(true)}
+          style={{ cursor: "pointer", color: !hover && "#d0d8e7" }}
+        />
+      </span>
     </td>
   );
 };

@@ -187,7 +187,7 @@ const Dashboard = ({ tasks }) => {
   ];
 
   return (
-    <Card className="p-3 m-4 bg-white">
+    <Card className="p-3 m-4">
       <Card.Title className="text-uppercase text-center">
         Analytics for Personal Tasks
       </Card.Title>
@@ -202,7 +202,10 @@ const Dashboard = ({ tasks }) => {
 
       <Row>
         {/* PROGRESS BAR */}
-        <Col className="border border-muted rounded shadow m-3">
+        <Col
+          className="border border-muted rounded shadow m-3 text-white"
+          style={{ backgroundColor: "rgb(27, 29, 66)" }}
+        >
           <Col className="m-3">
             {colors.map((i, index) => {
               return (
@@ -219,7 +222,10 @@ const Dashboard = ({ tasks }) => {
           <ProgressBar progressBarDataTest={progressBarDataTest} />
         </Col>
         {/* PIE CHART */}
-        <Col className="border border-muted rounded shadow m-3">
+        <Col
+          className="border border-muted rounded shadow m-3"
+          style={{ backgroundColor: "rgb(27, 29, 66)" }}
+        >
           <PieChart
             pieChartData={pieChartData}
             pieChartColors={pieChartColors}
@@ -231,7 +237,10 @@ const Dashboard = ({ tasks }) => {
 
       <Row>
         {/* BAR CHART FOR COMPLETED TASKS */}
-        <Col className="border border-muted rounded shadow m-3">
+        <Col
+          className="border border-muted rounded shadow m-3"
+          style={{ backgroundColor: "rgb(27, 29, 66)" }}
+        >
           <BarChartCompletedTasks
             barChartDataCompleted={barChartDataCompleted}
           />

@@ -23,6 +23,7 @@ const Notes = ({ editItem, projectItem, ownerIds }) => {
   const createNote = async (e) => {
     e.preventDefault();
     const noteObj = { note: formData, user_id: user._id };
+    if (!formData) return;
     try {
       const {
         data: { newNote, message },

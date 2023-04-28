@@ -8,6 +8,7 @@ import { Table } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 
 const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
   const [projectItems, setProjectItems] = useState([]);
@@ -18,15 +19,13 @@ const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
 
   useEffect(() => {
     fetchProjectItems();
-    if (projectItems) {
-      completionPercentage();
-    }
   }, []);
 
   const fetchProjectItems = async () => {
     try {
       const { data } = await axios(`projectItems/${project_id}`);
       setProjectItems(data.projectItems);
+      setCompletionBar(completionPercentage(data.projectItems));
     } catch (error) {
       console.log(error.response.data.message);
     }
@@ -78,22 +77,15 @@ const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
     }
   };
 
-  const completionPercentage = () => {
+  const completionPercentage = (projectItems) => {
     let completedItems = projectItems?.filter(
-      (item) => item?.progress === "Completed"
+      (item) => item.progress === "Completed"
     ).length;
-    let totalItems = projectItems?.length;
+    let totalItems = projectItems.length;
     let percentage = Math.round((completedItems / totalItems) * 100);
-    console.log(percentage);
-    return setCompletionBar(percentage);
-    // return percentage;
+    if (!completedItems) return 0;
+    return percentage;
   };
-
-  // const completionPercentage = projectItems && Math.round((projectItems?.filter(
-  //   (item) => item?.progress === "Completed"
-  // ).length / projectItems?.length) * 100)
-
-  // console.log(completionPercentage);
 
   const projectHeaders = [
     "Project Item",
@@ -105,6 +97,19 @@ const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
 
   return (
     <>
+      {/* <span>
+        <CircularProgressbar
+          styles={buildStyles({
+            textColor: "black",
+            textSize: "2rem",
+            pathColor: "darkgreen",
+          })}
+          className="mx-5"
+          value={completionPercentage()}
+          text={`${completionPercentage()} %`}
+          strokeWidth={12}
+        />
+      </span> */}
       <Table className="mt-5 border rounded" variant="" striped bordered hover>
         <thead className="w-auto mw-100">
           <tr>

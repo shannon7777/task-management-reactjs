@@ -12,7 +12,6 @@ const ProjectItem = ({
   teamMembers,
   editItem,
   deleteItem,
-  onChange,
   completion_date,
 }) => {
   const [owners, setOwners] = useState([]);
@@ -40,7 +39,6 @@ const ProjectItem = ({
           projectItem={projectItem}
           editItem={editItem}
           deleteItem={deleteItem}
-          onChange={onChange}
         />
         <Owners
           item_id={projectItem?._id}

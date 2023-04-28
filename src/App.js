@@ -182,7 +182,7 @@ const App = () => {
           />
           <Route
             path="/login"
-            element={<Login setNotify={setNotify} setError={setError} />}
+            element={<Login {...{ setNotify, setError }} />}
           />
 
           {/* PROTECTED ROUTES THAT NEED AUTHENTICATION */}
