@@ -5,7 +5,6 @@ import { Col, ProgressBar, Row } from "react-bootstrap";
 import { timelineBar, progressColors } from "../Projectlist/Project";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFlag } from "@fortawesome/free-solid-svg-icons";
 
 const Deadline = ({ editItem, projectItem, completion_date }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -36,7 +35,6 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
         ) : (
           <>
             <Col
-              md={8}
               onClick={() => setShowDatePicker((prev) => !prev)}
               style={{ cursor: "pointer" }}
             >
@@ -46,9 +44,6 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
                 animated
                 now={timelineBar(createdAt, deadline)}
               />
-            </Col>
-            <Col md={4}>
-              <FontAwesomeIcon className="mx-3" icon={faFlag} />
             </Col>
           </>
         )}

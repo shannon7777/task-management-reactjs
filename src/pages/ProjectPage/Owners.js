@@ -5,7 +5,7 @@ import TeamMembers from "../../components/TeamMember";
 import EditOwnersModal from "./EditOwnersModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faUsersGear } from "@fortawesome/free-solid-svg-icons";
 
 const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
   const [hover, setHover] = useState(false);
@@ -63,7 +63,7 @@ const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
         </span>
         <FontAwesomeIcon
           className="mt-2"
-          icon={faUsers}
+          icon={faUsersGear}
           onClick={() => setShowEditOwner(true)}
           style={{ cursor: "pointer", color: !hover && "#d0d8e7" }}
         />

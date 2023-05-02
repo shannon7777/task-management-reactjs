@@ -4,11 +4,18 @@ import DatePicker from "react-datepicker";
 const ProjectItemForm = ({
   deadline,
   setDeadline,
-  onSubmit,
-  setShowAddProjectItem,
+  createProjectItem,
+  setShowForm,
   item,
-  setItem
+  setItem,
+  category_id,
 }) => {
+  const onSubmit = (e) => {
+    e.preventDefault();
+    createProjectItem(category_id);
+    setShowForm((prev) => !prev);
+  };
+
   return (
     <Form className="m-3">
       <Row>
@@ -16,9 +23,8 @@ const ProjectItemForm = ({
           <Form.Group className="my-3" controlId="formItem">
             <Form.Label>Project Item</Form.Label>
             <Form.Control
-              className=""
               value={item}
-              type="item"
+              type="text"
               name="item"
               onChange={(e) => setItem(e.target.value)}
             />
@@ -52,7 +58,7 @@ const ProjectItemForm = ({
       <Button
         className="mx-3"
         variant="danger"
-        onClick={() => setShowAddProjectItem((prev) => !prev)}
+        onClick={() => setShowForm(false)}
       >
         Cancel
       </Button>

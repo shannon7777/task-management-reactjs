@@ -1,49 +1,65 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import ProjectItem from "./ProjectItem";
-import ProjectItemForm from "./ProjectItemForm";
-
-import { Table } from "react-bootstrap";
+import CategoryForm from "./CategoryForm";
+import Category from "./Category";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
+const ProjectItems = ({ teamMembers, completion_date }) => {
+  const [categories, setCategories] = useState([]);
   const [projectItems, setProjectItems] = useState([]);
-  const [showAddProjectItem, setShowAddProjectItem] = useState(false);
+  const [categoryTitle, setCategoryTitle] = useState("");
   const [item, setItem] = useState("");
   const [deadline, setDeadline] = useState(new Date());
+  const [showForm, setShowForm] = useState(false);
+  const [hover, setHover] = useState(false);
   const { project_id } = useParams();
 
   useEffect(() => {
-    fetchProjectItems();
+    fetchAllData();
   }, []);
 
-  const fetchProjectItems = async () => {
+  const fetchAllData = async () => {
     try {
-      const { data } = await axios(`projectItems/${project_id}`);
-      setProjectItems(data.projectItems);
-      setCompletionBar(completionPercentage(data.projectItems));
+      const [fetchedProjectItems, fetchedCategories] = await Promise.all([
+        axios(`projectItems/${project_id}`),
+        axios(`projectItems/category/${project_id}`),
+      ]);
+      setCategories(fetchedCategories.data.categories);
+      setProjectItems(fetchedProjectItems.data.projectItems);
     } catch (error) {
       console.log(error.response.data.message);
     }
   };
 
-  const createProjectItem = async (e) => {
-    e.preventDefault();
+  const createCategory = async () => {
+    try {
+      const { data } = await axios.post(`projectItems/category/${project_id}`, {
+        title: categoryTitle,
+      });
+      setCategories((prev) => [...prev, data.newCategory]);
+      setShowForm((prev) => !prev);
+      setCategoryTitle("");
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const createProjectItem = async (category_id) => {
+    console.log(category_id);
     if (!item) return;
     const createdItem = {
       item,
       deadline: deadline.toDateString(),
+      category_id,
     };
     try {
       const { data } = await axios.post(
         `projectItems/${project_id}`,
         createdItem
       );
-      setShowAddProjectItem((prev) => !prev);
       setItem("");
       setDeadline(new Date());
       setProjectItems([...projectItems, data.projectItem]);
@@ -77,15 +93,19 @@ const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
     }
   };
 
-  const completionPercentage = (projectItems) => {
-    let completedItems = projectItems?.filter(
-      (item) => item.progress === "Completed"
-    ).length;
-    let totalItems = projectItems.length;
-    let percentage = Math.round((completedItems / totalItems) * 100);
-    if (!completedItems) return 0;
-    return percentage;
-  };
+  // const completionPercentage = (projectItems) => {
+  //   let completedItems = projectItems?.filter(
+  //     (item) => item.progress === "Completed"
+  //   ).length;
+  //   let totalItems = projectItems.length;
+  //   let percentage = Math.round((completedItems / totalItems) * 100);
+  //   if (!completedItems) return 0;
+  //   return percentage;
+  // };
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
   const projectHeaders = [
     "Project Item",
@@ -97,59 +117,48 @@ const ProjectItems = ({ teamMembers, completion_date, setCompletionBar }) => {
 
   return (
     <>
-      {/* <span>
-        <CircularProgressbar
-          styles={buildStyles({
-            textColor: "black",
-            textSize: "2rem",
-            pathColor: "darkgreen",
-          })}
-          className="mx-5"
-          value={completionPercentage()}
-          text={`${completionPercentage()} %`}
-          strokeWidth={12}
+      <div
+      className="my-5"
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
+        style={{ cursor: "pointer" }}
+      >
+        <FontAwesomeIcon
+          icon={faCirclePlus}
+          style={{
+            color: !hover && "rgb(192,191,191)",
+          }}
+          size="xl"
+          onClick={() => setShowForm(true)}
         />
-      </span> */}
-      <Table className="mt-5 border rounded" variant="" striped bordered hover>
-        <thead className="w-auto mw-100">
-          <tr>
-            {projectHeaders.map((header, index) => (
-              <th key={index}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        {projectItems &&
-          projectItems?.map((projectItem, index) => (
-            <ProjectItem
-              key={index}
-              projectItem={projectItem}
-              teamMembers={teamMembers}
-              editItem={editItem}
-              deleteItem={deleteItem}
-              completion_date={completion_date}
-            />
-          ))}
-      </Table>
-
-      {showAddProjectItem && (
-        <ProjectItemForm
-          setShowAddProjectItem={setShowAddProjectItem}
-          onSubmit={createProjectItem}
-          deadline={deadline}
-          setDeadline={setDeadline}
-          item={item}
-          setItem={setItem}
+        <span className="mx-2">Create Category</span>
+      </div>
+      {showForm && (
+        <CategoryForm
+          {...{ createCategory, setShowForm, setCategoryTitle, categoryTitle }}
         />
       )}
-      <span className="d-flex m-3">
-        <FontAwesomeIcon
-          icon={faSquarePlus}
-          size="xl"
-          style={{ cursor: "pointer" }}
-          onClick={() => setShowAddProjectItem(true)}
-        />
-        <p className="mx-2">Add Item</p>
-      </span>
+
+      {categories.map((category) => (
+        <div key={`category-${category._id}`}>
+          <Category
+            {...{
+              category,
+              projectItems,
+              teamMembers,
+              createProjectItem,
+              completion_date,
+              editItem,
+              deleteItem,
+              projectHeaders,
+              item,
+              setItem,
+              deadline,
+              setDeadline,
+            }}
+          />
+        </div>
+      ))}
     </>
   );
 };

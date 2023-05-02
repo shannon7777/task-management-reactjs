@@ -45,7 +45,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     description: "",
     completion_date: project.completion_date,
   });
-  const [completionBar, setCompletionBar] = useState();
 
   useEffect(() => {
     fetchAllData();
@@ -153,13 +152,13 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const progressColors = () => {
-    if (completionBar <= 25) return "crimson";
-    if (completionBar > 25 && completionBar <= 50) return "Darkcyan";
-    if (completionBar > 50 && completionBar <= 75) return "Indianred";
-    if (completionBar > 75) return "olivedrab";
-    return "green";
-  };
+  // const progressColors = () => {
+  //   if (completionBar <= 25) return "crimson";
+  //   if (completionBar > 25 && completionBar <= 50) return "Darkcyan";
+  //   if (completionBar > 50 && completionBar <= 75) return "Indianred";
+  //   if (completionBar > 75) return "olivedrab";
+  //   return "green";
+  // };
 
   const editMembersModal = showEdit.users && (
     <EditMembersModal
@@ -449,7 +448,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       <ProjectItems
         teamMembers={teamMembers?.map((member) => member.email)}
         completion_date={project.completion_date}
-        setCompletionBar={setCompletionBar}
+        // setCompletionBar={setCompletionBar}
       />
     </>
   );
