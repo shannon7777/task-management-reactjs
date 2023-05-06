@@ -9,6 +9,8 @@ import { faSquarePlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const Category = ({
   category,
+  editCategory,
+  setCategoryTitle,
   projectItems,
   createProjectItem,
   teamMembers,
@@ -22,12 +24,20 @@ const Category = ({
   setDeadline,
 }) => {
   const [showForm, setShowForm] = useState(false);
-  const [hover, setHover] = useState(false);
+  // const [hover, setHover] = useState(false);
   return (
     <>
-      <h5 className="" key={`category-${category._id}`}>
-        {category.title}
-      </h5>
+      <h6>
+        <p
+          className="blackbadge"
+          contentEditable={true}
+          suppressContentEditableWarning={true}
+          onInput={(e) => setCategoryTitle(e.target.innerHTML)}
+          onBlur={() => editCategory(category._id)}
+        >
+          {category.title}
+        </p>
+      </h6>
       <Table
         key={`table-${category._id}`}
         className=" shadow"

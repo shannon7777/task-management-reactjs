@@ -1,5 +1,12 @@
 import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
+import {
+  fetchAllTasks,
+  createTask,
+  updateTask,
+  removeTask,
+} from "../../services/task";
+import useAuth from "../../hooks/useAuth";
 
 import Header from "./Header";
 import AddTask from "./AddTask";
@@ -19,6 +26,31 @@ const Home = ({
   setFormData,
   onChange,
 }) => {
+  // const {
+  //   auth,
+  //   auth: { user },
+  // } = useAuth();
+
+  // useEffect(() => {
+  //   if (user) getTasks();
+  // }, [auth]);
+
+  // const getTasks = () => {
+  //   fetchAllTasks(user._id, setTasks);
+  // };
+
+  // const addTask = async (e) => {
+  //   e.preventDefault();
+  //   createTask(taskProps, setNotifications);
+  // };
+
+  // const editTask = async (id, editedTask) => {
+  //   updateTask(id, editedTask, taskProps, setNotifications);
+  // };
+
+  // const deleteTask = async (id) => {
+  //   removeTask(id, taskProps, setNotifications);
+  // };
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
   const colorStatus = {
     "New Task": "#92a8d1",
@@ -56,11 +88,7 @@ const Home = ({
       {tasks
         .filter((task) => task.progress === progress)
         .map((task) => (
-          <Task
-            key={`task-${task._id}`}
-            task={task}
-            {...taskProps}
-          />
+          <Task key={`task-${task._id}`} task={task} {...taskProps} />
         ))}
     </Col>
   ));

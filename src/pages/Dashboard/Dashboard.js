@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 
 import BarChartDueTasks from "./BarChartDueTasks";
@@ -5,8 +6,13 @@ import BarChartCompletedTasks from "./BarChartCompletedTasks";
 import PieChart from "./PieChart";
 import ProgressBar from "./ProgressBar";
 
-const Dashboard = ({ tasks }) => {
-  //  ----- DATA ANALYTICS ----
+const Dashboard = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    let allTasks = JSON.parse(localStorage.getItem("tasks"));
+    setTasks(allTasks);
+  }, []);
 
   // ---- PIE CHART DATA -----
   const totalNew = tasks.filter(({ progress }) => progress === "New Task");

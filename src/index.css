@@ -244,14 +244,27 @@ body {
   transform: scale(1.2);
 }
 
-.edit-project-button {
-  /* opacity: 0.7; */
-  cursor: pointer;
-}
-
 .btn-star {
   background-color: transparent;
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.no-tableRadius {
+  border-radius: 0px !important;
+}
+
+.tableRadius{
+  border-radius: 10px !important;
+}
+
+.blackbadge {
+  border: 1px black solid;
+  border-radius: 7px;
+  background-color: black;
+  color: white;
+  padding: 0.3rem;
+  width: fit-content;
+  height: fit-content;
 }

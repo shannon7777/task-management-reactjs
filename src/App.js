@@ -17,6 +17,12 @@ import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
 import axios from "axios";
+import {
+  fetchAllTasks,
+  createTask,
+  removeTask,
+  updateTask,
+} from "./services/task";
 
 const App = () => {
   const {
@@ -45,75 +51,36 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (user) fetchAllTasks();
+    if (user) getTasks();
   }, [auth]);
 
-  const fetchAllTasks = async () => {
-    try {
-      const {
-        status,
-        data: { tasks },
-      } = await axios(`/tasks/${user._id}`);
-      if (status === 200) setTasks(tasks);
-    } catch (error) {
-      console.log(error.message);
-    }
+  const taskProps = {
+    formData,
+    setFormData,
+    dateToComplete,
+    setTasks,
+  };
+  const setNotifications = {
+    setError,
+    setNotify,
+    setInfo,
   };
 
-  // Add Task
+  const getTasks = () => {
+    fetchAllTasks(user._id, setTasks);
+  };
+
   const addTask = async (e) => {
     e.preventDefault();
-    const task = {
-      ...formData,
-      dateToComplete: dateToComplete
-        ? dateToComplete.toDateString()
-        : `No completion date has been set`,
-    };
-    if (!formData.text)
-      throw setInfo({
-        text: `Fill in the task form in order to add a task`,
-      });
-    try {
-      const {
-        data: { newTask, message },
-      } = await axios.post("/tasks", task);
-      setTasks([...tasks, newTask]);
-      setNotify({ text: message });
-      setFormData({ text: "", description: "", progress: "" });
-    } catch (error) {
-      setError({ text: error.response.data.message });
-    }
+    createTask(taskProps, setNotifications);
   };
 
-  // Deleting a task
-  const deleteTask = async (id) => {
-    try {
-      const {
-        data: { message },
-        status,
-      } = await axios.delete(`tasks/${id}`);
-      if (status === 401) throw setError({ text: message });
-      setNotify({ text: message });
-      return setTasks(tasks.filter((task) => task._id !== id));
-    } catch (error) {
-      setError({ text: error.message });
-    }
-  };
-
-  // Editing a specific task and/or a date
   const editTask = async (id, editedTask) => {
-    console.log(editedTask);
-    try {
-      const {
-        status,
-        data: { updatedTask, message },
-      } = await axios.put(`/tasks/${id}`, editedTask);
-      if (status === 400) throw setError({ text: message });
-      setNotify({ text: message });
-      setTasks(tasks.map((task) => (task._id === id ? updatedTask : task)));
-    } catch (error) {
-      setError(error.message);
-    }
+    updateTask(id, editedTask, taskProps, setNotifications);
+  };
+
+  const deleteTask = async (id) => {
+    removeTask(id, taskProps, setNotifications);
   };
 
   const onChange = (e) => {
@@ -124,7 +91,6 @@ const App = () => {
     });
   };
 
-  // Toggling add task form
   const onAdd = () => {
     setShowAddTask(!showAddTask);
   };
@@ -160,12 +126,6 @@ const App = () => {
     notificationMsg,
     infoMsg,
     errorMsg,
-  };
-
-  const setNotifications = {
-    setError,
-    setNotify,
-    setInfo,
   };
 
   return (
@@ -216,9 +176,13 @@ const App = () => {
               />
             </Route>
 
-            {/* <Route element={<RequireAuth />}> */}
-            <Route path="/dashboard" element={<Dashboard tasks={tasks} />} />
-            {/* </Route> */}
+            <Route element={<RequireAuth />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+
+            {/* <Route element={<RequireAuth />}>
+                <Route path="/projectItem" element={}/>
+            </Route> */}
 
             <Route path="team-projects" element={<RequireAuth />}>
               <Route index element={<ProjectList {...setNotifications} />} />

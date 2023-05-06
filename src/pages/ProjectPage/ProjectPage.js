@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
@@ -148,8 +148,21 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onChangeEdit = (e) => {
+    // must use e.target.getAttribute('name') if you are using anything other than <input> of <form> tags
+    setFormData({
+      ...formData,
+      [e.target.getAttribute("name")]: e.target.innerHTML,
+    });
+  };
+
+  const disableNewlines = (e) => {
+    const keyCode = e.keyCode || e.which;
+
+    if (keyCode === 13) {
+      e.returnValue = false;
+      if (e.preventDefault) e.preventDefault();
+    }
   };
 
   // const progressColors = () => {
@@ -190,43 +203,25 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
               />
             </Col>
             <Col className="d-flex mx-auto" md={8}>
-              {showEdit.title ? (
-                <Form className="d-flex">
-                  <Form.Control
-                    className="w-100 h-50 my-auto"
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={onChange}
-                  ></Form.Control>
-                  <FontAwesomeIcon
-                    className="my-auto mx-3"
-                    icon={faCircleCheck}
-                    onClick={editProject}
-                    style={{ cursor: "pointer" }}
-                    type="submit"
-                  />
-
-                  <FontAwesomeIcon
-                    className="my-auto"
-                    icon={faXmark}
-                    onClick={() => setShowEdit({ title: false })}
-                    style={{ cursor: "pointer" }}
-                    type="button"
-                  />
-                </Form>
-              ) : (
-                <p>
-                  {project?.title}{" "}
-                  {hover.title && (
-                    <FontAwesomeIcon
-                      className="edit-project-button"
-                      icon={faPenToSquare}
-                      size="sm"
-                      onClick={() => setShowEdit({ title: true })}
-                    />
-                  )}
-                </p>
+              <p
+                suppressContentEditableWarning={true}
+                contentEditable={true}
+                onBlur={editProject}
+                onInput={onChangeEdit}
+                onKeyDown={disableNewlines}
+                value={formData.title}
+                name="title"
+                type="text"
+                style={{ cursor: "pointer" }}
+              >
+                {project.title}
+              </p>
+              {hover.title && (
+                <FontAwesomeIcon
+                  className="m-2"
+                  icon={faPenToSquare}
+                  size="sm"
+                />
               )}
             </Col>
           </Card.Header>
@@ -286,11 +281,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
             {/* <Card> */}
             <Card.Body className="p-4">
               <Card.Title>PROJECT DETAILS</Card.Title>
-              <Card.Text
-                className="d-flex justify-content-between"
-                onMouseOver={() => setHover({ description: true })}
-                onMouseOut={() => setHover({ description: false })}
-              >
+              <Card.Text className="d-flex justify-content-between">
                 <span className="d-flex">
                   <Badge bg="dark">Description :</Badge>
 
@@ -298,7 +289,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                     <FontAwesomeIcon
                       className="mx-3"
                       icon={faPenToSquare}
-                      onClick={() => setShowEdit({ description: true })}
                       size="lg"
                       style={{ cursor: "pointer" }}
                     />
@@ -319,35 +309,21 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 </span>
               </Card.Text>
 
-              {showEdit.description ? (
-                <Form className="d-flex mb-3">
-                  <Form.Control
-                    className="w-100 h-50"
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    onChange={onChange}
-                    size="sm"
-                  ></Form.Control>
-                  <FontAwesomeIcon
-                    className="my-auto mx-3"
-                    icon={faCircleCheck}
-                    onClick={editProject}
-                    style={{ cursor: "pointer" }}
-                    size="lg"
-                    type="submit"
-                  />
-                  <FontAwesomeIcon
-                    className="my-auto"
-                    icon={faXmark}
-                    onClick={() => setShowEdit({ description: false })}
-                    style={{ cursor: "pointer" }}
-                    size="lg"
-                  />
-                </Form>
-              ) : (
-                <p>{project.description}</p>
-              )}
+              <p
+                onMouseOver={() => setHover({ description: true })}
+                onMouseOut={() => setHover({ description: false })}
+                suppressContentEditableWarning={true}
+                contentEditable={true}
+                onBlur={editProject}
+                onInput={onChangeEdit}
+                onKeyDown={disableNewlines}
+                value={formData.description}
+                name="description"
+                type="text"
+                style={{ cursor: "pointer" }}
+              >
+                {project.description}
+              </p>
 
               {/* <div style={{ width: "25%" }}>
                   <CircularProgressbar

@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import CategoryForm from "./CategoryForm";
 import Category from "./Category";
+import {
+  fetchCategoriesAndItems,
+  addCategory,
+  updateCategory,
+  createItem,
+  updateItem,
+  removeItem,
+} from "../../services/projectItem";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -22,75 +29,41 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   }, []);
 
   const fetchAllData = async () => {
-    try {
-      const [fetchedProjectItems, fetchedCategories] = await Promise.all([
-        axios(`projectItems/${project_id}`),
-        axios(`projectItems/category/${project_id}`),
-      ]);
-      setCategories(fetchedCategories.data.categories);
-      setProjectItems(fetchedProjectItems.data.projectItems);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    fetchCategoriesAndItems(setCategories, setProjectItems, project_id);
   };
 
   const createCategory = async () => {
-    try {
-      const { data } = await axios.post(`projectItems/category/${project_id}`, {
-        title: categoryTitle,
-      });
-      setCategories((prev) => [...prev, data.newCategory]);
-      setShowForm((prev) => !prev);
-      setCategoryTitle("");
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    addCategory(
+      setCategories,
+      setShowForm,
+      categoryTitle,
+      setCategoryTitle,
+      project_id
+    );
+  };
+
+  const editCategory = async (id) => {
+    updateCategory(id, setCategories, categoryTitle, setCategoryTitle);
   };
 
   const createProjectItem = async (category_id) => {
-    console.log(category_id);
-    if (!item) return;
-    const createdItem = {
+    createItem(
       item,
-      deadline: deadline.toDateString(),
+      deadline,
       category_id,
-    };
-    try {
-      const { data } = await axios.post(
-        `projectItems/${project_id}`,
-        createdItem
-      );
-      setItem("");
-      setDeadline(new Date());
-      setProjectItems([...projectItems, data.projectItem]);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+      project_id,
+      setItem,
+      setDeadline,
+      setProjectItems
+    );
   };
 
   const editItem = async (id, editedItem) => {
-    console.log(editedItem);
-    try {
-      const {
-        data: { updatedItem },
-      } = await axios.put(`projectItems/${id}`, editedItem);
-      setProjectItems(
-        projectItems.map((item) => (item._id === id ? updatedItem : item))
-      );
-      setItem("");
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    updateItem(id, editedItem, setProjectItems, setItem);
   };
 
   const deleteItem = async (item_id) => {
-    try {
-      const { data } = await axios.delete(`/projectItems/${item_id}`);
-      setProjectItems(projectItems.filter((item) => item._id !== item_id));
-      console.log(data.message);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    removeItem(item_id, setProjectItems);
   };
 
   // const completionPercentage = (projectItems) => {
@@ -101,10 +74,6 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   //   let percentage = Math.round((completedItems / totalItems) * 100);
   //   if (!completedItems) return 0;
   //   return percentage;
-  // };
-
-  // const onChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
   // };
 
   const projectHeaders = [
@@ -118,7 +87,7 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   return (
     <>
       <div
-      className="my-5"
+        className="my-5"
         onMouseOver={() => setHover(true)}
         onMouseOut={() => setHover(false)}
         style={{ cursor: "pointer" }}
@@ -144,6 +113,8 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
           <Category
             {...{
               category,
+              editCategory,
+              setCategoryTitle,
               projectItems,
               teamMembers,
               createProjectItem,
