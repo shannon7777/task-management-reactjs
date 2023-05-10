@@ -26,22 +26,12 @@ import {
 
 const App = () => {
   const {
-    auth,
-    auth: { user, accessToken },
+    auth: { accessToken },
   } = useAuth();
-  const [showAddTask, setShowAddTask] = useState(false);
-  const [tasks, setTasks] = useState([]);
 
   const [notify, setNotify] = useState({ show: false, text: "" });
   const [error, setError] = useState({ show: false, text: "" });
   const [info, setInfo] = useState({ show: false, text: "" });
-  const [formData, setFormData] = useState({
-    text: "",
-    description: "",
-    progress: "",
-    user_id: "",
-  });
-  const [dateToComplete, setDateToComplete] = useState(null);
 
   axios.defaults.baseURL = `http://localhost:5000/api`;
   axios.defaults.withCredentials = true;
@@ -50,49 +40,10 @@ const App = () => {
     credentials: "include",
   };
 
-  useEffect(() => {
-    if (user) getTasks();
-  }, [auth]);
-
-  const taskProps = {
-    formData,
-    setFormData,
-    dateToComplete,
-    setTasks,
-  };
   const setNotifications = {
     setError,
     setNotify,
     setInfo,
-  };
-
-  const getTasks = () => {
-    fetchAllTasks(user._id, setTasks);
-  };
-
-  const addTask = async (e) => {
-    e.preventDefault();
-    createTask(taskProps, setNotifications);
-  };
-
-  const editTask = async (id, editedTask) => {
-    updateTask(id, editedTask, taskProps, setNotifications);
-  };
-
-  const deleteTask = async (id) => {
-    removeTask(id, taskProps, setNotifications);
-  };
-
-  const onChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-      user_id: user._id,
-    });
-  };
-
-  const onAdd = () => {
-    setShowAddTask(!showAddTask);
   };
 
   const notificationMsg = (
@@ -150,22 +101,7 @@ const App = () => {
             <Route element={<RequireAuth />}>
               <Route
                 path="/"
-                element={
-                  <Home
-                    onAdd={onAdd}
-                    showAddTask={showAddTask}
-                    addTask={addTask}
-                    deleteTask={deleteTask}
-                    editTask={editTask}
-                    tasks={tasks}
-                    fetchAllTasks={fetchAllTasks}
-                    formData={formData}
-                    setFormData={setFormData}
-                    dateToComplete={dateToComplete}
-                    setDateToComplete={setDateToComplete}
-                    onChange={onChange}
-                  />
-                }
+                element={<Home setNotifications={setNotifications} />}
               />
             </Route>
             <Route path="profile" element={<RequireAuth />}>

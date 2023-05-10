@@ -14,7 +14,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-const ProjectItems = ({ teamMembers, completion_date }) => {
+const Tables = ({ teamMembers, completion_date }) => {
   const [categories, setCategories] = useState([]);
   const [projectItems, setProjectItems] = useState([]);
   const [categoryTitle, setCategoryTitle] = useState("");
@@ -43,7 +43,7 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   };
 
   const editCategory = async (id) => {
-    updateCategory(id, setCategories, categoryTitle, setCategoryTitle);
+    updateCategory(id, setCategories, categoryTitle, setCategoryTitle, project_id);
   };
 
   const createProjectItem = async (category_id) => {
@@ -59,11 +59,11 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   };
 
   const editItem = async (id, editedItem) => {
-    updateItem(id, editedItem, setProjectItems, setItem);
+    updateItem(id, editedItem, setProjectItems, setItem, project_id);
   };
 
   const deleteItem = async (item_id) => {
-    removeItem(item_id, setProjectItems);
+    removeItem(item_id, setProjectItems, project_id);
   };
 
   // const completionPercentage = (projectItems) => {
@@ -134,4 +134,4 @@ const ProjectItems = ({ teamMembers, completion_date }) => {
   );
 };
 
-export default ProjectItems;
+export default Tables;

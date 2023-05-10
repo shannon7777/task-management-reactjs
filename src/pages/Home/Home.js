@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import {
   fetchAllTasks,
@@ -13,44 +13,55 @@ import AddTask from "./AddTask";
 import Task from "./Task";
 import useFetchImg from "../../hooks/useFetchImg";
 
-const Home = ({
-  onAdd,
-  showAddTask,
-  addTask,
-  tasks,
-  deleteTask,
-  editTask,
-  dateToComplete,
-  setDateToComplete,
-  formData,
-  setFormData,
-  onChange,
-}) => {
-  // const {
-  //   auth,
-  //   auth: { user },
-  // } = useAuth();
+const Home = ({ setNotifications }) => {
+  const [tasks, setTasks] = useState([]);
+  const [formData, setFormData] = useState({
+    text: "",
+    description: "",
+    progress: "",
+    user_id: "",
+  });
+  const [dateToComplete, setDateToComplete] = useState(null);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const {
+    auth,
+    auth: { user },
+  } = useAuth();
+  const fetchImg = useFetchImg();
 
-  // useEffect(() => {
-  //   if (user) getTasks();
-  // }, [auth]);
+  useEffect(() => {
+    getTasks();
+    fetchImg();
+  }, [auth]);
 
-  // const getTasks = () => {
-  //   fetchAllTasks(user._id, setTasks);
-  // };
+  const getTasks = () => {
+    fetchAllTasks(user._id, setTasks);
+  };
 
-  // const addTask = async (e) => {
-  //   e.preventDefault();
-  //   createTask(taskProps, setNotifications);
-  // };
+  const addTask = async (e) => {
+    e.preventDefault();
+    createTask(taskProps, setNotifications);
+  };
 
-  // const editTask = async (id, editedTask) => {
-  //   updateTask(id, editedTask, taskProps, setNotifications);
-  // };
+  const editTask = async (id, editedTask) => {
+    updateTask(id, editedTask, taskProps, { ...setNotifications });
+  };
 
-  // const deleteTask = async (id) => {
-  //   removeTask(id, taskProps, setNotifications);
-  // };
+  const deleteTask = async (id) => {
+    removeTask(id, taskProps, { ...setNotifications });
+  };
+
+  const onChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+      user_id: user._id,
+    });
+  };
+
+  const onAdd = () => {
+    setShowAddTask(!showAddTask);
+  };
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
   const colorStatus = {
     "New Task": "#92a8d1",
@@ -60,19 +71,15 @@ const Home = ({
   };
 
   const taskProps = {
+    setTasks,
     deleteTask,
     editTask,
     colorStatus,
     formData,
     setFormData,
     onChange,
+    dateToComplete,
   };
-
-  const fetchImg = useFetchImg();
-
-  useEffect(() => {
-    fetchImg();
-  }, []);
 
   // getting each progress by creating a Set to only have unique items
   const uniqueProgress = [...new Set(tasks?.map(({ progress }) => progress))];

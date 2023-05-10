@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { inviteOwners, deleteOwners } from "../../services/projectItem";
 
 import TeamMembers from "../../components/TeamMember";
 import EditOwnersModal from "./EditOwnersModal";
@@ -7,42 +8,20 @@ import EditOwnersModal from "./EditOwnersModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersGear } from "@fortawesome/free-solid-svg-icons";
 
-const Owners = ({ item_id, teamMembers, owners, setOwners }) => {
+const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
   const [hover, setHover] = useState(false);
   const [showEditOwner, setShowEditOwner] = useState(false);
 
   const addOwners = async (ownerArr) => {
-    try {
-      const {
-        data: { owners },
-      } = await axios.post(`projectItems/owners/${item_id}`, ownerArr);
-      setOwners((prev) => [...prev, ...owners]);
-    } catch (error) {
-      if (error.response) console.log(error.response.data.message);
-      else {
-        console.log(error.message);
-      }
-    }
+    inviteOwners(ownerArr, setOwners, item_id, project_id);
   };
 
   const removeOwners = async (owner) => {
-    try {
-      const { data } = await axios.put(`projectItems/owners/${item_id}`, owner);
-      setOwners((prev) => prev.filter((user) => !owner.includes(user.email)));
-      console.log(data.message);
-    } catch (error) {
-      if (error.response) console.log(error.response.data.message);
-      else {
-        console.log(error.message);
-      }
-    }
+    deleteOwners(owner, setOwners, item_id, project_id);
   };
 
   return (
-    <td
-      onMouseOver={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
+    <td onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <span className="d-flex justify-content-between">
         {showEditOwner && (
           <EditOwnersModal

@@ -268,3 +268,12 @@ body {
   width: fit-content;
   height: fit-content;
 }
+
+blockquote {
+  background: #eee;
+  border-radius: 5px;
+  margin: 16px 0;
+  padding: 10px;
+  cursor: "pointer";
+  width: fit-content;
+}

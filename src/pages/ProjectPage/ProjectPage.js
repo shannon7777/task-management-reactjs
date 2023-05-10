@@ -5,12 +5,11 @@ import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
-import ProjectItems from "./ProjectItems";
+import Tables from "./Tables";
 import DatePicker from "react-datepicker";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-import { Badge, Card, Col, Form, Row } from "react-bootstrap";
+import { Badge, Card, Col, Row } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -43,7 +42,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    completion_date: project.completion_date,
+    completion_date: "",
   });
 
   useEffect(() => {
@@ -79,26 +78,17 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   };
 
   const editProject = async (e) => {
-    e.preventDefault();
-    const editedObj = Object.fromEntries(
-      Object.entries(formData).filter((value) => value[1] !== "")
-    );
-    const editedProject = {
-      ...editedObj,
-      completion_date:
-        formData.completion_date && formData.completion_date.toDateString(),
-    };
+    // if (e.target.innerHTML === "") return (e.target.innerHTML = text);
+    if (!formData.title && !formData.description && !formData.completion_date)
+      return;
     try {
-      const { data } = await axios.put(
-        `projects/${project._id}`,
-        editedProject
-      );
+      const { data } = await axios.put(`projects/${project._id}`, formData);
       setProject(data.updatedProject);
       setShowEdit((prev) => !prev);
       setFormData({
         title: "",
         description: "",
-        completion_date: new Date(data.updatedProject.completion_date),
+        completion_date: "",
       });
     } catch (error) {
       setError({ text: error.response.data.message });
@@ -216,6 +206,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
               >
                 {project.title}
               </p>
+
               {hover.title && (
                 <FontAwesomeIcon
                   className="m-2"
@@ -229,7 +220,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
 
         <Row>
           <Col className="m-3 rounded shadow">
-            {/* <Card> */}
             <Card.Body className="p-4">
               <Card.Title>TEAM MEMBERS</Card.Title>
               <Card.Text
@@ -274,11 +264,9 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 {projectOwner} {ownedByUser}
               </Card.Text>
             </Card.Body>
-            {/* </Card> */}
           </Col>
 
           <Col className="m-3 rounded shadow">
-            {/* <Card> */}
             <Card.Body className="p-4">
               <Card.Title>PROJECT DETAILS</Card.Title>
               <Card.Text className="d-flex justify-content-between">
@@ -309,7 +297,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 </span>
               </Card.Text>
 
-              <p
+              <blockquote
                 onMouseOver={() => setHover({ description: true })}
                 onMouseOut={() => setHover({ description: false })}
                 suppressContentEditableWarning={true}
@@ -320,10 +308,9 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 value={formData.description}
                 name="description"
                 type="text"
-                style={{ cursor: "pointer" }}
               >
                 {project.description}
-              </p>
+              </blockquote>
 
               {/* <div style={{ width: "25%" }}>
                   <CircularProgressbar
@@ -359,7 +346,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                     onClick={() => setShowEdit({ datePicker: true })}
                     style={{ cursor: "pointer" }}
                   >
-                    {project?.completion_date}
+                    {new Date(project?.completion_date).toDateString()}
                     {hover.datePicker && (
                       <FontAwesomeIcon
                         className="mx-2"
@@ -416,15 +403,13 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 )}
               </span>
             </Card.Body>
-            {/* </Card> */}
           </Col>
         </Row>
       </Card>
 
-      <ProjectItems
+      <Tables
         teamMembers={teamMembers?.map((member) => member.email)}
         completion_date={project.completion_date}
-        // setCompletionBar={setCompletionBar}
       />
     </>
   );

@@ -7,12 +7,13 @@ import PieChart from "./PieChart";
 import ProgressBar from "./ProgressBar";
 
 const Dashboard = () => {
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-    let allTasks = JSON.parse(localStorage.getItem("tasks"));
-    setTasks(allTasks);
-  }, []);
+  // useEffect(() => {
+  //   let allTasks = JSON.parse(localStorage.getItem("tasks"));
+  //   setTasks(allTasks);
+  // }, []);
+  let tasks = JSON.parse(localStorage.getItem("tasks"));
 
   // ---- PIE CHART DATA -----
   const totalNew = tasks.filter(({ progress }) => progress === "New Task");

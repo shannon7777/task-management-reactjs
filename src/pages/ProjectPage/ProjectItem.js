@@ -5,7 +5,8 @@ import Deadline from "./Deadline";
 import Status from "./Status";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { getOwners } from "../../services/projectItem";
+import { useParams } from "react-router-dom";
 
 const ProjectItem = ({
   projectItem,
@@ -19,19 +20,12 @@ const ProjectItem = ({
     fetchOwners();
   }, []);
 
+  const { project_id } = useParams();
+
   const fetchOwners = async () => {
-    try {
-      const {
-        data: { owners },
-      } = await axios(`projectItems/owners/${projectItem._id}`);
-      return setOwners(owners);
-    } catch (error) {
-      if (error.response) console.log(error.response.data.message);
-      else {
-        console.log(error.message);
-      }
-    }
+    getOwners(projectItem, projectItem._id, setOwners, project_id);
   };
+
   return (
     <tbody>
       <tr>
@@ -45,6 +39,7 @@ const ProjectItem = ({
           teamMembers={teamMembers}
           owners={owners}
           setOwners={setOwners}
+          project_id={project_id}
         />
         <Deadline
           projectItem={projectItem}
@@ -59,7 +54,7 @@ const ProjectItem = ({
         <Notes
           projectItem={projectItem}
           editItem={editItem}
-          ownerIds={owners.map((owner) => owner._id)}
+          ownerIds={owners?.map((owner) => owner._id)}
         />
       </tr>
     </tbody>

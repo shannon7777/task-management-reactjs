@@ -22,12 +22,20 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
 
   const getMembers = async () => {
     try {
+      let teamMembers = JSON.parse(
+        localStorage.getItem(`teamMembers-${project._id}`)
+      );
+      if (teamMembers) return setTeamMembers(teamMembers);
       const {
         data: { users },
       } = await axios(`projects/members/${project._id}`);
+      localStorage.setItem(`teamMembers-${project._id}`, JSON.stringify(users));
       return setTeamMembers(users);
     } catch (error) {
-      setError({ text: error.response.data.message });
+      if (error.response) setError(error.response.data.message);
+      else {
+        setError(error.message);
+      }
     }
   };
 
@@ -90,7 +98,9 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
                   icon={faCalendarCheck}
                   className="m-1"
                 />
-                <p className="m-1">{`${project.completion_date}`}</p>
+                <p className="m-1">{`${new Date(
+                  project.completion_date
+                ).toDateString()}`}</p>
               </span>
               <Row className="my-2">
                 <span className="d-flex">

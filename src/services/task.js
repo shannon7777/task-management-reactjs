@@ -2,11 +2,16 @@ import axios from "axios";
 
 const fetchAllTasks = async (user, setTasks) => {
   try {
+    let tasks = JSON.parse(localStorage.getItem("tasks"));
+    if (tasks) return setTasks(tasks);
     const { status, data } = await axios.get(`/tasks/${user}`);
     if (status === 200) setTasks(data.tasks);
     localStorage.setItem("tasks", JSON.stringify(data.tasks));
   } catch (error) {
-    console.log(error);
+    if (error.response) console.log(error.response.data.message);
+    else {
+      console.log(error.message);
+    }
   }
 };
 
@@ -14,6 +19,7 @@ const createTask = async (
   { formData, dateToComplete, setTasks, setFormData },
   { setNotify, setInfo, setError }
 ) => {
+  console.log(dateToComplete);
   if (!formData.text)
     throw setInfo({
       text: `Fill in the task form in order to add a task`,
@@ -26,11 +32,11 @@ const createTask = async (
         : `No completion date has been set`,
     };
     const { data } = await axios.post("/tasks", task);
-    setTasks((prev) => [...prev, data.newTask]);
-    setNotify({ text: data.message });
-    setFormData({ text: "", description: "", progress: "" });
     let tasks = JSON.parse(localStorage.getItem("tasks"));
     tasks.push(data.newTask);
+    setTasks(tasks);
+    setNotify({ text: data.message });
+    setFormData({ text: "", description: "", progress: "" });
     localStorage.setItem("tasks", JSON.stringify(tasks));
   } catch (error) {
     if (error.response) setError(error.response.data.message);
@@ -72,12 +78,12 @@ const updateTask = async (
       data: { updatedTask, message },
     } = await axios.put(`/tasks/${id}`, editedTask);
     if (status === 400) throw setError({ text: message });
-    setNotify({ text: message });
     let tasks = JSON.parse(localStorage.getItem("tasks"));
     const updatedTasks = tasks.map((task) =>
       task._id === id ? updatedTask : task
     );
     setTasks(updatedTasks);
+    setNotify({ text: message });
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   } catch (error) {
     if (error.response) setError(error.response.data.message);
