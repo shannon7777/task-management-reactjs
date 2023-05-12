@@ -2,30 +2,34 @@ import { useRef, useState, useEffect } from "react";
 import { Overlay, Tooltip } from "react-bootstrap";
 import axios from "axios";
 
-const TeamMembers = ({ member_id }) => {
-  const [user, setUser] = useState("");
+const TeamMembers = ({ member }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [isHovering, setIsHovering] = useState(false);
   const target = useRef(null);
   const placeholderPic = `https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
 
   const fetchTeamMember = async () => {
-    if (!member_id) return;
+    if (!member) return;
     try {
-      const [imageResponse, userResponse] = await Promise.all([
-        axios(`users/img/${member_id}`),
-        axios(`users/${member_id}`),
-      ]);
-      setImageUrl(imageResponse.data.imageUrl);
-      setUser(userResponse.data.user);
+      let image = JSON.parse(localStorage.getItem(`memberImg-${member._id}`));
+      if (image) return setImageUrl(image);
+      const { data } = await axios(`users/img/${member._id}`);
+      setImageUrl(data.imageUrl);
+      localStorage.setItem(
+        `memberImg-${member._id}`,
+        JSON.stringify(data.imageUrl)
+      );
     } catch (error) {
-      console.log(error.response);
+      if (error.response) console.log(error.response.data.message);
+      else {
+        console.log(error.message);
+      }
     }
   };
 
   useEffect(() => {
     fetchTeamMember();
-  }, [member_id]);
+  }, [member]);
 
   return (
     <>
@@ -41,7 +45,7 @@ const TeamMembers = ({ member_id }) => {
         />
       </span>
       <Overlay target={target.current} show={isHovering} placement="right">
-        {(props) => <Tooltip {...props}>{user.username}</Tooltip>}
+        {(props) => <Tooltip {...props}>{member.username}</Tooltip>}
       </Overlay>
     </>
   );

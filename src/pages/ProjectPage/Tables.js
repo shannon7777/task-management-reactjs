@@ -4,12 +4,16 @@ import CategoryForm from "./CategoryForm";
 import Category from "./Category";
 import {
   fetchCategoriesAndItems,
-  addCategory,
-  updateCategory,
   createItem,
   updateItem,
   removeItem,
 } from "../../services/projectItem";
+
+import {
+  addCategory,
+  updateCategory,
+  removeCategory,
+} from "../../services/category";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -43,7 +47,17 @@ const Tables = ({ teamMembers, completion_date }) => {
   };
 
   const editCategory = async (id) => {
-    updateCategory(id, setCategories, categoryTitle, setCategoryTitle, project_id);
+    updateCategory(
+      id,
+      setCategories,
+      categoryTitle,
+      setCategoryTitle,
+      project_id
+    );
+  };
+
+  const deleteCategory = async (category_id) => {
+    removeCategory(category_id, setCategories, setProjectItems, project_id);
   };
 
   const createProjectItem = async (category_id) => {
@@ -87,7 +101,7 @@ const Tables = ({ teamMembers, completion_date }) => {
   return (
     <>
       <div
-        className="my-5"
+        className="my-4"
         onMouseOver={() => setHover(true)}
         onMouseOut={() => setHover(false)}
         style={{ cursor: "pointer" }}
@@ -114,6 +128,7 @@ const Tables = ({ teamMembers, completion_date }) => {
             {...{
               category,
               editCategory,
+              deleteCategory,
               setCategoryTitle,
               projectItems,
               teamMembers,

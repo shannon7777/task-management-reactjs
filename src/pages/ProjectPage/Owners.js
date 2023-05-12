@@ -36,7 +36,7 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
         <span>
           {owners?.map((owner, index) => (
             <span key={index}>
-              <TeamMembers member_id={owner._id} />
+              <TeamMembers member={owner} />
             </span>
           ))}
         </span>

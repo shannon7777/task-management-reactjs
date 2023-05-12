@@ -277,3 +277,10 @@ blockquote {
   cursor: "pointer";
   width: fit-content;
 }
+
+.category {
+  display: flex;
+  /* width: fit-content; */
+  justify-content: space-between;
+}
+

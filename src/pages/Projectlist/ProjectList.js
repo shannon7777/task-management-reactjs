@@ -4,7 +4,11 @@ import useAuth from "../../hooks/useAuth";
 
 import { Project } from "./Project";
 import AddProjectForm from "./AddProjectForm";
-import axios from "axios";
+import {
+  getProjects,
+  addProject,
+  removeProject,
+} from "../../services/projectDetail";
 
 const ProjectList = ({ setNotify, setError, setInfo }) => {
   const {
@@ -20,53 +24,35 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [rating, setRating] = useState(0);
 
-  const fetchProjects = async () => {
-    const {
-      data: { projects },
-    } = await axios(`projects/${user._id}`);
-    setProjects(projects);
-  };
-
   useEffect(() => {
     fetchProjects();
   }, []);
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const fetchProjects = async () => {
+    getProjects(setProjects, user._id, setError);
   };
 
   const createProject = async (e) => {
     e.preventDefault();
-    const project = {
-      ...formData,
-      completion_date: formData.completion_date.toDateString(),
+    addProject(
+      formData,
+      setFormData,
+      setProjects,
       rating,
-    };
-    if (!formData.title || !formData.description)
-      return setInfo({ text: `Please fill in all fields` });
-    try {
-      const {
-        data: { newProject, message },
-      } = await axios.post(`projects`, project);
-      setNotify({ text: message });
-      setRating(0);
-      setFormData({ title: "", description: "", user_id: user._id });
-      setProjects((prev) => [...prev, newProject]);
-    } catch (error) {
-      if (error.response.status === 400)
-        throw setError({ text: error.response.data.message });
-    }
+      user,
+      setRating,
+      setInfo,
+      setNotify,
+      setError
+    );
   };
 
   const deleteProject = async (id) => {
-    try {
-      const { data } = await axios.delete(`projects/${id}`);
-      setNotify({ text: data.message });
-      setProjects(projects.filter((project) => project._id !== id));
-    } catch (error) {
-      if (error.response.status === 400)
-        throw setError({ text: error.response.data.message });
-    }
+    removeProject(setProjects, id, setNotify, setError);
+  };
+
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (

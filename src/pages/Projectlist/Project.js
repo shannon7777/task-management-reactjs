@@ -123,10 +123,7 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
               <span>
                 {teamMembers.map((member, index) => (
                   <span key={index}>
-                    <TeamMembers
-                      className="profilePicNavbar"
-                      member_id={member._id}
-                    />
+                    <TeamMembers className="profilePicNavbar" member={member} />
                   </span>
                 ))}
               </span>

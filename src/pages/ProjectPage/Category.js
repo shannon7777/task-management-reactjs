@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
@@ -10,6 +10,7 @@ import { faSquarePlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 const Category = ({
   category,
   editCategory,
+  deleteCategory,
   setCategoryTitle,
   projectItems,
   createProjectItem,
@@ -24,10 +25,14 @@ const Category = ({
   setDeadline,
 }) => {
   const [showForm, setShowForm] = useState(false);
-  // const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(false);
   return (
     <>
-      <h6>
+      <h6
+        className="category"
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
+      >
         <p
           className="blackbadge"
           contentEditable={true}
@@ -37,10 +42,20 @@ const Category = ({
         >
           {category.title}
         </p>
+        {hover && (
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => deleteCategory(category._id)}
+            style={{ height: "fit-content" }}
+          >
+            Delete
+          </Button>
+        )}
       </h6>
       <Table
         key={`table-${category._id}`}
-        className=" shadow"
+        className="shadow"
         style={{ borderRadius: "10px" }}
         hover
       >

@@ -27,8 +27,10 @@ const fetchCategoriesAndItems = async (
     const {
       data: { categories },
     } = fetchedCategories;
+
     setCategories(categories);
     setProjectItems(projectItems);
+
     localStorage.setItem(
       `categories-${project_id}`,
       JSON.stringify(categories)
@@ -39,66 +41,6 @@ const fetchCategoriesAndItems = async (
     );
   } catch (error) {
     console.log(error.response.data.message);
-  }
-};
-
-const addCategory = async (
-  setCategories,
-  setShowForm,
-  categoryTitle,
-  setCategoryTitle,
-  project_id
-) => {
-  try {
-    const { data } = await axios.post(`projectItems/category/${project_id}`, {
-      title: categoryTitle,
-    });
-    setCategories((prev) => [...prev, data.newCategory]);
-    let categories = JSON.parse(
-      localStorage.getItem(`categories-${project_id}`)
-    );
-    categories.push(data.newCategory);
-    localStorage.setItem(
-      `categories-${project_id}`,
-      JSON.stringify(categories)
-    );
-    setShowForm((prev) => !prev);
-    setCategoryTitle("");
-  } catch (error) {
-    console.log(error.response.data.message);
-  }
-};
-
-const updateCategory = async (
-  id,
-  setCategories,
-  categoryTitle,
-  setCategoryTitle,
-  project_id
-) => {
-  try {
-    if (!categoryTitle) return;
-    const { data, status } = await axios.put(`projectItems/category/${id}`, {
-      title: categoryTitle,
-    });
-    if (status === 400) throw console.log(`Could not update category`);
-    let categories = JSON.parse(
-      localStorage.getItem(`categories-${project_id}`)
-    );
-    let updatedCategories = categories.map((category) =>
-      category._id === id ? data.updatedCategory : category
-    );
-    setCategories(updatedCategories);
-    localStorage.setItem(
-      `categories-${project_id}`,
-      JSON.stringify(updatedCategories)
-    );
-    setCategoryTitle("");
-  } catch (error) {
-    if (error.response) console.log(error.response.data.message);
-    else {
-      console.log(error.message);
-    }
   }
 };
 
@@ -196,32 +138,21 @@ const removeItem = async (item_id, setProjectItems, project_id) => {
   }
 };
 
-const getOwners = async (
-  projectItem,
-  projectItem_id,
-  setOwners,
-  project_id
-) => {
+const getOwners = async (item_id, setOwners, project_id) => {
   try {
-    // let owners = JSON.parse(localStorage.getItem(`owners-${projectItem_id}`));
-    // if (owners) return setOwners(owners);
     let teamMembers = JSON.parse(
       localStorage.getItem(`teamMembers-${project_id}`)
     );
+    let projectItem = JSON.parse(
+      localStorage.getItem(`projectItems-${project_id}`)
+    ).filter((item) => item._id === item_id);
 
     if (teamMembers)
       return setOwners(
-        teamMembers.filter((member) => projectItem.owners.includes(member._id))
+        teamMembers.filter((member) =>
+          projectItem[0].owners.includes(member._id)
+        )
       );
-    // const { data, status } = await axios(
-    //   `projectItems/owners/${projectItem_id}`
-    // );
-    // if (status === 400) throw console.log(data.message);
-    // setOwners(data.owners);
-    // localStorage.setItem(
-    //   `owners-${projectItem_id}`,
-    //   JSON.stringify(data.owners)
-    // );
   } catch (error) {
     if (error.response) console.log(error.response.data.message);
     else {
@@ -288,10 +219,10 @@ const deleteOwners = async (owner, setOwners, item_id, project_id) => {
   }
 };
 
+const addNote = async () => {};
+
 export {
   fetchCategoriesAndItems,
-  addCategory,
-  updateCategory,
   createItem,
   updateItem,
   removeItem,

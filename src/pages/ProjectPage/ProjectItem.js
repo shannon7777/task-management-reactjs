@@ -18,12 +18,14 @@ const ProjectItem = ({
   const [owners, setOwners] = useState([]);
   useEffect(() => {
     fetchOwners();
-  }, []);
+  }, [teamMembers]);
 
   const { project_id } = useParams();
 
   const fetchOwners = async () => {
-    getOwners(projectItem, projectItem._id, setOwners, project_id);
+    // let projectItems = JSON.parse(localStorage.getItem(`projectItems-${project_id}`))
+    // let item = projectItems.filter(item => item._id === projectItem._id)
+    getOwners(projectItem._id, setOwners, project_id);
   };
 
   return (

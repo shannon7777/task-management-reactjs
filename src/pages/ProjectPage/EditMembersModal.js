@@ -14,7 +14,7 @@ const EditMembersModal = ({
   owner_email,
   addMember,
   removeMember,
-  project_id,
+  // project_id,
   setShowEditMember,
   showEditMember,
   teamMembers,
@@ -67,7 +67,7 @@ const EditMembersModal = ({
 
   const onRemove = (e) => {
     e.preventDefault();
-    removeMember(membersToRemove, project_id);
+    removeMember(membersToRemove);
     setShowEditMember((prev) => !prev);
   };
 

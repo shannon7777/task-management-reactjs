@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 
+import { fetchProjectData, updateProject } from "../../services/projectDetail";
+
 import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
 import Tables from "./Tables";
@@ -45,54 +47,44 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     completion_date: "",
   });
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
   const {
     auth: { user },
   } = useAuth();
   const { project_id } = useParams();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
   const owner = teamMembers?.filter(
     (member) => member._id === project?.creator
   );
   const projectOwner = (
-    <TeamMembers className="profilePicNavbar" member_id={owner[0]?._id} />
+    <TeamMembers className="profilePicNavbar" member={owner[0]} />
   );
   const ownedByUser = owner[0]?._id === user._id ? "(You)" : null;
 
   const fetchAllData = async () => {
-    try {
-      const [fetchedProject, fetchedMembers] = await Promise.all([
-        axios(`projects/one/${project_id}`),
-        axios(`projects/members/${project_id}`),
-      ]);
-      setProject(fetchedProject.data);
-      setTeamMembers(fetchedMembers.data.users);
-    } catch (error) {
-      setError({ text: error.response.data.message });
-      navigate("/team-projects");
-    }
+    fetchProjectData(
+      project_id,
+      setProject,
+      setTeamMembers,
+      setError,
+      navigate
+    );
   };
 
   const editProject = async (e) => {
-    // if (e.target.innerHTML === "") return (e.target.innerHTML = text);
-    if (!formData.title && !formData.description && !formData.completion_date)
-      return;
-    try {
-      const { data } = await axios.put(`projects/${project._id}`, formData);
-      setProject(data.updatedProject);
-      setShowEdit((prev) => !prev);
-      setFormData({
-        title: "",
-        description: "",
-        completion_date: "",
-      });
-    } catch (error) {
-      setError({ text: error.response.data.message });
-    }
+    e.preventDefault();
+    updateProject(
+      project_id,
+      formData,
+      setFormData,
+      setProject,
+      setShowEdit,
+      setError
+    );
   };
 
   const addMember = async (membersArr) => {
@@ -112,11 +104,19 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       });
     }
     try {
+      let updatedTeamMembers = JSON.parse(
+        localStorage.getItem(`teamMembers-${project_id}`)
+      );
       const {
         data: { users, message },
       } = await axios.post(`projects/members/${project_id}`, newMembersArr);
       setNotify({ text: message });
-      setTeamMembers([...teamMembers, ...users]);
+      updatedTeamMembers.push(...users);
+      setTeamMembers(updatedTeamMembers);
+      localStorage.setItem(
+        `teamMembers-${project_id}`,
+        JSON.stringify(updatedTeamMembers)
+      );
     } catch (error) {
       console.log(error);
       throw setError({ text: error.response.data.message });
@@ -129,9 +129,37 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         `projects/members/${project_id}`,
         membersArr
       );
+      // Grab teamMembers and projectItems from localStorage and update them
+      let currentMembers = JSON.parse(
+        localStorage.getItem(`teamMembers-${project_id}`)
+      );
+      let filteredTeamMembers = currentMembers.filter(
+        (member) => !membersArr.includes(member.email)
+      );
+      let teamMembersToRemove = currentMembers
+        .filter((member) => membersArr.includes(member.email))
+        .map((member) => member._id);
+
+      // remove ownerid from owners array in projectItems
+      let projectItems = JSON.parse(
+        localStorage.getItem(`projectItems-${project_id}`)
+      );
+      projectItems.forEach(
+        (item) =>
+          (item.owners = item.owners.filter(
+            (id) => !teamMembersToRemove.includes(id)
+          ))
+      );
+      setTeamMembers(filteredTeamMembers);
       setNotify({ text: data.message });
-      setTeamMembers(
-        teamMembers.filter((member) => !membersArr.includes(member.email))
+      // Save updated teamMembers & projectItems back into localStorage
+      localStorage.setItem(
+        `teamMembers-${project_id}`,
+        JSON.stringify(filteredTeamMembers)
+      );
+      localStorage.setItem(
+        `projectItems-${project_id}`,
+        JSON.stringify(projectItems)
       );
     } catch (error) {
       throw setError({ text: error.response.data.message });
@@ -242,7 +270,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                       <span key={index}>
                         <TeamMembers
                           className="profilePicNavbar"
-                          member_id={member._id}
+                          member={member}
                         />
                       </span>
                     ))}
