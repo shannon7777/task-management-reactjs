@@ -64,6 +64,7 @@ const createItem = async (
       `projectItems/${project_id}`,
       createdItem
     );
+    //  UPDATE CATEGORIES TOO  !!!!
     setItem("");
     setDeadline(new Date());
     let projectItems = JSON.parse(

@@ -170,17 +170,17 @@ const ratingColors = {
   5: "red",
 };
 
-const timelineBar = (createdAt, completedDate) => {
+const timelineBar = (createdAt, completion_date) => {
   let totalDays =
-    (new Date(completedDate) - new Date(createdAt)) / 1000 / 60 / 60 / 24;
+    (new Date(completion_date) - new Date(createdAt)) / 1000 / 60 / 60 / 24;
   let daysPassed = (new Date() - new Date(createdAt)) / 1000 / 60 / 60 / 24;
   let percentage = (daysPassed / totalDays) * 100;
   if (percentage < 0) return 100;
   return Math.round(percentage);
 };
 
-const progressColors = (createdAt, completedDate) => {
-  let timeline = timelineBar(createdAt, completedDate);
+const progressColors = (createdAt, completion_date) => {
+  let timeline = timelineBar(createdAt, completion_date);
   if (timeline <= 25) return "primary";
   if (timeline > 25 && timeline <= 50) return "info";
   if (timeline > 50 && timeline <= 75) return "warning";

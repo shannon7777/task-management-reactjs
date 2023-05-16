@@ -4,8 +4,6 @@ import { Col, ProgressBar, Row } from "react-bootstrap";
 
 import { timelineBar, progressColors } from "../Projectlist/Project";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 const Deadline = ({ editItem, projectItem, completion_date }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { _id, deadline, createdAt } = projectItem;

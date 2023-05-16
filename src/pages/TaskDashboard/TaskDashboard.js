@@ -6,7 +6,7 @@ import BarChartCompletedTasks from "./BarChartCompletedTasks";
 import PieChart from "./PieChart";
 import ProgressBar from "./ProgressBar";
 
-const Dashboard = () => {
+const TaskDashboard = () => {
   // const [tasks, setTasks] = useState([]);
 
   // useEffect(() => {
@@ -262,4 +262,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default TaskDashboard;

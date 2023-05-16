@@ -183,14 +183,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     }
   };
 
-  // const progressColors = () => {
-  //   if (completionBar <= 25) return "crimson";
-  //   if (completionBar > 25 && completionBar <= 50) return "Darkcyan";
-  //   if (completionBar > 50 && completionBar <= 75) return "Indianred";
-  //   if (completionBar > 75) return "olivedrab";
-  //   return "green";
-  // };
-
   const editMembersModal = showEdit.users && (
     <EditMembersModal
       project_id={project_id}
@@ -340,20 +332,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 {project.description}
               </blockquote>
 
-              {/* <div style={{ width: "25%" }}>
-                  <CircularProgressbar
-                    styles={buildStyles({
-                      textColor: "black",
-                      textSize: "2rem",
-                      pathColor: progressColors(),
-                    })}
-                    className="mx-5"
-                    value={completionBar}
-                    text={`${completionBar} %`}
-                    strokeWidth={12}
-                  />
-                </div> */}
-
               <span
                 className=""
                 onMouseOver={() => setHover({ datePicker: true })}
@@ -384,20 +362,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                     )}
                   </span>
                 </strong>
-
-                {/* <div style={{ width: "10%" }}>
-                  <CircularProgressbar
-                    styles={buildStyles({
-                      textColor: "black",
-                      textSize: "1.8rem",
-                      pathColor: progressColors(),
-                    })}
-                    // className="mx-5"
-                    value={completionBar}
-                    text={`${completionBar} %`}
-                    strokeWidth={12}
-                  />
-                </div> */}
 
                 {showEdit.datePicker && (
                   <span>

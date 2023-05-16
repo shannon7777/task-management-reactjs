@@ -10,19 +10,14 @@ import { UserProfile, EditProfile } from "./pages/UserProfile";
 import RequireAuth from "./components/RequireAuth";
 import PersistLogin from "./components/PersistLogin";
 import CustomAlert from "./components/CustomAlert";
-import Dashboard from "./pages/Dashboard";
+import TaskDashboard from "./pages/TaskDashboard";
+import ProjectDashboard from "./pages/ProjectDashboard";
 import ProjectList from "./pages/Projectlist";
 import ProjectPage from "./pages/ProjectPage";
 import About from "./components/About";
 
 import useAuth from "./hooks/useAuth";
 import axios from "axios";
-import {
-  fetchAllTasks,
-  createTask,
-  removeTask,
-  updateTask,
-} from "./services/task";
 
 const App = () => {
   const {
@@ -104,6 +99,7 @@ const App = () => {
                 element={<Home setNotifications={setNotifications} />}
               />
             </Route>
+
             <Route path="profile" element={<RequireAuth />}>
               <Route index element={<UserProfile {...setNotifications} />} />
               <Route
@@ -113,12 +109,16 @@ const App = () => {
             </Route>
 
             <Route element={<RequireAuth />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="task-dashboard" element={<TaskDashboard />} />
+              {/* <Route path="/project-dashboard" element={<ProjectDashboard />} /> */}
             </Route>
 
-            {/* <Route element={<RequireAuth />}>
-                <Route path="/projectItem" element={}/>
-            </Route> */}
+            <Route path="project-dashboard" element={<RequireAuth />}>
+              <Route index element={<ProjectDashboard />}/>
+              <Route path=":project_id" element={<ProjectDashboard />}/>
+            </Route>
+
+            {/* <Route path="/members-dashboard" element={<MembersDashboard />} /> */}
 
             <Route path="team-projects" element={<RequireAuth />}>
               <Route index element={<ProjectList {...setNotifications} />} />

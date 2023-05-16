@@ -1,14 +1,11 @@
 import { Link, useMatch, useResolvedPath, NavLink } from "react-router-dom";
-import { useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { Button } from "react-bootstrap";
 import ProfilePic from "../pages/UserProfile/ProfilePic";
 import { RiUserLine } from "react-icons/ri";
-import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineForm } from "react-icons/ai";
 import { BsQuestion } from "react-icons/bs";
-import { BiLogOut } from "react-icons/bi";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -55,7 +52,7 @@ const Navbar = ({ setNotify }) => {
       <ul className="mx-4">
         {user ? (
           <>
-            <CustomLink to="/dashboard">
+            <CustomLink to="/task-dashboard">
               <FontAwesomeIcon icon={faChartLine} size="lg" />
               <p className="m-2">Dashboard</p>
             </CustomLink>
