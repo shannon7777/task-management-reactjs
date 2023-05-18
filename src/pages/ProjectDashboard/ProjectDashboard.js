@@ -32,14 +32,6 @@ const ProjectDashboard = () => {
     return progressTypes;
   });
 
-  // let progressTypes = [
-  //   "Not Started",
-  //   "In Progress",
-  //   "Stuck",
-  //   "Awaiting Review",
-  //   "Completed",
-  // ];
-
   return (
     <>
       <h4>
@@ -74,7 +66,7 @@ const ProjectDashboard = () => {
             />
           </Row>
           <Row>
-            <Calendar projectItems={projectItems} />
+            <Calendar projectItems={projectItems} progressTypes={progressTypes}/>
           </Row>
         </>
       )}

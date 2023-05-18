@@ -19,8 +19,6 @@ const BarChart = ({ project_id, projectItems, progressTypes }) => {
     return obj;
   });
 
-  console.log(data);
-
   return (
     <Col className="m-2 shadow border rounded" style={{ height: 400 }}>
       {/* <button onClick={() => setGrouped((prev) => !prev)}>

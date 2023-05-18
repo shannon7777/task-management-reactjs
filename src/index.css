@@ -284,3 +284,9 @@ blockquote {
   justify-content: space-between;
 }
 
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 350px
+}
+
