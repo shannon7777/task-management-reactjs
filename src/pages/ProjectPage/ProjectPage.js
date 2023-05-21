@@ -3,7 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 
-import { fetchProjectData, updateProject } from "../../services/projectDetail";
+import {
+  fetchProjectData,
+  updateProject,
+  inviteMembers,
+  deleteMembers,
+} from "../../services/projectDetail";
 
 import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
@@ -88,82 +93,19 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   };
 
   const addMember = async (membersArr) => {
-    // Check for members that already exist in the project
-    const newMembersArr = [...membersArr];
-    teamMembers.forEach((teamMember) =>
-      newMembersArr.forEach((member, index) => {
-        if (member === teamMember.email) {
-          newMembersArr.splice(index, 1);
-        }
-        return newMembersArr;
-      })
+    inviteMembers(
+      membersArr,
+      teamMembers,
+      setTeamMembers,
+      setInfo,
+      setError,
+      setNotify,
+      project_id
     );
-    if (newMembersArr.length < 1) {
-      return setInfo({
-        text: `${[...membersArr]} is already a team member`,
-      });
-    }
-    try {
-      let updatedTeamMembers = JSON.parse(
-        localStorage.getItem(`teamMembers-${project_id}`)
-      );
-      const {
-        data: { users, message },
-      } = await axios.post(`projects/members/${project_id}`, newMembersArr);
-      setNotify({ text: message });
-      updatedTeamMembers.push(...users);
-      setTeamMembers(updatedTeamMembers);
-      localStorage.setItem(
-        `teamMembers-${project_id}`,
-        JSON.stringify(updatedTeamMembers)
-      );
-    } catch (error) {
-      console.log(error);
-      throw setError({ text: error.response.data.message });
-    }
   };
 
   const removeMember = async (membersArr) => {
-    try {
-      const { data } = await axios.put(
-        `projects/members/${project_id}`,
-        membersArr
-      );
-      // Grab teamMembers and projectItems from localStorage and update them
-      let currentMembers = JSON.parse(
-        localStorage.getItem(`teamMembers-${project_id}`)
-      );
-      let filteredTeamMembers = currentMembers.filter(
-        (member) => !membersArr.includes(member.email)
-      );
-      let teamMembersToRemove = currentMembers
-        .filter((member) => membersArr.includes(member.email))
-        .map((member) => member._id);
-
-      // remove ownerid from owners array in projectItems
-      let projectItems = JSON.parse(
-        localStorage.getItem(`projectItems-${project_id}`)
-      );
-      projectItems.forEach(
-        (item) =>
-          (item.owners = item.owners.filter(
-            (id) => !teamMembersToRemove.includes(id)
-          ))
-      );
-      setTeamMembers(filteredTeamMembers);
-      setNotify({ text: data.message });
-      // Save updated teamMembers & projectItems back into localStorage
-      localStorage.setItem(
-        `teamMembers-${project_id}`,
-        JSON.stringify(filteredTeamMembers)
-      );
-      localStorage.setItem(
-        `projectItems-${project_id}`,
-        JSON.stringify(projectItems)
-      );
-    } catch (error) {
-      throw setError({ text: error.response.data.message });
-    }
+    deleteMembers(membersArr, setTeamMembers, project_id, setNotify, setError);
   };
 
   const onChangeEdit = (e) => {

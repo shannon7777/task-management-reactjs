@@ -80,16 +80,6 @@ const Tables = ({ teamMembers, completion_date }) => {
     removeItem(item_id, setProjectItems, project_id);
   };
 
-  // const completionPercentage = (projectItems) => {
-  //   let completedItems = projectItems?.filter(
-  //     (item) => item.progress === "Completed"
-  //   ).length;
-  //   let totalItems = projectItems.length;
-  //   let percentage = Math.round((completedItems / totalItems) * 100);
-  //   if (!completedItems) return 0;
-  //   return percentage;
-  // };
-
   const projectHeaders = [
     "Project Item",
     "Owners",

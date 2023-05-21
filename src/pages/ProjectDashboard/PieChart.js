@@ -1,52 +1,26 @@
 import { ResponsivePie } from "@nivo/pie";
 import { Col } from "react-bootstrap";
-const PieChart = ({ projectItems }) => {
-  const pieChartProgress = [
-    {
-      id: "Not Started",
-      label: "Not Started",
-      value: projectItems.filter((item) => item.progress === "Not Started")
-        .length,
-      color: "#6b7275",
-    },
-    {
-      id: "In Progress",
-      label: "In Progress",
-      value: projectItems.filter((item) => item.progress === "In Progress")
-        .length,
-      color: "#186e99",
-    },
-    {
-      id: "Stuck",
-      label: "Stuck",
-      value: projectItems.filter((item) => item.progress === "Stuck").length,
-      color: "#ad470c",
-    },
-    {
-      id: "Awaiting Review",
-      label: "Awaiting Review",
-      value: projectItems.filter((item) => item.progress === "Awaiting Review")
-        .length,
-      color: "#bf8b08",
-    },
-    {
-      id: "Completed",
-      label: "Completed",
-      value: projectItems.filter((item) => item.progress === "Completed")
-        .length,
-      color: "#356e19",
-    },
-  ];
+const PieChart = ({ projectItems, progressTypes }) => {
+  const pieChartData = Object.keys(progressTypes).map((progress) => {
+    let obj = {};
+    obj.id = progress;
+    obj.label = progress;
+    obj.value = projectItems.filter(
+      (item) => item.progress === progress
+    ).length;
+    obj.color = progressTypes[progress];
+    return obj;
+  });
 
   return (
     <Col className="m-2 shadow border rounded" style={{ height: 400 }}>
       <ResponsivePie
-        data={pieChartProgress}
+        data={pieChartData}
         margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
         innerRadius={0.5}
         padAngle={1}
         cornerRadius={3}
-        colors={pieChartProgress.map((data) => data.color)}
+        colors={pieChartData.map((data) => data.color)}
         borderWidth={1}
         borderColor={{
           from: "color",

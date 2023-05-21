@@ -24,6 +24,7 @@ const ProjectDashboard = () => {
     "Awaiting Review": "#bf8b08",
     Completed: "#356e19",
   };
+
   let progressTypes = {};
   let progressArr = [
     ...new Set(projectItems?.map((item) => item.progress)),
@@ -51,7 +52,10 @@ const ProjectDashboard = () => {
       {projectItems && (
         <>
           <Row>
-            <PieChart project_id={project_id} projectItems={projectItems} />
+            <PieChart
+              projectItems={projectItems}
+              progressTypes={progressTypes}
+            />
             <BarChart
               project_id={project_id}
               projectItems={projectItems}
@@ -59,14 +63,20 @@ const ProjectDashboard = () => {
             />
           </Row>
           <Row>
-            <ItemList projectItems={projectItems} />
+            <ItemList
+              projectItems={projectItems}
+              progressTypes={progressTypes}
+            />
             <BarChartDeadline
               projectItems={projectItems}
               progressTypes={progressTypes}
             />
           </Row>
           <Row>
-            <Calendar projectItems={projectItems} progressTypes={progressTypes}/>
+            <Calendar
+              projectItems={projectItems}
+              progressTypes={progressTypes}
+            />
           </Row>
         </>
       )}

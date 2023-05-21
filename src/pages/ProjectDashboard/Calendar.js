@@ -1,28 +1,31 @@
 import { useState, useEffect } from "react";
-import { ResponsiveTimeRange } from "@nivo/calendar";
 import { Badge, Col, Row } from "react-bootstrap";
 import dayjs from "dayjs";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBackward, faForward } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBackward,
+  faForward,
+  faCheckCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
-const Calendar = ({ projectItems, progressTypes }) => {
+const Calendar = ({ projectItems }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [dates, setDates] = useState(dayjs());
+  const [hover, setHover] = useState(null);
   const daysOfTheWeek = ["S", "M", "T", "W", "T", "F", "S"];
 
   useEffect(() => {
     setDates(firstItemDueDate());
-  }, []);
+  }, [projectItems]);
 
   const firstItemDueDate = () => {
     let deadlines = projectItems.sort(
       (a, b) => new Date(a.deadline) - new Date(b.deadline)
     );
     const firstDate = deadlines[0].deadline;
-    return dayjs(new Date(firstDate));
+    return dayjs(firstDate);
   };
-  console.log(firstItemDueDate());
 
   // generate all dates within specified month & year
   const generateDates = (month = dayjs().month(), year = dayjs().year()) => {
@@ -32,11 +35,17 @@ const Calendar = ({ projectItems, progressTypes }) => {
 
     // generating dates on calendar that dont belong to current month (prefix)
     for (let i = 0; i < firstDateOfMonth.day(); i++) {
-      datesArr.push({ date: firstDateOfMonth.day(i), currentMonth: false });
+      datesArr.push({
+        date: firstDateOfMonth.day(i),
+        currentMonth: false,
+      });
     }
 
     for (let i = firstDateOfMonth.date(); i <= lastDateOfMonth.date(); i++) {
-      datesArr.push({ date: firstDateOfMonth.date(i), currentMonth: true });
+      datesArr.push({
+        date: firstDateOfMonth.date(i),
+        currentMonth: true,
+      });
     }
 
     // generating the suffix dates that don't belong to the month
@@ -47,7 +56,10 @@ const Calendar = ({ projectItems, progressTypes }) => {
       i <= lastDateOfMonth.date() + remainingDays;
       i++
     ) {
-      datesArr.push({ date: lastDateOfMonth.date(i), currentMonth: false });
+      datesArr.push({
+        date: lastDateOfMonth.date(i),
+        currentMonth: false,
+      });
     }
 
     return datesArr;
@@ -70,14 +82,12 @@ const Calendar = ({ projectItems, progressTypes }) => {
 
   return (
     <Row>
-      <Col
-        className="border shadow rounded m-2"
-        style={{ height: "400px", width: "400px" }}
-      >
+      <Col className="border shadow rounded m-2" style={{ height: "400px" }}>
         <div className="d-flex justify-content-around mt-2">
           <h4>
             {months[dates.month()]}, {dates.year()}
           </h4>
+
           <div>
             <FontAwesomeIcon
               className="mx-3"
@@ -86,7 +96,10 @@ const Calendar = ({ projectItems, progressTypes }) => {
               onClick={() => setDates(dates.month(dates.month() - 1))}
             />
             <Badge
-              onClick={() => setDates(dayjs())}
+              onClick={() => {
+                setSelectedDate(dayjs());
+                setDates(dayjs());
+              }}
               style={{ cursor: "pointer" }}
             >
               today
@@ -101,16 +114,34 @@ const Calendar = ({ projectItems, progressTypes }) => {
         </div>
         <div className="calendar p-2">
           {daysOfTheWeek.map((day, index) => (
-            <h6 key={index} className="text-center mt-3">
+            <h5 key={index} className="text-center my-2">
               {day}
-            </h6>
+            </h5>
           ))}
 
           {generateDates(dates.month(), dates.year()).map(
             ({ date, currentMonth }, index) => (
               <h6
-                className={`text-center ${!currentMonth ? "opacity-25" : ""}`}
                 key={index}
+                onMouseOver={() => setHover(index)}
+                onMouseOut={() => setHover(null)}
+                className={`${!currentMonth ? "opacity-25" : ""} 
+                ${hover === index && "bg-secondary rounded"} ${
+                  date.toDate().toDateString() ===
+                    selectedDate.toDate().toDateString() &&
+                  "bg-secondary rounded text-white"
+                } ${
+                  date.toDate().toDateString() ===
+                    dayjs().toDate().toDateString() && "bg-primary rounded"
+                } ${
+                  projectItems.some(
+                    ({ deadline }) =>
+                      dayjs(deadline).toDate().toDateString() ===
+                      date.toDate().toDateString()
+                  ) && "border border-danger"
+                } p-2 m-1`}
+                style={{ cursor: "pointer" }}
+                onClick={() => setSelectedDate(date)}
               >
                 {date.date()}
               </h6>
@@ -119,83 +150,36 @@ const Calendar = ({ projectItems, progressTypes }) => {
         </div>
       </Col>
 
-      <Col></Col>
+      <Col className="border shadow rounded m-2 py-2">
+        <h4>
+          <Badge bg="dark">{selectedDate.toDate().toDateString()}</Badge>
+        </h4>
+        <hr />
+        {projectItems
+          .filter(
+            (item) =>
+              dayjs(item.deadline).toDate().toDateString() ===
+              selectedDate.toDate().toDateString()
+          )
+          .map((item, index) => (
+            <blockquote className="w-100" key={index}>
+              <h6>
+                {`Item due: ${item.item}`}
+                <span>
+                  {item.progress === "Completed" && (
+                    <FontAwesomeIcon
+                      className="mx-4"
+                      icon={faCheckCircle}
+                      color="green"
+                    />
+                  )}
+                </span>
+              </h6>
+            </blockquote>
+          ))}
+      </Col>
     </Row>
   );
-
-  // const startDate = () => {
-  //   let deadlines = projectItems.sort(
-  //     (a, b) => new Date(b.deadline) - new Date(a.deadline)
-  //   );
-  //   return deadlines[deadlines.length - 1].deadline;
-  // };
-
-  //   const endDate = () => {
-  //     let deadlines = projectItems.sort(
-  //       (a, b) => new Date(b.deadline) - new Date(a.deadline)
-  //     );
-  //     return deadlines[0].deadline;
-  //   };
-
-  //   const formatDate = (deadline) => {
-  //     return new Date(deadline).toISOString().split("T")[0];
-  //   };
-
-  //   const data = projectItems.map((item) => {
-  //     let dataObj = {};
-  //     dataObj.value = projectItems.filter(
-  //       ({ deadline }) => deadline === item.deadline
-  //     ).length;
-  //     dataObj.day = formatDate(item.deadline);
-  //     return dataObj;
-  //   });
-
-  //   return (
-  //     <Col className="m-2 shadow border rounded" style={{ height: 400 }}>
-  //       <ResponsiveTimeRange
-  //         data={data}
-  //         from={startDate()}
-  //         to={endDate()}
-  //         emptyColor="#eeeeee"
-  //         colors={Object.values(progressTypes)}
-  //         // minValue={100}
-  //         margin={{ top: 40, right: 40, bottom: 100, left: 40 }}
-  //         monthLegendOffset={14}
-  //         weekdayLegendOffset={74}
-  //         dayRadius={7}
-  //         daySpacing={3}
-  //         dayBorderWidth={2}
-  //         dayBorderColor="#ebebeb"
-  //         tooltip={({ day, value }) => (
-  //           <div className="border bg-dark text-white rounded p-2">
-  //             <div>{day}</div>
-  //             {projectItems
-  //               .filter((item) => formatDate(item.deadline) === day)
-  //               .map((item, index) => (
-  //                 <div key={index}>
-  //                   {index + 1}:{item.item}
-  //                 </div>
-  //               ))}
-  //           </div>
-  //         )}
-  //         legends={[
-  //           {
-  //             anchor: "bottom-right",
-  //             direction: "row",
-  //             justify: false,
-  //             itemCount: 4,
-  //             itemWidth: 42,
-  //             itemHeight: 50,
-  //             itemsSpacing: 21,
-  //             itemDirection: "right-to-left",
-  //             translateX: -77,
-  //             translateY: -72,
-  //             symbolSize: 20,
-  //           },
-  //         ]}
-  //       />
-  //     </Col>
-  //   );
 };
 
 export default Calendar;

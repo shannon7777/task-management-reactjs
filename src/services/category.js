@@ -87,28 +87,31 @@ const removeCategory = async (
       `/projectItems/category/${category_id}`
     );
     if (status === 400) throw console.log(data.message);
+
     let categories = JSON.parse(
       localStorage.getItem(`categories-${project_id}`)
-    );
-    let projectItems = JSON.parse(
-      localStorage.getItem(`projectItems-${project_id}`)
     );
     let filteredCategories = categories.filter(
       (category) => category._id !== category_id
     );
-    let filteredProjectItems = projectItems.filter(
-      (item) => category_id !== item.category_id
-    );
-    setCategories(filteredCategories);
-    setProjectItems(filteredProjectItems);
     localStorage.setItem(
       `categories-${project_id}`,
       JSON.stringify(filteredCategories)
+    );
+
+    let projectItems = JSON.parse(
+      localStorage.getItem(`projectItems-${project_id}`)
+    );
+    let filteredProjectItems = projectItems.filter(
+      (item) => category_id !== item.category_id
     );
     localStorage.setItem(
       `projectItems-${project_id}`,
       JSON.stringify(filteredProjectItems)
     );
+
+    setCategories(filteredCategories);
+    setProjectItems(filteredProjectItems);
   } catch (error) {
     if (error.response) console.log(error.response.data.message);
     else {
