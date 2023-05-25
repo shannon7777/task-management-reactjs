@@ -66,7 +66,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     (member) => member._id === project?.creator
   );
   const projectOwner = (
-    <TeamMembers className="profilePicNavbar" member={owner[0]} />
+    <TeamMembers className="teamMemberpic" member={owner[0]} />
   );
   const ownedByUser = owner[0]?._id === user._id ? "(You)" : null;
 
@@ -203,7 +203,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                     teamMembers.map((member, index) => (
                       <span key={index}>
                         <TeamMembers
-                          className="profilePicNavbar"
+                          className="teamMemberpic"
                           member={member}
                         />
                       </span>

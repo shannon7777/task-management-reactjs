@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Overlay, Tooltip } from "react-bootstrap";
 import axios from "axios";
 
-const TeamMembers = ({ member }) => {
+const TeamMembers = ({ member, className }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [isHovering, setIsHovering] = useState(false);
   const target = useRef(null);
@@ -40,7 +40,7 @@ const TeamMembers = ({ member }) => {
       >
         <img
           alt="user"
-          className="teamMemberpic"
+          className={className}
           src={imageUrl || placeholderPic}
         />
       </span>

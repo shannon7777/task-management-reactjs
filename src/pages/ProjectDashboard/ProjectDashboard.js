@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Badge, Row } from "react-bootstrap";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
@@ -35,13 +35,25 @@ const ProjectDashboard = () => {
 
   return (
     <>
-      <h4>
-        <Badge bg="dark" className="my-2">
+      <h4 className="mt-4">
+        <Badge bg="dark" className="my-2 mx-2">
           Current Projects
         </Badge>
+        <Badge>
+          <Link
+            className="project-link"
+            to={`/members-dashboard/${project_id ? project_id : ""}`}
+          >
+            Members Dashboard
+          </Link>
+        </Badge>
       </h4>
-      <Row>
-        <ProjectSelectionList projects={projects} project_id={project_id} />
+      <Row className={`${projectItems ? "w-100" : "w-50"}`}>
+        <ProjectSelectionList
+          projects={projects}
+          project_id={project_id}
+          params="project-dashboard"
+        />
         {projectItems && (
           <ProgressAndTimeline
             projectItems={projectItems}
@@ -62,6 +74,7 @@ const ProjectDashboard = () => {
               progressTypes={progressTypes}
             />
           </Row>
+
           <Row>
             <ItemList
               projectItems={projectItems}
@@ -72,6 +85,7 @@ const ProjectDashboard = () => {
               progressTypes={progressTypes}
             />
           </Row>
+
           <Row>
             <Calendar
               projectItems={projectItems}

@@ -12,6 +12,7 @@ import PersistLogin from "./components/PersistLogin";
 import CustomAlert from "./components/CustomAlert";
 import TaskDashboard from "./pages/TaskDashboard";
 import ProjectDashboard from "./pages/ProjectDashboard";
+import MemberDashboard from "./pages/MembersDashboard";
 import ProjectList from "./pages/Projectlist";
 import ProjectPage from "./pages/ProjectPage";
 import About from "./components/About";
@@ -114,11 +115,14 @@ const App = () => {
             </Route>
 
             <Route path="project-dashboard" element={<RequireAuth />}>
-              <Route index element={<ProjectDashboard />}/>
-              <Route path=":project_id" element={<ProjectDashboard />}/>
+              <Route index element={<ProjectDashboard />} />
+              <Route path=":project_id" element={<ProjectDashboard />} />
             </Route>
 
-            {/* <Route path="/members-dashboard" element={<MembersDashboard />} /> */}
+            <Route path="members-dashboard" element={<RequireAuth />}>
+              <Route index element={<MemberDashboard />} />
+              <Route path=":project_id" element={<MemberDashboard />} />
+            </Route>
 
             <Route path="team-projects" element={<RequireAuth />}>
               <Route index element={<ProjectList {...setNotifications} />} />
@@ -127,11 +131,12 @@ const App = () => {
                 element={<ProjectPage {...setNotifications} />}
               />
             </Route>
+
+            <Route path="*" element={<MissingPage />} />
           </Route>
 
           <Route path="/about" element={<About />} />
           {/* catch all other url routes */}
-          <Route path="*" element={<MissingPage />} />
         </Route>
       </Routes>
     </>

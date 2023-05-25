@@ -81,7 +81,7 @@ const Calendar = ({ projectItems }) => {
   ];
 
   return (
-    <Row>
+    <>
       <Col className="border shadow rounded m-2" style={{ height: "400px" }}>
         <div className="d-flex justify-content-around mt-2">
           <h4>
@@ -178,7 +178,7 @@ const Calendar = ({ projectItems }) => {
             </blockquote>
           ))}
       </Col>
-    </Row>
+    </>
   );
 };
 
