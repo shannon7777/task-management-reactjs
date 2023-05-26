@@ -1,10 +1,10 @@
-import { Col, Card } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const ProjectSelectionList = ({ projects, project_id, params }) => {
   return (
-    <Col
-      className="m-2 shadow rounded"
+    <div
+      className="my-2 shadow rounded"
       style={{ height: 230, overflow: "auto" }}
     >
       {projects.map((project) => (
@@ -15,15 +15,12 @@ const ProjectSelectionList = ({ projects, project_id, params }) => {
           } shadow m-2 p-1`}
           key={`project-${project._id}`}
         >
-          <Link
-            className="project-link p-2"
-            to={`/${params}/${project._id}`}
-          >
+          <Link className="project-link p-2" to={`/${params}/${project._id}`}>
             <Card.Title>{project.title}</Card.Title>
           </Link>
         </Card>
       ))}
-    </Col>
+    </div>
   );
 };
 

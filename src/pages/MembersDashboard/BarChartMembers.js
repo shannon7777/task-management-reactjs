@@ -1,27 +1,7 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { Col } from "react-bootstrap";
 
-const BarChartMembers = ({ teamMembers, project_id }) => {
-  const projectItems = JSON.parse(
-    localStorage.getItem(`projectItems-${project_id}`)
-  );
-
-  let progressTypesObj = {
-    "Not Started": "#6b7275",
-    "In Progress": "#186e99",
-    Stuck: "#ad470c",
-    "Awaiting Review": "#bf8b08",
-    Completed: "#356e19",
-  };
-
-  let progressTypes = {};
-  let progressArr = [
-    ...new Set(projectItems?.map((item) => item.progress)),
-  ].map((progress) => {
-    progressTypes[progress] = progressTypesObj[progress];
-    return progressTypes;
-  });
-
+const BarChartMembers = ({ teamMembers, projectItems, progressTypes }) => {
   const data = teamMembers.map((member) => {
     let obj = {};
     obj.member = member.username;
@@ -34,27 +14,19 @@ const BarChartMembers = ({ teamMembers, project_id }) => {
     return obj;
   });
 
-  let membersImgObj = {};
-  teamMembers.forEach((member) => {
-    let img = JSON.parse(localStorage.getItem(`memberImg-${member._id}`));
-    membersImgObj[`memberImg-${member._id}`] = img;
-  });
-
   const customMemberImage = ({ bars }) => {
-    console.log(bars);
-    let size = 24;
+    let size = 30;
     let images = bars.map(({ key, x, y, width, height, data }) => (
       <image
-        style={{ borderRadius: "15px" }}
-        // href="https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+        className="barChartImg"
         href={JSON.parse(
           localStorage.getItem(`memberImg-${data.data.memberId}`)
         )}
         key={key}
-        // x={x + width / 2 - size / 2}
+        // x={x + width / 2 - size / 3}
         y={y + height / 3 - size / 3}
-        height={size}
-        width={size}
+        height={30}
+        width={30}
       />
     ));
     return images;

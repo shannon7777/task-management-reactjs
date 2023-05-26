@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { Badge, Row } from "react-bootstrap";
+import { Badge, Col, Row } from "react-bootstrap";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
 import ProgressAndTimeline from "./ProgressAndTimeline";
@@ -34,9 +34,9 @@ const ProjectDashboard = () => {
   });
 
   return (
-    <>
+    <div className="m-2">
       <h4 className="mt-4">
-        <Badge bg="dark" className="my-2 mx-2">
+        <Badge bg="dark px-5 my-2" style={{ marginRight: "1rem" }}>
           Current Projects
         </Badge>
         <Badge>
@@ -48,18 +48,22 @@ const ProjectDashboard = () => {
           </Link>
         </Badge>
       </h4>
-      <Row className={`${projectItems ? "w-100" : "w-50"}`}>
-        <ProjectSelectionList
-          projects={projects}
-          project_id={project_id}
-          params="project-dashboard"
-        />
-        {projectItems && (
-          <ProgressAndTimeline
-            projectItems={projectItems}
-            project={project[0]}
+      <Row>
+        <Col>
+          <ProjectSelectionList
+            projects={projects}
+            project_id={project_id}
+            params="project-dashboard"
           />
-        )}
+        </Col>
+        <Col>
+          {projectItems && (
+            <ProgressAndTimeline
+              projectItems={projectItems}
+              project={project[0]}
+            />
+          )}
+        </Col>
       </Row>
       {projectItems && (
         <>
@@ -94,7 +98,7 @@ const ProjectDashboard = () => {
           </Row>
         </>
       )}
-    </>
+    </div>
   );
 };
 

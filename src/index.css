@@ -208,9 +208,10 @@ body {
 }
 
 .member-dashboard {
-  width: 50px;
-  height: 50px;
-  border-radius: 10%
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  /* border-radius: 10% */
 }
 
 .dot {
@@ -295,6 +296,11 @@ blockquote {
   grid-template-columns: repeat(7, 1fr);
   height: 350px;
   text-align: center;
+}
+
+.barChartImg {
+  border: 1px solid black;
+  border-radius: 50%;
 }
 
 

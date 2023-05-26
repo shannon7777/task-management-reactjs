@@ -33,7 +33,7 @@ const ProgressAndTimeline = ({ projectItems, project }) => {
   };
 
   return (
-    <Col className="d-flex m-2 shadow border rounded" style={{ height: 230 }}>
+    <div className="d-flex shadow border rounded my-2 px-2" style={{ height: 230 }}>
       <Col>
         <p className="p-1 text-center">
           <strong>Completion Rate</strong>
@@ -43,7 +43,7 @@ const ProgressAndTimeline = ({ projectItems, project }) => {
             width: "180px",
             height: "180px",
             padding: "20px 20px",
-            marginLeft: "2.5rem",
+            marginLeft: "2rem",
           }}
         >
           <CircularProgressbar
@@ -79,7 +79,7 @@ const ProgressAndTimeline = ({ projectItems, project }) => {
           Completion date: {new Date(project.completion_date).toDateString()}{" "}
         </Badge>
       </Col>
-    </Col>
+    </div>
   );
 };
 
