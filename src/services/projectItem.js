@@ -220,7 +220,46 @@ const deleteOwners = async (owner, setOwners, item_id, project_id) => {
   }
 };
 
-const addNote = async () => {};
+const addNote = async (
+  formData,
+  setFormData,
+  user,
+  projectItem,
+  setAllNotes,
+  setShowNoteForm
+) => {
+  const noteObj = { note: formData, user_id: user._id };
+  if (!formData) return;
+  try {
+    const {
+      data: { newNote, message },
+    } = await axios.put(`projectItems/notes/${projectItem._id}`, noteObj);
+    setAllNotes((prev) => [...prev, newNote]);
+    setShowNoteForm((prev) => !prev);
+    setFormData("");
+  } catch (error) {
+    if (error.response) console.log(error.response.data.message);
+    else {
+      console.log(error.message);
+    }
+  }
+};
+
+const deleteNote = async (id, projectItem, setAllNotes) => {
+  try {
+    const { data } = await axios.put(
+      `projectItems/removeNote/${projectItem._id}`,
+      { note_id: id }
+    );
+    console.log(data.message);
+    return setAllNotes((prev) => prev.filter((note) => note._id !== id));
+  } catch (error) {
+    if (error.response) throw console.log(error.response.data.message);
+    else {
+      console.log(error.message);
+    }
+  }
+};
 
 export {
   fetchCategoriesAndItems,
@@ -230,4 +269,6 @@ export {
   getOwners,
   inviteOwners,
   deleteOwners,
+  addNote,
+  deleteNote,
 };

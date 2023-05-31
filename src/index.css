@@ -303,4 +303,27 @@ blockquote {
   border-radius: 50%;
 }
 
+.memberSelect {
+  display: flex;
+  border-radius: 1rem;
+  cursor: pointer;
+  border: 1px solid grey;
+  padding: 0.2rem;
+  margin: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.memberSelect:hover {
+  border: 1px solid darkolivegreen;
+  -webkit-transform: scale(1.01);
+  transform: scale(1.01);
+  background-color: rgb(2, 60, 2);
+  color: white;
+}
+
+.memberSelect p{
+  margin: 0 15px 0 15px;
+  vertical-align: middle;
+}
+
 

@@ -1,14 +1,14 @@
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import axios from "axios";
 
 import TeamMembers from "../../components/TeamMember";
+import { addNote, deleteNote } from "../../services/projectItem";
 
 import { Modal, Form, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStickyNote, faX } from "@fortawesome/free-solid-svg-icons";
 
-const Notes = ({ editItem, projectItem, ownerIds }) => {
+const Notes = ({ editItem, projectItem, owners }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [formData, setFormData] = useState("");
@@ -18,36 +18,22 @@ const Notes = ({ editItem, projectItem, ownerIds }) => {
     auth: { user },
   } = useAuth();
 
-  let ableToView = ownerIds.includes(user._id);
+  let ableToView = owners.map((owner) => owner._id).includes(user._id);
 
   const createNote = async (e) => {
     e.preventDefault();
-    const noteObj = { note: formData, user_id: user._id };
-    if (!formData) return;
-    try {
-      const {
-        data: { newNote, message },
-      } = await axios.put(`projectItems/notes/${projectItem._id}`, noteObj);
-      setAllNotes((prev) => [...prev, newNote]);
-      setShowNoteForm((prev) => !prev);
-      setFormData("");
-    } catch (error) {}
+    addNote(
+      formData,
+      setFormData,
+      user,
+      projectItem,
+      setAllNotes,
+      setShowNoteForm
+    );
   };
 
   const removeNote = async (id) => {
-    try {
-      const { data } = await axios.put(
-        `projectItems/removeNote/${projectItem._id}`,
-        { note_id: id }
-      );
-      console.log(data.message);
-      return setAllNotes((prev) => prev.filter((note) => note._id !== id));
-    } catch (error) {
-      if (error.response) throw console.log(error.response.data.message);
-      else {
-        console.log(error.message);
-      }
-    }
+    deleteNote(id, projectItem, setAllNotes);
   };
 
   const noteForm = (
@@ -65,15 +51,16 @@ const Notes = ({ editItem, projectItem, ownerIds }) => {
     </Form>
   );
 
-  let owners = [...new Set(allNotes.map(({ user_id }) => user_id))];
-  const itemNotes = owners.map((id) => (
-    <Card key={`owner-${id}`}>
+  let ownerNoteIds = allNotes.map(({ user_id }) => user_id);
+  let ownerNotes = owners.filter((owner) => ownerNoteIds.includes(owner._id));
+  const itemNotes = ownerNotes.map((owner) => (
+    <Card key={`owner-${owner._id}`}>
       <Card.Body>
         <span>
-          <TeamMembers member_id={id} />
+          <TeamMembers member={owner} className="teamMemberpic" />
         </span>
         {allNotes
-          .filter(({ user_id }) => user_id === id)
+          .filter(({ user_id }) => user_id === owner._id)
           .map(({ note, _id, user_id }) => (
             <p
               key={`note-${_id}`}

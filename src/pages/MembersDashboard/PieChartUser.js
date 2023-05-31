@@ -1,5 +1,5 @@
 import { ResponsivePie } from "@nivo/pie";
-import { Col } from "react-bootstrap";
+import { Col, Badge } from "react-bootstrap";
 
 const PieChartUser = ({ user, projectItems }) => {
   let progressTypesObj = {
@@ -11,10 +11,9 @@ const PieChartUser = ({ user, projectItems }) => {
   };
 
   let progressTypes = {};
-
-  let progressArr = projectItems
+  projectItems
     .filter((item) => item.owners.includes(user._id))
-    .map(({ progress }) => {
+    .forEach(({ progress }) => {
       progressTypes[progress] = progressTypesObj[progress];
       return progressTypes;
     });
@@ -30,12 +29,21 @@ const PieChartUser = ({ user, projectItems }) => {
     return obj;
   });
 
+  let totalUserItems = projectItems.filter((item) =>
+    item.owners.includes(user._id)
+  ).length;
+
   return (
     <Col className="m-2 shadow border rounded" style={{ height: 400 }}>
-      <h5>{user.username}</h5>
+      <h4 className="m-2">
+        <Badge bg="primary">
+          {user.username}
+          <Badge bg="secondary mx-2">{totalUserItems}</Badge>
+        </Badge>
+      </h4>
       <ResponsivePie
         data={pieChartData}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+        margin={{ top: 50, right: 80, bottom: 120, left: 80 }}
         innerRadius={0.5}
         padAngle={1}
         cornerRadius={3}
@@ -95,7 +103,7 @@ const PieChartUser = ({ user, projectItems }) => {
             translateX: 0,
             translateY: 56,
             itemsSpacing: 0,
-            itemWidth: 100,
+            itemWidth: 115,
             itemHeight: 18,
             itemTextColor: "#999",
             itemDirection: "left-to-right",

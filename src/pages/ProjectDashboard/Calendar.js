@@ -138,7 +138,7 @@ const Calendar = ({ projectItems }) => {
                     ({ deadline }) =>
                       dayjs(deadline).toDate().toDateString() ===
                       date.toDate().toDateString()
-                  ) && "border border-danger"
+                  ) && "border rounded border-danger"
                 } p-2 m-1`}
                 style={{ cursor: "pointer" }}
                 onClick={() => setSelectedDate(date)}
@@ -161,22 +161,24 @@ const Calendar = ({ projectItems }) => {
               dayjs(item.deadline).toDate().toDateString() ===
               selectedDate.toDate().toDateString()
           )
-          .map((item, index) => (
-            <blockquote className="w-100" key={index}>
-              <h6>
-                {`Item due: ${item.item}`}
-                <span>
-                  {item.progress === "Completed" && (
-                    <FontAwesomeIcon
-                      className="mx-4"
-                      icon={faCheckCircle}
-                      color="green"
-                    />
-                  )}
-                </span>
-              </h6>
-            </blockquote>
-          ))}
+          .map((item, index) => {
+            return (
+              <blockquote className="w-100" key={index}>
+                <h6>
+                  {`Item due: ${item.item}`}
+                  <span>
+                    {item.progress === "Completed" && (
+                      <FontAwesomeIcon
+                        className="mx-4"
+                        icon={faCheckCircle}
+                        color="green"
+                      />
+                    )}
+                  </span>
+                </h6>
+              </blockquote>
+            );
+          })}
       </Col>
     </>
   );

@@ -1,29 +1,33 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import TeamMembers from "../../components/TeamMember";
 
 const MemberSelectionList = ({ teamMembers, setSelectedUser }) => {
+  const [active, setActive] = useState(null);
+  const onSelectUser = (member) => {
+    setSelectedUser(member);
+    setActive(member._id);
+  };
+
   return (
     <div
-      className="m-2 border rounded"
+      className="m-2 border rounded shadow"
       style={{ overflow: "auto", height: "230px" }}
     >
-      {teamMembers &&
+      {
         teamMembers.map((member) => (
           <div
             key={member._id}
-            className="d-flex border p-1 shadow m-1"
-            onClick={() => setSelectedUser(member)}
-            // style={{  }}
+            className={`memberSelect shadow ${
+              active === member._id && "bg-dark text-white"
+            }`}
+            onClick={() => onSelectUser(member)}
           >
-            <p>
+            <span>
+              <TeamMembers member={member} className="member-dashboard" />
+            </span>
+            <p className="mx-3">
               <strong>{member.username}</strong>
             </p>
-            <span>
-              <TeamMembers
-                member={member}
-                className="member-dashboard"
-              />
-            </span>
           </div>
         ))}
     </div>

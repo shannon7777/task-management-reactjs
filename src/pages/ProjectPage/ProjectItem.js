@@ -56,7 +56,7 @@ const ProjectItem = ({
         <Notes
           projectItem={projectItem}
           editItem={editItem}
-          ownerIds={owners?.map((owner) => owner._id)}
+          owners={owners}
         />
       </tr>
     </tbody>

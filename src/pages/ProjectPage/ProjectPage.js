@@ -66,7 +66,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     (member) => member._id === project?.creator
   );
   const projectOwner = (
-    <TeamMembers className="teamMemberpic" member={owner[0]} />
+    <TeamMembers className="teamMemberpic mx-2" member={owner[0]} />
   );
   const ownedByUser = owner[0]?._id === user._id ? "(You)" : null;
 
@@ -220,9 +220,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 {editMembersModal}
               </Card.Text>
               <Card.Text>
-                <Badge bg="dark" className="ms-auto">
-                  Project Owner:
-                </Badge>
+                <Badge bg="dark">Project Owner:</Badge>
                 {projectOwner} {ownedByUser}
               </Card.Text>
             </Card.Body>

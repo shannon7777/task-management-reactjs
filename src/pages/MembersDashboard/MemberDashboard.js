@@ -6,6 +6,9 @@ import ProjectSelectionList from "../ProjectDashboard/ProjectSelectionList";
 import BarChartMembers from "./BarChartMembers";
 import MemberSelectionList from "./MemberSelectionList";
 import PieChartUser from "./PieChartUser";
+import UserProjectItems from "./UserProjectItems";
+
+import { progressTypesObj } from "../ProjectDashboard/ProjectDashboard";
 
 const MemberDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -18,15 +21,7 @@ const MemberDashboard = () => {
     localStorage.getItem(`projectItems-${project_id}`)
   );
 
-  let progressTypesObj = {
-    "Not Started": "#6b7275",
-    "In Progress": "#186e99",
-    Stuck: "#ad470c",
-    "Awaiting Review": "#bf8b08",
-    Completed: "#356e19",
-  };
-
-  let progressTypes = {};
+  const progressTypes = {};
   let progressArr = [
     ...new Set(projectItems?.map((item) => item.progress)),
   ].map((progress) => {
@@ -49,7 +44,7 @@ const MemberDashboard = () => {
           </Link>
         </Badge>
       </h4>
-      <Row className="">
+      <Row>
         <Col>
           <ProjectSelectionList
             project_id={project_id}
@@ -59,16 +54,18 @@ const MemberDashboard = () => {
         </Col>
 
         <Col>
-          <MemberSelectionList
-            teamMembers={teamMembers}
-            setSelectedUser={setSelectedUser}
-          />
+          {teamMembers && (
+            <MemberSelectionList
+              teamMembers={teamMembers}
+              setSelectedUser={setSelectedUser}
+            />
+          )}
         </Col>
       </Row>
 
       <Row>
         <Col>
-          {teamMembers && (
+          {teamMembers && projectItems && (
             <BarChartMembers
               teamMembers={teamMembers}
               projectItems={projectItems}
@@ -76,15 +73,24 @@ const MemberDashboard = () => {
             />
           )}
         </Col>
+      </Row>
 
-        <Col>
-          {selectedUser && (
-            <PieChartUser
-              user={selectedUser}
-              projectItems={projectItems}
-            />
-          )}
-        </Col>
+      <Row>
+        {selectedUser && projectItems && (
+          <>
+            <Col>
+              <PieChartUser user={selectedUser} projectItems={projectItems} />
+            </Col>
+
+            <Col>
+              <UserProjectItems
+                user={selectedUser}
+                projectItems={projectItems}
+                progressTypes={progressTypes}
+              />
+            </Col>
+          </>
+        )}
       </Row>
     </div>
   );

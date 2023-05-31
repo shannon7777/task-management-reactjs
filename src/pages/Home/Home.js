@@ -63,18 +63,12 @@ const Home = ({ setNotifications }) => {
     setShowAddTask(!showAddTask);
   };
   // -------------------- TASKS CATEGORIZED BY PROGRESS -----------------
-  const colorStatus = {
-    "New Task": "#92a8d1",
-    "In progress": "#feb236",
-    Stuck: "#c94c4c",
-    Completed: "#82b74b",
-  };
 
   const taskProps = {
     setTasks,
     deleteTask,
     editTask,
-    colorStatus,
+    taskProgressColors,
     formData,
     setFormData,
     onChange,
@@ -88,7 +82,7 @@ const Home = ({ setNotifications }) => {
     <Col md={6} className="my-3" key={`progress-${progress}`}>
       <span
         className="progress-title"
-        style={{ background: colorStatus[progress] }}
+        style={{ background: taskProgressColors[progress] }}
       >
         <span>{progress}</span>
       </span>
@@ -128,3 +122,10 @@ const Home = ({ setNotifications }) => {
 };
 
 export default Home;
+
+export const taskProgressColors = {
+  "New Task": "#92a8d1",
+  "In progress": "#feb236",
+  Stuck: "#c94c4c",
+  Completed: "#82b74b",
+};

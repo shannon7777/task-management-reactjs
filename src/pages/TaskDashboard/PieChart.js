@@ -1,75 +1,94 @@
-import { PieChart as PieChartApi, Pie, Cell, Tooltip } from "recharts";
+// import { PieChart as PieChartApi, Pie, Cell, Tooltip } from "recharts";
+import { ResponsivePie } from "@nivo/pie";
+import { Col } from "react-bootstrap";
+import { taskProgressColors } from "../Home/Home";
 
-const PieChart = ({
-  pieChartData,
-  pieChartColors,
-  pieChartData2,
-  pieChartColors2,
-}) => {
+const PieChart = ({ tasks }) => {
+  let pieChartData = Object.keys(taskProgressColors).map((progress) => {
+    let obj = {};
+    obj.id = progress;
+    obj.label = progress;
+    obj.value = tasks.filter((task) => task.progress === progress).length;
+    obj.color = taskProgressColors[progress];
+    return obj;
+  });
+
   return (
-    <PieChartApi width={600} height={400}>
-      <Pie
+    <Col className="m-2 shadow border rounded" style={{ height: 400 }}>
+      <ResponsivePie
         data={pieChartData}
-        cx={120}
-        cy={200}
-        labelLine={false}
-        outerRadius={100}
-        dataKey="value"
-        label={renderCustomizedLabel}
-      >
-        {pieChartData.map((entry, i) => (
-          <Cell
-            key={`cell-1-${i}`}
-            fill={pieChartColors[i % pieChartColors.length]}
-          />
-        ))}
-      </Pie>
-      <Pie
-        data={pieChartData2}
-        cx={420}
-        cy={200}
-        labelLine={false}
-        outerRadius={100}
-        dataKey="value"
-        label={renderCustomizedLabel}
-        startAngle={180}
-      >
-        {pieChartData2.map((entry, i) => (
-          <Cell
-            key={`cell-2-${i}`}
-            fill={pieChartColors2[i % pieChartColors2.length]}
-          />
-        ))}
-      </Pie>
-      <Tooltip />
-    </PieChartApi>
+        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+        innerRadius={0.5}
+        padAngle={1}
+        cornerRadius={3}
+        colors={pieChartData.map((data) => data.color)}
+        borderWidth={1}
+        borderColor={{
+          from: "color",
+          modifiers: [["darker", 0.2]],
+        }}
+        activeOuterRadiusOffset={8}
+        activeInnerRadiusOffset={8}
+        arcLinkLabelsSkipAngle={10}
+        arcLinkLabelsTextColor="#333333"
+        arcLinkLabelsThickness={2}
+        arcLinkLabelsColor={{ from: "color" }}
+        arcLabelsSkipAngle={10}
+        arcLabelsTextColor="white"
+        defs={[
+          {
+            id: "dots",
+            type: "patternDots",
+            background: "inherit",
+            color: "rgba(255, 255, 255, 0.3)",
+            size: 4,
+            padding: 1,
+            stagger: true,
+          },
+          {
+            id: "lines",
+            type: "patternLines",
+            background: "inherit",
+            color: "rgba(255, 255, 255, 0.3)",
+            rotation: -45,
+            lineWidth: 6,
+            spacing: 10,
+          },
+        ]}
+        fill={[
+          {
+            match: {
+              id: "Completed",
+            },
+            id: "lines",
+          },
+          {
+            match: {
+              id: "In Progress",
+            },
+            id: "lines",
+          },
+        ]}
+        legends={[
+          {
+            anchor: "bottom",
+            direction: "row",
+            justify: false,
+            translateX: 0,
+            translateY: 56,
+            itemsSpacing: 0,
+            itemWidth: 100,
+            itemHeight: 18,
+            itemTextColor: "#999",
+            itemDirection: "left-to-right",
+            itemOpacity: 1,
+            symbolSize: 18,
+            symbolShape: "circle",
+          },
+        ]}
+      />
+    </Col>
   );
 };
 
 export default PieChart;
-
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-}) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text
-      x={x}
-      y={y}
-      fill="white"
-      textAnchor={x > cx ? "start" : "end"}
-      dominantBaseline="central"
-    >
-      {percent > 0 ? `${(percent * 100).toFixed(0)}%` : null}
-    </text>
-  );
-};

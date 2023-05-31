@@ -17,15 +17,7 @@ const ProjectDashboard = () => {
     localStorage.getItem(`projectItems-${project_id}`)
   );
 
-  let progressTypesObj = {
-    "Not Started": "#6b7275",
-    "In Progress": "#186e99",
-    Stuck: "#ad470c",
-    "Awaiting Review": "#bf8b08",
-    Completed: "#356e19",
-  };
-
-  let progressTypes = {};
+  const progressTypes = {};
   let progressArr = [
     ...new Set(projectItems?.map((item) => item.progress)),
   ].map((progress) => {
@@ -103,3 +95,11 @@ const ProjectDashboard = () => {
 };
 
 export default ProjectDashboard;
+
+export const progressTypesObj = {
+  "Not Started": "#6b7275",
+  "In Progress": "#186e99",
+  Stuck: "#ad470c",
+  "Awaiting Review": "#bf8b08",
+  Completed: "#356e19",
+};

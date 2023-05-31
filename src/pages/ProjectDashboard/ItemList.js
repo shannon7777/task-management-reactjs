@@ -5,40 +5,36 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 const ItemList = ({ projectItems, progressTypes }) => {
   const [items, setItems] = useState(projectItems);
-  const [filter, setFilter] = useState({
-    overdue: false,
-    dueThisWeek: false,
-    completed: false,
-    incomplete: false,
-  });
+  // const [filter, setFilter] = useState({
+  //   overdue: false,
+  //   dueThisWeek: false,
+  //   completed: false,
+  //   incomplete: false,
+  // });
   // make a filter to show items that are overdue && due this week
 
-  const itemsDueThisWeek = (deadline) => {
-    const thisWeekend = new Date(
-      new Date().setDate(new Date().getDate() - new Date().getDay() + 7)
-    );
-    const startOfTheWeek = new Date(
-      new Date().setDate(new Date().getDate() - new Date().getDay())
-    );
-    return (
-      startOfTheWeek < new Date(deadline) && new Date(deadline) < thisWeekend
-    );
-  };
-  const overdue = (deadline) => {
-    let dateToday = new Date().setHours(0, 0, 0, 0);
-    return new Date(deadline) < dateToday;
-  };
+  // const itemsDueThisWeek = (deadline) => {
+  //   const thisWeekend = new Date(
+  //     new Date().setDate(new Date().getDate() - new Date().getDay() + 7)
+  //   );
+  //   const startOfTheWeek = new Date(
+  //     new Date().setDate(new Date().getDate() - new Date().getDay())
+  //   );
+  //   return (
+  //     startOfTheWeek < new Date(deadline) && new Date(deadline) < thisWeekend
+  //   );
+  // };
+  // const overdue = (deadline) => {
+  //   let dateToday = new Date().setHours(0, 0, 0, 0);
+  //   return new Date(deadline) < dateToday;
+  // };
 
-  const checkboxes = [
-    { label: "Overdue", value: overdue() },
-    { label: "Due This Week", value: itemsDueThisWeek() },
-    { label: "Completed", value: (deadline) => deadline === "Completed" },
-    { label: "Not completed", value: (deadline) => deadline !== "Completed" },
-  ];
-
-  const onChange = (e) => {
-    console.log(e.target.value);
-  };
+  // const checkboxes = [
+  //   { label: "Overdue", value: overdue() },
+  //   { label: "Due This Week", value: itemsDueThisWeek() },
+  //   { label: "Completed", value: (deadline) => deadline === "Completed" },
+  //   { label: "Not completed", value: (deadline) => deadline !== "Completed" },
+  // ];
 
   return (
     <Col
@@ -122,3 +118,20 @@ const ItemList = ({ projectItems, progressTypes }) => {
 };
 
 export default ItemList;
+
+export const itemsDueThisWeek = (deadline) => {
+  const thisWeekend = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay() + 7)
+  );
+  const startOfTheWeek = new Date(
+    new Date().setDate(new Date().getDate() - new Date().getDay())
+  );
+  return (
+    startOfTheWeek < new Date(deadline) && new Date(deadline) < thisWeekend
+  );
+};
+
+export const overdue = (deadline) => {
+  let dateToday = new Date().setHours(0, 0, 0, 0);
+  return new Date(deadline) < dateToday;
+};

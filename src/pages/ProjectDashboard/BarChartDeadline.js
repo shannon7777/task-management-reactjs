@@ -44,7 +44,6 @@ const BarChartDeadline = ({ projectItems, progressTypes }) => {
       <ResponsiveBar
         data={data}
         keys={Object.keys(progressTypes)}
-        // keys={}
         indexBy="timeframe"
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
         padding={0.3}

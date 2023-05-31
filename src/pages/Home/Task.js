@@ -15,7 +15,7 @@ const Task = ({
   task,
   deleteTask,
   editTask,
-  colorStatus,
+  taskProgressColors,
   formData,
   setFormData,
   onChange,
@@ -66,7 +66,7 @@ const Task = ({
 
       <div
         className={`accordion-body ${active === task._id && "show"}`}
-        style={{ background: colorStatus[task.progress] }}
+        style={{ background: taskProgressColors[task.progress] }}
       >
         <Row>
           <Col md="6">
