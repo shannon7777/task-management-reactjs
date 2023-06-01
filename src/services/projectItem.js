@@ -237,6 +237,21 @@ const addNote = async (
     setAllNotes((prev) => [...prev, newNote]);
     setShowNoteForm((prev) => !prev);
     setFormData("");
+
+    // update localStorage
+    let projectItems = JSON.parse(
+      localStorage.getItem(`projectItems-${projectItem.project_id}`)
+    );
+    let updatedNotes = projectItems.map((item) => {
+      if (projectItem._id === item._id) {
+        item.notes = [...item.notes, newNote];
+      }
+      return item;
+    });
+    localStorage.setItem(
+      `projectItems-${projectItem.project_id}`,
+      JSON.stringify(updatedNotes)
+    );
   } catch (error) {
     if (error.response) console.log(error.response.data.message);
     else {
@@ -251,8 +266,23 @@ const deleteNote = async (id, projectItem, setAllNotes) => {
       `projectItems/removeNote/${projectItem._id}`,
       { note_id: id }
     );
+    setAllNotes((prev) => prev.filter((note) => note._id !== id));
+
+    // update localStorarge
+    let projectItems = JSON.parse(
+      localStorage.getItem(`projectItems-${projectItem.project_id}`)
+    );
+    let filteredNotes = projectItems.map((item) => {
+      if (item._id === projectItem._id) {
+        item.notes = item.notes.filter((note) => note._id === id);
+      }
+      return item;
+    });
+    localStorage.setItem(
+      `projectItems-${projectItem.project_id}`,
+      JSON.stringify(filteredNotes)
+    );
     console.log(data.message);
-    return setAllNotes((prev) => prev.filter((note) => note._id !== id));
   } catch (error) {
     if (error.response) throw console.log(error.response.data.message);
     else {
