@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+// import { ColorModeContext } from "./theme";
+// import useColorMode from "./hooks/useColorMode";
+// import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import Home from "./pages/Home";
 import Register from "./pages/Register";
@@ -25,6 +28,7 @@ const App = () => {
     auth: { accessToken },
   } = useAuth();
 
+  // const [theme, colorMode] = useColorMode();
   const [notify, setNotify] = useState({ show: false, text: "" });
   const [error, setError] = useState({ show: false, text: "" });
   const [info, setInfo] = useState({ show: false, text: "" });

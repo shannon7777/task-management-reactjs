@@ -27,10 +27,12 @@ const Home = ({ setNotifications }) => {
     auth,
     auth: { user },
   } = useAuth();
+  // const user = JSON.parse(localStorage.getItem("user"));
   const fetchImg = useFetchImg();
 
   useEffect(() => {
     getTasks();
+    if (localStorage.getItem("userImg")) return;
     fetchImg();
   }, [auth]);
 

@@ -8,8 +8,6 @@ const useFetchImg = () => {
 
   const fetchImg = async () => {
     try {
-      // if userImg exists, return 
-      if (localStorage.getItem("userImg")) return;
       const {
         data: { imageUrl },
       } = await axios(`users/img/${user._id}`);

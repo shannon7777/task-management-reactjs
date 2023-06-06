@@ -10,7 +10,7 @@ import RemovePic from "./RemovePic";
 const UserProfile = ({ setError, setNotify }) => {
   const {
     auth: {
-      user: { firstName, lastName, email, username, roles, imgUrl },
+      user: { firstName, lastName, email, username, roles },
     },
   } = useAuth();
   const [showUpload, setShowUpload] = useState(false);
