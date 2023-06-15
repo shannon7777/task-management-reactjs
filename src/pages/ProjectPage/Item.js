@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Form } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { disableNewlines } from "./ProjectPage";
 
 const Item = ({ projectItem, editItem, deleteItem }) => {
   const [hover, onHover] = useState(false);

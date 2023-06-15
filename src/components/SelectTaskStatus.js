@@ -1,30 +1,24 @@
-import { Form } from "react-bootstrap";
+import { Select, FormControl, MenuItem, InputLabel } from "@mui/material";
 
-const SelectTaskStatus = ({ selectOptions, onChange, progress }) => {
+const SelectTaskStatus = ({ selectOptions, onChange, progress, label }) => {
   return (
     <>
-      <Form>
-        <Form.Group
-          className="d-flex justify-content-center"
-          controlId="selectStatus"
+      <FormControl>
+        <InputLabel id="age-label">{label}</InputLabel>
+        <Select
+          labelId="age-label"
+          id="demo-simple-select"
+          value={progress}
+          label="Change status of task"
+          onChange={onChange}
         >
-          <Form.Select
-            className="border rounded border-success text-center shadow w-100"
-            size="sm"
-            onChange={onChange}
-            defaultValue={progress}
-          >
-            {selectOptions.map((option, index) => {
-              return (
-                <option key={`option-${index}`} value={option}>
-                  {option}
-                </option>
-              );
-            })}
-          </Form.Select>
-
-        </Form.Group>
-      </Form>
+          {selectOptions.map((option, index) => (
+            <MenuItem key={index} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </>
   );
 };

@@ -9,7 +9,6 @@ import Topbar from "./Topbar";
 const Layout = ({ setNotify, notificationMsg, errorMsg, infoMsg }) => {
   const [theme, colorMode] = useColorMode();
   const user = JSON.parse(localStorage.getItem("user"));
-
   return (
     <>
       <ColorModeContext.Provider value={colorMode}>
@@ -19,10 +18,10 @@ const Layout = ({ setNotify, notificationMsg, errorMsg, infoMsg }) => {
             {/* <Navbar setNotify={setNotify} /> */}
             {user && <Sidebar />}
             <main className="content">
-              {user && <Topbar setNotify={setNotify} />}
               {notificationMsg}
               {errorMsg}
               {infoMsg}
+              {user && <Topbar setNotify={setNotify} />}
               <Container maxWidth="xl">
                 <Outlet />
               </Container>

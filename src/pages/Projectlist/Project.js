@@ -13,6 +13,7 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { Stack } from "@mui/material";
 
 const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
   const [teamMembers, setTeamMembers] = useState([]);
@@ -120,13 +121,16 @@ const Project = ({ project, deleteProject, setError, setNotify, setInfo }) => {
                 </span>
               </Row>
 
-              <span>
-                {teamMembers.map((member, index) => (
-                  <span key={index}>
-                    <TeamMembers className="teamMemberpic" member={member} />
-                  </span>
+              <Stack direction="row">
+                {teamMembers.map((member) => (
+                  <TeamMembers
+                    key={`member-${member._id}`}
+                    height={25}
+                    width={25}
+                    member={member}
+                  />
                 ))}
-              </span>
+              </Stack>
             </section>
           </Link>
         </Col>

@@ -1,15 +1,30 @@
 import { useState } from "react";
 import EditTask from "./EditTask";
 import SelectTaskStatus from "../../components/SelectTaskStatus";
-import { Card, Row, Col, Badge } from "react-bootstrap";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { FaRegEdit } from "react-icons/fa";
-import { TbChecks } from "react-icons/tb";
-import { TiDeleteOutline } from "react-icons/ti";
-import { IoIosArrowDropdown } from "react-icons/io";
-import { BsFillCalendarCheckFill } from "react-icons/bs";
-import { GoCheck } from "react-icons/go";
+// import { Card, Row, Col, Badge } from "react-bootstrap";
+// import { RiDeleteBin5Line } from "react-icons/ri";
+// import { FaRegEdit } from "react-icons/fa";
+// import { TbChecks } from "react-icons/tb";
+// import { TiDeleteOutline } from "react-icons/ti";
+// import { IoIosArrowDropdown } from "react-icons/io";
+// import { BsFillCalendarCheckFill } from "react-icons/bs";
+// import { GoCheck } from "react-icons/go";
 import TaskIconSignal from "../../components/TaskIconSignal";
+
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  useTheme,
+  IconButton,
+  Box,
+  Divider,
+  Stack,
+  Chip,
+} from "@mui/material";
+import { Delete, Edit, Event, ExpandMore } from "@mui/icons-material";
+import { tokens } from "../../theme";
 
 const Task = ({
   task,
@@ -23,145 +38,108 @@ const Task = ({
   const [showEditTask, setShowEditTask] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [status, setStatus] = useState(0);
-  const [confirmStatus, setConfirmStatus] = useState(false);
-  const [active, setActive] = useState(null);
 
-  const onChangeStatus = (e) => {
-    setStatus(e.target.value);
-    setConfirmStatus(true);
-  };
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   const onSubmit = (e) => {
     e.preventDefault();
     const completedDate =
       status === "Completed" ? new Date().toDateString() : "";
-    editTask(task._id, { progress: status, completedDate });
-    setConfirmStatus((prev) => !prev);
+    editTask(task._id, { progress: e.target.value, completedDate });
   };
 
   const selectOptions = ["New Task", "In progress", "Stuck", "Completed"];
 
   return (
-    <div
-      className="task"
-      onMouseOver={() => setIsHovering(true)}
-      onMouseOut={() => setIsHovering(false)}
-    >
-      <div
-        className="accordion-header shadow text-white"
-        onClick={() =>
-          active && task._id === active ? setActive(null) : setActive(task._id)
-        }
-        style={{ cursor: "pointer" }}
-      >
-        {task.text}
-        <TaskIconSignal
-          progress={task.progress}
-          dateToComplete={task.dateToComplete}
-        />
-        <span className={`arrow ${active === task._id && "rotate"}`}>
-          {<IoIosArrowDropdown size={25} />}
-        </span>
-      </div>
+    <>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          id={`accordion-${task._id}`}
+          sx={{
+            height: "75px",
+          }}
+        >
+          <Typography variant="h5" color={colors.greenAccent[400]}>
+            {task.text}
+          </Typography>
 
-      <div
-        className={`accordion-body ${active === task._id && "show"}`}
-        style={{ background: taskProgressColors[task.progress] }}
-      >
-        <Row>
-          <Col md="6">
-            <Card.Body className="p-2">
-              {showEditTask && (
-                <EditTask
-                  setShowEditTask={setShowEditTask}
-                  showEditTask={showEditTask}
-                  editTask={editTask}
-                  task={task}
-                  formData={formData}
-                  setFormData={setFormData}
-                  onChange={onChange}
-                />
-              )}
+          <TaskIconSignal
+            progress={task.progress}
+            dateToComplete={task.dateToComplete}
+          />
+        </AccordionSummary>
+        <AccordionDetails
+          onMouseOver={() => setIsHovering(true)}
+          onMouseOut={() => {
+            setIsHovering(false);
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            {task.description}
+          </Typography>
 
-              <p>{task.description ? task.description : "-"}</p>
+          <Divider />
 
-              <p className="completion-date">
-                <span className="mx-2">
-                  <BsFillCalendarCheckFill color="white" size={20} />
-                </span>
-                Due date:{" "}
-                <Badge
-                  className="border shadow"
-                  bg={
-                    task.dateToComplete === `No completion date has been set`
-                      ? `warning`
-                      : `primary`
-                  }
-                >
-                  {task.dateToComplete}
-                </Badge>
-              </p>
-              {task.completedDate && (
-                <p className="completion-date">
-                  <span>
-                    <GoCheck color="black" size={20} />
-                  </span>
-                  Completed on:{" "}
-                  <Badge className="border shadow" bg="success">
-                    {task.completedDate}
-                  </Badge>
-                </p>
-              )}
-            </Card.Body>
-          </Col>
+          <Stack mt={2} direction="row" gap={2}>
+            <Box mt={1} display="flex" gap={1}>
+              <Event />
+              <Typography variant="h5" color={colors.greenAccent[500]}>
+                {task.dateToComplete}
+              </Typography>
+            </Box>
 
-          <Col className="d-flex align-content-center flex-wrap text-center">
-            <Card.Body>
-              <Card.Title className="text-white">{task.progress}</Card.Title>
-              {isHovering && !confirmStatus && (
-                <SelectTaskStatus
-                  selectOptions={selectOptions}
-                  onChange={onChangeStatus}
-                  onSubmit={onSubmit}
-                  progress={task.progress}
-                />
-              )}
-              {confirmStatus && (
-                <>
-                  <p>{`Change task status to "${status}" ?`}</p>
-                  <TiDeleteOutline
-                    onClick={() => setConfirmStatus(false)}
-                    size={30}
-                    color="darkred"
-                  />
-                  <TbChecks onClick={onSubmit} size={30} color="green" />{" "}
-                </>
-              )}
-            </Card.Body>
-          </Col>
-
-          <Col className="d-flex align-items-end flex-column m-3">
-            {isHovering && (
-              <>
-                <FaRegEdit
-                  color="black"
-                  onClick={() => setShowEditTask((prev) => !prev)}
-                  size={25}
-                  style={{ cursor: "pointer" }}
-                />
-                <RiDeleteBin5Line
-                  className="mt-auto"
-                  color="darkred"
-                  onClick={() => deleteTask(task._id)}
-                  style={{ cursor: "pointer" }}
-                  size={25}
-                />
-              </>
+            {isHovering ? (
+              <SelectTaskStatus
+                selectOptions={selectOptions}
+                onChange={onSubmit}
+                progress={task.progress}
+                label="Progress"
+              />
+            ) : (
+              <Chip
+                label={task.progress}
+                sx={{
+                  bgcolor: taskProgressColors[task.progress],
+                  width: 100,
+                }}
+              />
             )}
-          </Col>
-        </Row>
-      </div>
-    </div>
+
+            {isHovering && (
+              <Box m="auto" mr={1} display="flex" gap={3}>
+                <IconButton onClick={() => setShowEditTask((prev) => !prev)}>
+                  <Edit />
+                </IconButton>
+
+                <Divider
+                  variant="middle"
+                  color="grey"
+                  orientation="vertical"
+                  flexItem
+                />
+
+                <IconButton onClick={() => deleteTask(task._id)}>
+                  <Delete />
+                </IconButton>
+              </Box>
+            )}
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+      {showEditTask && (
+        <EditTask
+          setShowEditTask={setShowEditTask}
+          showEditTask={showEditTask}
+          editTask={editTask}
+          task={task}
+          formData={formData}
+          setFormData={setFormData}
+          onChange={onChange}
+        />
+      )}
+    </>
   );
 };
 

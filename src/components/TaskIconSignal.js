@@ -1,14 +1,7 @@
-import { useState, useRef } from "react";
-import { Overlay, Tooltip } from "react-bootstrap";
-import { IoIosTimer } from "react-icons/io";
-import { FcCheckmark } from "react-icons/fc";
-import { BsExclamationCircle } from "react-icons/bs";
+import { AssignmentLate, Check, WatchLater } from "@mui/icons-material";
+import { Box, Tooltip, Typography, Zoom } from "@mui/material";
 
 const TaskIconSignal = ({ progress, dateToComplete }) => {
-  const [show, setShow] = useState(false);
-  const target = useRef(null);
-  const toggleShow = () => setShow((prev) => !prev);
-
   const dueToday = dateToComplete === new Date().toDateString();
   const incomplete = progress !== "Completed";
 
@@ -19,59 +12,41 @@ const TaskIconSignal = ({ progress, dateToComplete }) => {
   };
 
   const iconDueToday = dueToday && incomplete && (
-    <>
-      <span
-        ref={target}
-        className="mx-auto"
-        onMouseOver={toggleShow}
-        onMouseOut={toggleShow}
-      >
-        <IoIosTimer size={25} />
-      </span>
-      <Overlay target={target.current} show={show} placement="right">
-        <Tooltip>This task is due today</Tooltip>
-      </Overlay>
-    </>
+    <Tooltip
+      title={<Typography fontSize={15}>Task due today</Typography>}
+      TransitionComponent={Zoom}
+      arrow
+    >
+      <WatchLater />
+    </Tooltip>
   );
 
   const iconOverdue = checkOverdue(new Date(dateToComplete)) && (
-    <>
-      <span
-        className="mx-auto"
-        ref={target}
-        onMouseOver={toggleShow}
-        onMouseOut={toggleShow}
-      >
-        <BsExclamationCircle size={20} color="red" />
-      </span>
-      <Overlay target={target.current} show={show} placement="right">
-        <Tooltip>This task is overdue!</Tooltip>
-      </Overlay>
-    </>
+    <Tooltip
+      title={<Typography fontSize={15}>Task is Overdue!</Typography>}
+      TransitionComponent={Zoom}
+      arrow
+    >
+      <AssignmentLate sx={{ color: "red" }} />
+    </Tooltip>
   );
 
   const iconCompleted = progress === "Completed" && (
-    <>
-      <span
-        className="mx-auto"
-        ref={target}
-        onMouseOver={toggleShow}
-        onMouseOut={toggleShow}
-      >
-        <FcCheckmark color="green" size={20} />
-      </span>
-      <Overlay target={target.current} show={show} placement="top">
-        <Tooltip>Task Completed!</Tooltip>
-      </Overlay>
-    </>
+    <Tooltip
+      title={<Typography fontSize={15}>Task Completed!</Typography>}
+      TransitionComponent={Zoom}
+      arrow
+    >
+      <Check sx={{ color: "green" }} />
+    </Tooltip>
   );
 
   return (
-    <>
+    <Box ml={5}>
       {iconDueToday}
       {iconOverdue}
       {iconCompleted}
-    </>
+    </Box>
   );
 };
 export default TaskIconSignal;

@@ -12,6 +12,7 @@ import Header from "./Header";
 import AddTask from "./AddTask";
 import Task from "./Task";
 import useFetchImg from "../../hooks/useFetchImg";
+import { Chip } from "@mui/material";
 
 const Home = ({ setNotifications }) => {
   const [tasks, setTasks] = useState([]);
@@ -82,12 +83,15 @@ const Home = ({ setNotifications }) => {
 
   const allTasks = uniqueProgress?.map((progress) => (
     <Col md={6} className="my-3" key={`progress-${progress}`}>
-      <span
-        className="progress-title"
-        style={{ background: taskProgressColors[progress] }}
-      >
-        <span>{progress}</span>
-      </span>
+      <Chip
+        label={progress}
+        sx={{
+          border: (theme) => `2px solid ${theme.palette.divider}`,
+          mb: 1,
+          bgcolor: taskProgressColors[progress],
+          fontSize: 15,
+        }}
+      />
       {tasks
         .filter((task) => task.progress === progress)
         .map((task) => (

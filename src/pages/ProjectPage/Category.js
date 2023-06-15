@@ -6,6 +6,8 @@ import ProjectItemForm from "./ProjectItemForm";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { useTheme } from "@emotion/react";
+import { disableNewlines } from "./ProjectPage";
 
 const Category = ({
   category,
@@ -26,6 +28,8 @@ const Category = ({
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [hover, setHover] = useState(false);
+  const theme = useTheme();
+
   return (
     <>
       <h6
@@ -39,6 +43,8 @@ const Category = ({
           suppressContentEditableWarning={true}
           onInput={(e) => setCategoryTitle(e.target.innerHTML)}
           onBlur={() => editCategory(category._id)}
+          style={{ cursor: "pointer" }}
+          onKeyDown={disableNewlines}
         >
           {category.title}
         </p>
@@ -57,6 +63,7 @@ const Category = ({
         key={`table-${category._id}`}
         className="shadow"
         style={{ borderRadius: "10px" }}
+        variant={theme.palette.mode === "dark" && "dark"}
         hover
       >
         <thead className="w-auto mw-100">

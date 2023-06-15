@@ -1,11 +1,9 @@
-import { useRef, useState, useEffect } from "react";
-import { Overlay, Tooltip } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Tooltip, Zoom, Avatar, Typography } from "@mui/material";
 import axios from "axios";
 
-const TeamMembers = ({ member, className }) => {
+const TeamMembers = ({ member, width, height }) => {
   const [imageUrl, setImageUrl] = useState("");
-  const [isHovering, setIsHovering] = useState(false);
-  const target = useRef(null);
   const placeholderPic = `https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
 
   const fetchTeamMember = async () => {
@@ -32,22 +30,17 @@ const TeamMembers = ({ member, className }) => {
   }, [member]);
 
   return (
-    <>
-      <span
-        ref={target}
-        onMouseOver={() => setIsHovering(true)}
-        onMouseOut={() => setIsHovering(false)}
-      >
-        <img
-          alt="user"
-          className={className}
-          src={imageUrl || placeholderPic}
-        />
-      </span>
-      <Overlay target={target.current} show={isHovering} placement="right">
-        {(props) => <Tooltip {...props}>{member.username}</Tooltip>}
-      </Overlay>
-    </>
+    <Tooltip
+      title={<Typography fontSize={15}>{member?.username}</Typography>}
+      TransitionComponent={Zoom}
+      arrow
+    >
+      <Avatar
+        alt="user"
+        src={imageUrl || placeholderPic}
+        sx={{ width, height }}
+      />
+    </Tooltip>
   );
 };
 

@@ -96,7 +96,7 @@ const App = () => {
             element={<Login {...{ setNotify, setError }} />}
           />
 
-          {/* PROTECTED ROUTES THAT NEED AUTHENTICATION */}
+          {/* PROTECTED ROUTES THAT NEED AUTHENTICATION and to PERSIST LOGIN*/}
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth />}>
               <Route

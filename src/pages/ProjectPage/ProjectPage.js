@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import axios from "axios";
 
 import {
   fetchProjectData,
@@ -30,6 +29,7 @@ import {
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
+import { Box, Stack } from "@mui/material";
 
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
@@ -66,7 +66,12 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     (member) => member._id === project?.creator
   );
   const projectOwner = (
-    <TeamMembers className="teamMemberpic mx-2" member={owner[0]} />
+    <TeamMembers
+      className="teamMemberpic mx-2"
+      member={owner[0]}
+      width={25}
+      height={25}
+    />
   );
   const ownedByUser = owner[0]?._id === user._id ? "(You)" : null;
 
@@ -114,15 +119,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       ...formData,
       [e.target.getAttribute("name")]: e.target.innerHTML,
     });
-  };
-
-  const disableNewlines = (e) => {
-    const keyCode = e.keyCode || e.which;
-
-    if (keyCode === 13) {
-      e.returnValue = false;
-      if (e.preventDefault) e.preventDefault();
-    }
   };
 
   const editMembersModal = showEdit.users && (
@@ -184,45 +180,44 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           <Col className="m-3 rounded shadow">
             <Card.Body className="p-4">
               <Card.Title>TEAM MEMBERS</Card.Title>
-              <Card.Text
-                className="mt-3"
+              <Box
                 onMouseOver={() => setHover({ users: true })}
                 onMouseOut={() => setHover({ users: false })}
               >
-                <FontAwesomeIcon
-                  className="px-2"
-                  icon={faUsersLine}
-                  size="xl"
-                />
-                <Badge className="h-50 my-2" bg="success">
-                  {teamMembers?.length}
-                </Badge>
-                <span className="vr mx-3" />
-                <span className="p-2">
+                <Stack direction="row">
+                  <FontAwesomeIcon
+                    className="px-2"
+                    icon={faUsersLine}
+                    size="xl"
+                  />
+                  <Badge className="h-50 my-2" bg="success">
+                    {teamMembers?.length}
+                  </Badge>
+                  <span className="vr mx-3" />
                   {teamMembers &&
                     teamMembers.map((member, index) => (
-                      <span key={index}>
-                        <TeamMembers
-                          className="teamMemberpic"
-                          member={member}
-                        />
-                      </span>
+                      <TeamMembers
+                        key={index}
+                        member={member}
+                        width={25}
+                        height={25}
+                      />
                     ))}
-                </span>
-                {hover.users && (
-                  <FontAwesomeIcon
-                    className=""
-                    icon={faUserGear}
-                    onClick={() => setShowEdit({ users: true })}
-                    style={{ cursor: "pointer" }}
-                  />
-                )}
-                {editMembersModal}
-              </Card.Text>
-              <Card.Text>
+                  {hover.users && (
+                    <FontAwesomeIcon
+                      className=""
+                      icon={faUserGear}
+                      onClick={() => setShowEdit({ users: true })}
+                      style={{ cursor: "pointer" }}
+                    />
+                  )}
+                  {editMembersModal}
+                </Stack>
+              </Box>
+              <Box>
                 <Badge bg="dark">Project Owner:</Badge>
                 {projectOwner} {ownedByUser}
-              </Card.Text>
+              </Box>
             </Card.Body>
           </Col>
 
@@ -355,4 +350,13 @@ const ratingColors = {
   3: "blue",
   4: "green",
   5: "red",
+};
+
+export const disableNewlines = (e) => {
+  const keyCode = e.keyCode || e.which;
+
+  if (keyCode === 13) {
+    e.returnValue = false;
+    if (e.preventDefault) e.preventDefault();
+  }
 };

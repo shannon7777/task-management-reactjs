@@ -14,7 +14,6 @@ import {
   PlaylistAddCheck,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -37,12 +36,7 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [collapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("Home");
-  //   const {
-  //     auth: {
-  //       user: { firstName, lastName, email },
-  //     },
-  //   } = useAuth();
-  //   console.log(firstName, lastName);
+
   const user = JSON.parse(localStorage.getItem(`user`));
   const userImg = JSON.parse(localStorage.getItem(`userImg`));
   const placeholderPic = `https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
@@ -174,13 +168,5 @@ const Sidebar = () => {
     </Box>
   );
 };
-
-// const sidebarItems = [
-//     {title: `Personal Tasks`, to: "/", icon: <HomeOutlined />},
-//     {title: `Team Projects`, to: "/team-projects", icon: <HomeOutlined />},
-//     {title: `Personal Tasks`, to: "/", icon: <HomeOutlined />},
-//     {title: `Personal Tasks`, to: "/", icon: <HomeOutlined />},
-//     {title: `Personal Tasks`, to: "/", icon: <HomeOutlined />},
-// ]
 
 export default Sidebar;

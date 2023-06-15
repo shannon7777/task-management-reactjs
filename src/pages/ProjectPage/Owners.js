@@ -7,6 +7,7 @@ import EditOwnersModal from "./EditOwnersModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersGear } from "@fortawesome/free-solid-svg-icons";
+import { Stack } from "@mui/material";
 
 const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
   const [hover, setHover] = useState(false);
@@ -33,13 +34,11 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
             removeOwners={removeOwners}
           />
         )}
-        <span>
+        <Stack direction="row">
           {owners?.map((owner, index) => (
-            <span key={index}>
-              <TeamMembers member={owner} className="teamMemberpic" />
-            </span>
+            <TeamMembers key={index} member={owner} width={25} height={25} />
           ))}
-        </span>
+        </Stack>
         <FontAwesomeIcon
           className="mt-2"
           icon={faUsersGear}

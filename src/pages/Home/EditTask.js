@@ -1,7 +1,16 @@
 import { useState } from "react";
-import { Button, Modal, Form, Col } from "react-bootstrap";
+import { Modal, Form, Col } from "react-bootstrap";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DatePicker from "react-datepicker";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 const EditTask = ({
   task,
@@ -35,7 +44,7 @@ const EditTask = ({
 
   return (
     <>
-      <Modal
+      {/* <Modal
         centered
         show={showEditTask}
         onHide={() => setShowEditTask((prev) => !prev)}
@@ -113,7 +122,47 @@ const EditTask = ({
             </Button>
           </Modal.Footer>
         </Form>
-      </Modal>
+      </Modal> */}
+      <Button variant="outlined" onClick={() => setShowEditTask(true)}>
+        Open form dialog
+      </Button>
+      <Dialog open={showEditTask} onClose={() => setShowEditTask(false)}>
+        <DialogTitle>Subscribe</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            name="text"
+            type="text"
+            margin="dense"
+            label="Task"
+            variant="outlined"
+            onChange={onChange}
+            value={formData.text}
+          />
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            name="description"
+            type="text"
+            margin="dense"
+            label="Description"
+            // variant="outlined"
+            rows={4}
+            onChange={onChange}
+            value={formData.description}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button color="error" onClick={() => setShowEditTask(false)}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="success" onClick={onSubmit}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
