@@ -9,7 +9,7 @@ const AddTask = ({
   formData,
   dateToComplete,
   setDateToComplete,
-  onChange
+  onChange,
 }) => {
   return (
     <Collapse in={showAddTask}>

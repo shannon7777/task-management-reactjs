@@ -84,7 +84,7 @@ const Notes = ({ editItem, projectItem, owners }) => {
   ));
 
   return (
-    <td>
+    <div>
       {ableToView && (
         <FontAwesomeIcon
           icon={faStickyNote}
@@ -112,7 +112,7 @@ const Notes = ({ editItem, projectItem, owners }) => {
           {showNoteForm && noteForm}
         </Modal.Body>
       </Modal>
-    </td>
+    </div>
   );
 };
 

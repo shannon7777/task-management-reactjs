@@ -22,7 +22,7 @@ const Home = ({ setNotifications }) => {
     progress: "",
     user_id: "",
   });
-  const [dateToComplete, setDateToComplete] = useState(null);
+  const [dateToComplete, setDateToComplete] = useState(new Date());
   const [showAddTask, setShowAddTask] = useState(false);
   const {
     auth,

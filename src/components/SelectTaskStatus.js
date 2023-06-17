@@ -3,7 +3,7 @@ import { Select, FormControl, MenuItem, InputLabel } from "@mui/material";
 const SelectTaskStatus = ({ selectOptions, onChange, progress, label }) => {
   return (
     <>
-      <FormControl>
+      <FormControl size="small">
         <InputLabel id="age-label">{label}</InputLabel>
         <Select
           labelId="age-label"

@@ -1,52 +1,55 @@
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import { useState } from "react";
 import { Col, ProgressBar, Row } from "react-bootstrap";
 
 import { timelineBar, progressColors } from "../Projectlist/Project";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 const Deadline = ({ editItem, projectItem, completion_date }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { _id, deadline, createdAt } = projectItem;
   const edit = (date) => {
     setShowDatePicker(false);
-    let editedDeadline = { deadline: date.toDateString() };
+    let editedDeadline = { deadline: dayjs(date).toDate().toDateString() };
     editItem(_id, editedDeadline);
   };
 
   return (
-    <td onMouseLeave={() => setShowDatePicker(false)}>
-      <Row className="d-flex">
-        {showDatePicker ? (
-          <Col className="d-flex">
+    <Row className="d-flex" onMouseLeave={() => setShowDatePicker(false)}>
+      {showDatePicker ? (
+        <Col className="d-flex">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              className="btn btn-outline-success shadow"
+              sx={{ width: 150 }}
+              className="mt-3"
+              label={
+                completion_date
+                  ? "Edit the completion date"
+                  : "Please set a completion date"
+              }
+              value={dayjs(completion_date)}
               onChange={(date) => edit(date)}
-              selected={new Date(deadline)}
-              value={new Date(deadline)}
-              minDate={new Date()}
-              maxDate={new Date(completion_date)}
-              showPopperArrow={false}
-              dateFormat="MMMM d, yyyy"
-              placeholderText="change deadline"
+            />
+          </LocalizationProvider>
+        </Col>
+      ) : (
+        <>
+          <Col
+            onClick={() => setShowDatePicker((prev) => !prev)}
+            style={{ cursor: "pointer", width: 0 }}
+          >
+            {deadline}
+            <ProgressBar
+              variant={progressColors(createdAt, deadline)}
+              animated
+              now={timelineBar(createdAt, deadline)}
             />
           </Col>
-        ) : (
-          <>
-            <Col
-              onClick={() => setShowDatePicker((prev) => !prev)}
-              style={{ cursor: "pointer" }}
-            >
-              {deadline}
-              <ProgressBar
-                variant={progressColors(createdAt, deadline)}
-                animated
-                now={timelineBar(createdAt, deadline)}
-              />
-            </Col>
-          </>
-        )}
-      </Row>
-    </td>
+        </>
+      )}
+    </Row>
   );
 };
 

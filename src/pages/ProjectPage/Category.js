@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Table } from "react-bootstrap";
+// import { Button, Table } from "react-bootstrap";
 
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
@@ -8,6 +8,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquarePlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@emotion/react";
 import { disableNewlines } from "./ProjectPage";
+
+import {
+  Table,
+  Paper,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+} from "@mui/material";
 
 const Category = ({
   category,
@@ -50,16 +60,17 @@ const Category = ({
         </p>
         {hover && (
           <Button
-            variant="outline-danger"
-            size="sm"
+            variant="contained"
+            color="error"
             onClick={() => deleteCategory(category._id)}
-            style={{ height: "fit-content" }}
+            sx={{ height: "fit-content" }}
           >
             Delete
           </Button>
         )}
       </h6>
-      <Table
+
+      {/* <Table
         key={`table-${category._id}`}
         className="shadow"
         style={{ borderRadius: "10px" }}
@@ -85,7 +96,33 @@ const Category = ({
               completion_date={completion_date}
             />
           ))}
-      </Table>
+      </Table> */}
+
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead>
+            <TableRow>
+              {projectHeaders.map((header, index) => (
+                <TableCell key={`header-${index}`}>{header}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+
+          {projectItems
+            ?.filter((item) => item.category_id === category._id)
+            .map((item, index) => (
+              <ProjectItem
+                key={index}
+                projectItem={item}
+                teamMembers={teamMembers}
+                editItem={editItem}
+                deleteItem={deleteItem}
+                completion_date={completion_date}
+              />
+            ))}
+        </Table>
+      </TableContainer>
+
       {showForm && (
         <ProjectItemForm
           setShowForm={setShowForm}

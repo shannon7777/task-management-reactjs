@@ -22,7 +22,10 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
   };
 
   return (
-    <td onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+    <div
+      onMouseOver={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <span className="d-flex justify-content-between">
         {showEditOwner && (
           <EditOwnersModal
@@ -46,7 +49,7 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
           style={{ cursor: "pointer", color: !hover && "#d0d8e7" }}
         />
       </span>
-    </td>
+    </div>
   );
 };
 

@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { Modal, Form, Col } from "react-bootstrap";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import DatePicker from "react-datepicker";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+// import DatePicker from "react-datepicker";
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
-  DialogTitle,
+  IconButton,
   TextField,
+  Typography,
 } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 
 const EditTask = ({
   task,
@@ -35,7 +37,7 @@ const EditTask = ({
     editTask(task._id, {
       ...editedObj,
       dateToComplete: dateToComplete
-        ? dateToComplete.toDateString()
+        ? dayjs(dateToComplete).toDate().toDateString()
         : `No completion date has been set`,
     });
     setShowEditTask((prev) => !prev);
@@ -123,11 +125,12 @@ const EditTask = ({
           </Modal.Footer>
         </Form>
       </Modal> */}
-      <Button variant="outlined" onClick={() => setShowEditTask(true)}>
-        Open form dialog
-      </Button>
+
       <Dialog open={showEditTask} onClose={() => setShowEditTask(false)}>
-        <DialogTitle>Subscribe</DialogTitle>
+        <Typography m={3} mb={0} variant="h4">
+          Edit This Task
+        </Typography>
+
         <DialogContent>
           <TextField
             autoFocus
@@ -136,7 +139,7 @@ const EditTask = ({
             type="text"
             margin="dense"
             label="Task"
-            variant="outlined"
+            variant="filled"
             onChange={onChange}
             value={formData.text}
           />
@@ -148,11 +151,31 @@ const EditTask = ({
             type="text"
             margin="dense"
             label="Description"
-            // variant="outlined"
+            variant="outlined"
             rows={4}
             onChange={onChange}
             value={formData.description}
           />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              className="mt-3"
+              label={
+                dateToComplete
+                  ? "Edit the completion date"
+                  : "Please set a completion date"
+              }
+              value={dayjs(dateToComplete)}
+              onChange={(date) => setDateToComplete(date)}
+            />
+          </LocalizationProvider>
+          {dateToComplete && (
+            <IconButton
+              onClick={() => setDateToComplete(null)}
+              sx={{ mt: 3, ml: 1, color: "red" }}
+            >
+              <Delete />
+            </IconButton>
+          )}
         </DialogContent>
         <DialogActions>
           <Button color="error" onClick={() => setShowEditTask(false)}>

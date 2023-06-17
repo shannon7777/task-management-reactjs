@@ -12,49 +12,42 @@ const Item = ({ projectItem, editItem, deleteItem }) => {
     editItem(projectItem._id, { item });
   };
 
-  const disableNewlines = (e) => {
-    const keyCode = e.keyCode || e.which;
-
-    if (keyCode === 13) {
-      e.returnValue = false;
-      if (e.preventDefault) e.preventDefault();
-    }
-  };
-
   return (
-    <td onMouseOver={() => onHover(true)} onMouseOut={() => onHover(false)}>
-      <div className="d-flex justify-content-between">
-        <p
-          suppressContentEditableWarning={true}
-          contentEditable={true}
-          onBlur={edit}
-          onInput={(e) => setItem(e.target.innerHTML)}
-          onKeyDown={disableNewlines}
-          value={item}
-          name="item"
-          type="text"
-          style={{ cursor: "pointer" }}
-        >
-          {projectItem?.item}
-        </p>
-        {hover && (
-          <span className="">
-            <FontAwesomeIcon
-              className="mx-2"
-              icon={faEdit}
-              size="lg"
-              style={{ cursor: "pointer" }}
-            />
-            <FontAwesomeIcon
-              icon={faXmark}
-              onClick={() => deleteItem(projectItem._id)}
-              size="lg"
-              style={{ cursor: "pointer" }}
-            />
-          </span>
-        )}
-      </div>
-    </td>
+    <div
+      className="d-flex justify-content-between"
+      onMouseOver={() => onHover(true)}
+      onMouseOut={() => onHover(false)}
+    >
+      <p
+        suppressContentEditableWarning={true}
+        contentEditable={true}
+        onBlur={edit}
+        onInput={(e) => setItem(e.target.innerHTML)}
+        onKeyDown={disableNewlines}
+        value={item}
+        name="item"
+        type="text"
+        style={{ cursor: "pointer" }}
+      >
+        {projectItem?.item}
+      </p>
+      {hover && (
+        <span className="">
+          <FontAwesomeIcon
+            className="mx-2"
+            icon={faEdit}
+            size="lg"
+            style={{ cursor: "pointer" }}
+          />
+          <FontAwesomeIcon
+            icon={faXmark}
+            onClick={() => deleteItem(projectItem._id)}
+            size="lg"
+            style={{ cursor: "pointer" }}
+          />
+        </span>
+      )}
+    </div>
   );
 };
 
