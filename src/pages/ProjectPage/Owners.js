@@ -7,7 +7,7 @@ import EditOwnersModal from "./EditOwnersModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersGear } from "@fortawesome/free-solid-svg-icons";
-import { Stack } from "@mui/material";
+import { Stack, TableCell } from "@mui/material";
 
 const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
   const [hover, setHover] = useState(false);
@@ -22,9 +22,10 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
   };
 
   return (
-    <div
+    <TableCell
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      sx={{ maxWidth: 5 }}
     >
       <span className="d-flex justify-content-between">
         {showEditOwner && (
@@ -49,7 +50,7 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
           style={{ cursor: "pointer", color: !hover && "#d0d8e7" }}
         />
       </span>
-    </div>
+    </TableCell>
   );
 };
 

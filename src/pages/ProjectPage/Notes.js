@@ -7,6 +7,7 @@ import { addNote, deleteNote } from "../../services/projectItem";
 import { Modal, Form, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStickyNote, faX } from "@fortawesome/free-solid-svg-icons";
+import { TableCell } from "@mui/material";
 
 const Notes = ({ editItem, projectItem, owners }) => {
   const [showNotes, setShowNotes] = useState(false);
@@ -84,7 +85,7 @@ const Notes = ({ editItem, projectItem, owners }) => {
   ));
 
   return (
-    <div>
+    <TableCell>
       {ableToView && (
         <FontAwesomeIcon
           icon={faStickyNote}
@@ -112,7 +113,7 @@ const Notes = ({ editItem, projectItem, owners }) => {
           {showNoteForm && noteForm}
         </Modal.Body>
       </Modal>
-    </div>
+    </TableCell>
   );
 };
 

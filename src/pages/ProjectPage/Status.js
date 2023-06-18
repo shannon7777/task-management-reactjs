@@ -32,20 +32,20 @@ const Status = ({ progress, item_id, editItem }) => {
         cursor: "pointer",
         bgcolor: progressColors[progress],
       }}
+      onClick={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
     >
-      <Box onClick={() => setShow(true)} onMouseLeave={() => setShow(false)}>
-        {show ? (
-          <span>
-            <SelectTaskStatus
-              selectOptions={selectOptions}
-              progress={progress}
-              onChange={onSelect}
-            />
-          </span>
-        ) : (
-          <p>{progress}</p>
-        )}
-      </Box>
+      {show ? (
+        <span>
+          <SelectTaskStatus
+            selectOptions={selectOptions}
+            progress={progress}
+            onChange={onSelect}
+          />
+        </span>
+      ) : (
+        <p>{progress}</p>
+      )}
     </TableCell>
   );
 };

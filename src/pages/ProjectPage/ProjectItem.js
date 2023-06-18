@@ -33,43 +33,30 @@ const ProjectItem = ({
   return (
     <TableBody>
       <TableRow>
-        <TableCell sx={{ maxWidth: 10 }}>
-          <Item
-            projectItem={projectItem}
-            editItem={editItem}
-            deleteItem={deleteItem}
-          />
-        </TableCell>
-        <TableCell sx={{ maxWidth: 5 }}>
-          <Owners
-            item_id={projectItem?._id}
-            teamMembers={teamMembers}
-            owners={owners}
-            setOwners={setOwners}
-            project_id={project_id}
-          />
-        </TableCell>
-        <TableCell sx={{ maxWidth: 5 }}>
-          <Deadline
-            projectItem={projectItem}
-            editItem={editItem}
-            completion_date={completion_date}
-          />
-        </TableCell>
-        {/* <TableCell sx={{ maxWidth: 50 }}> */}
-          <Status
-            progress={projectItem?.progress}
-            editItem={editItem}
-            item_id={projectItem?._id}
-          />
-        {/* </TableCell> */}
-        <TableCell>
-          <Notes
-            projectItem={projectItem}
-            editItem={editItem}
-            owners={owners}
-          />
-        </TableCell>
+        <Item
+          projectItem={projectItem}
+          editItem={editItem}
+          deleteItem={deleteItem}
+        />
+        <Owners
+          item_id={projectItem?._id}
+          teamMembers={teamMembers}
+          owners={owners}
+          setOwners={setOwners}
+          project_id={project_id}
+        />
+
+        <Deadline
+          projectItem={projectItem}
+          editItem={editItem}
+          completion_date={completion_date}
+        />
+        <Status
+          progress={projectItem?.progress}
+          editItem={editItem}
+          item_id={projectItem?._id}
+        />
+        <Notes projectItem={projectItem} editItem={editItem} owners={owners} />
       </TableRow>
     </TableBody>
   );
