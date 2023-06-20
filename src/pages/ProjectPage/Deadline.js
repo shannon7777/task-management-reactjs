@@ -24,7 +24,9 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
           <Col className="d-flex">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                sx={{ width: 150 }}
+                sx={{
+                  width: 150,
+                }}
                 className="mt-3"
                 label={
                   completion_date
@@ -33,6 +35,7 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
                 }
                 value={dayjs(completion_date)}
                 onChange={(date) => edit(date)}
+                slotProps={{ textField: { size: "small" } }}
               />
             </LocalizationProvider>
           </Col>

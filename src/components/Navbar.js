@@ -1,4 +1,4 @@
-import { Link, useMatch, useResolvedPath, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { Button } from "react-bootstrap";

@@ -335,7 +335,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       </Card>
 
       <Tables
-        teamMembers={teamMembers?.map((member) => member.email)}
+        // teamMembers={teamMembers?.map((member) => member.email)}
         completion_date={project.completion_date}
       />
     </>

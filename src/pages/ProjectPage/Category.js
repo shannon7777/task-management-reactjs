@@ -1,13 +1,14 @@
 import { useState } from "react";
-// import { Button, Table } from "react-bootstrap";
 
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@emotion/react";
 import { disableNewlines } from "./ProjectPage";
+
+import { useParams } from "react-router-dom";
 
 import {
   Table,
@@ -17,7 +18,12 @@ import {
   TableHead,
   TableRow,
   Button,
+  Typography,
+  Chip,
+  Stack,
 } from "@mui/material";
+import { tokens } from "../../theme";
+import { Add } from "@mui/icons-material";
 
 const Category = ({
   category,
@@ -26,7 +32,6 @@ const Category = ({
   setCategoryTitle,
   projectItems,
   createProjectItem,
-  teamMembers,
   completion_date,
   editItem,
   deleteItem,
@@ -39,25 +44,43 @@ const Category = ({
   const [showForm, setShowForm] = useState(false);
   const [hover, setHover] = useState(false);
   const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const { project_id } = useParams();
+  let teamMembers = JSON.parse(
+    localStorage.getItem(`teamMembers-${project_id}`)
+  );
 
   return (
     <>
-      <h6
-        className="category"
+      <Stack
+        direction="row"
+        justifyContent="space-between"
         onMouseOver={() => setHover(true)}
         onMouseOut={() => setHover(false)}
       >
-        <p
-          className="blackbadge"
-          contentEditable={true}
-          suppressContentEditableWarning={true}
-          onInput={(e) => setCategoryTitle(e.target.innerHTML)}
-          onBlur={() => editCategory(category._id)}
-          style={{ cursor: "pointer" }}
-          onKeyDown={disableNewlines}
-        >
-          {category.title}
-        </p>
+        <Chip
+          sx={{ borderRadius: 1, mb: 2 }}
+          label={
+            <Typography
+              color={colors.greenAccent[500]}
+              variant="h5"
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={(e) => setCategoryTitle(e.target.innerHTML)}
+              onBlur={() => editCategory(category._id)}
+              onKeyDown={disableNewlines}
+              sx={{
+                "&:focus": {
+                  outline: "none",
+                  border: "none",
+                },
+                cursor: "pointer",
+              }}
+            >
+              {category.title}
+            </Typography>
+          }
+        />
         {hover && (
           <Button
             variant="contained"
@@ -68,35 +91,7 @@ const Category = ({
             Delete
           </Button>
         )}
-      </h6>
-
-      {/* <Table
-        key={`table-${category._id}`}
-        className="shadow"
-        style={{ borderRadius: "10px" }}
-        variant={theme.palette.mode === "dark" && "dark"}
-        hover
-      >
-        <thead className="w-auto mw-100">
-          <tr>
-            {projectHeaders.map((header, index) => (
-              <th key={`header-${index}`}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        {projectItems
-          ?.filter((item) => item.category_id === category._id)
-          .map((item, index) => (
-            <ProjectItem
-              key={index}
-              projectItem={item}
-              teamMembers={teamMembers}
-              editItem={editItem}
-              deleteItem={deleteItem}
-              completion_date={completion_date}
-            />
-          ))}
-      </Table> */}
+      </Stack>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }}>

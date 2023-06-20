@@ -18,11 +18,11 @@ const ProjectItem = ({
   completion_date,
 }) => {
   const [owners, setOwners] = useState([]);
+  const { project_id } = useParams();
+
   useEffect(() => {
     fetchOwners();
   }, [teamMembers]);
-
-  const { project_id } = useParams();
 
   const fetchOwners = async () => {
     // let projectItems = JSON.parse(localStorage.getItem(`projectItems-${project_id}`))
@@ -41,6 +41,7 @@ const ProjectItem = ({
         <Owners
           item_id={projectItem?._id}
           teamMembers={teamMembers}
+          // teamMembers={teamMembers.map((member) => member.email)}
           owners={owners}
           setOwners={setOwners}
           project_id={project_id}

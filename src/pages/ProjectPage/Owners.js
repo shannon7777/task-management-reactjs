@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { inviteOwners, deleteOwners } from "../../services/projectItem";
 
 import TeamMembers from "../../components/TeamMember";
@@ -30,7 +29,8 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
       <span className="d-flex justify-content-between">
         {showEditOwner && (
           <EditOwnersModal
-            owners={owners?.map((owner) => owner.email)}
+            // owners={owners?.map((owner) => owner.email)}
+            owners={owners}
             teamMembers={teamMembers}
             setShowEditOwner={setShowEditOwner}
             showEditOwner={showEditOwner}

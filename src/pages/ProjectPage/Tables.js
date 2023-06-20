@@ -18,7 +18,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-const Tables = ({ teamMembers, completion_date }) => {
+const Tables = ({ completion_date }) => {
   const [categories, setCategories] = useState([]);
   const [projectItems, setProjectItems] = useState([]);
   const [categoryTitle, setCategoryTitle] = useState("");
@@ -121,7 +121,7 @@ const Tables = ({ teamMembers, completion_date }) => {
               deleteCategory,
               setCategoryTitle,
               projectItems,
-              teamMembers,
+              // teamMembers,
               createProjectItem,
               completion_date,
               editItem,

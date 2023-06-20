@@ -1,6 +1,14 @@
+import { Cancel } from "@mui/icons-material";
+import {
+  Avatar,
+  Chip,
+  Dialog,
+  DialogContent,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-
-import { Modal, Button, Form, Col, Row, Badge } from "react-bootstrap";
 
 const EditOwnersModal = ({
   showEditOwner,
@@ -10,75 +18,84 @@ const EditOwnersModal = ({
   removeOwners,
   owners,
 }) => {
+  const ownersEmailArr = owners.map((owner) => owner.email);
   const [projectMembers, setProjectMembers] = useState(
-    teamMembers.filter((member) => !owners.includes(member))
+    teamMembers.filter((member) => !ownersEmailArr?.includes(member.email))
   );
   const [itemOwners, setItemOwners] = useState(owners);
 
-  const addOwner = (email) => {
-    setProjectMembers((prev) => prev.filter((member) => member !== email));
-    setItemOwners((prev) => [...prev, email]);
-    addOwners([email]);
+  const addOwner = (owner) => {
+    setProjectMembers((prev) =>
+      prev.filter((member) => member.email !== owner.email)
+    );
+    setItemOwners((prev) => [...prev, owner]);
+    addOwners([owner.email]);
   };
 
-  const removeOwner = (email) => {
-    setItemOwners((prev) => prev.filter((owner) => owner !== email));
-    setProjectMembers((prev) => [...prev, email]);
-    removeOwners([email]);
+  const removeOwner = (member) => {
+    setItemOwners((prev) =>
+      prev.filter((owner) => owner.email !== member.email)
+    );
+    setProjectMembers((prev) => [...prev, member]);
+    removeOwners([member.email]);
   };
+
+  const imgFromStorage = (id) =>
+    JSON.parse(localStorage.getItem(`memberImg-${id}`));
 
   const currentProjectMembers = projectMembers?.map((member, index) => (
-    <Badge
+    <Chip
       key={index}
-      className="mx-2 px-2"
-      bg="dark"
-      pill
-      style={{ cursor: "pointer" }}
-      onClick={(e) => {
-        e.preventDefault();
-        addOwner(member);
-      }}
-    >
-      {member}
-    </Badge>
+      sx={{ my: "5px", mx: "5px" }}
+      size="medium"
+      variant="filled"
+      color="secondary"
+      avatar={<Avatar src={imgFromStorage(member?._id)} />}
+      label={member.email}
+      onClick={() => addOwner(member)}
+    />
   ));
 
   const itemOwnersArr = itemOwners?.map((owner, index) => (
-    <Badge className="mx-2 px-2" pill key={index} bg="success">
-      {owner}
-      <Badge
-        bg="dark"
-        className="mx-1"
-        style={{ cursor: "pointer" }}
-        onClick={(e) => {
-          e.preventDefault();
-          removeOwner(owner);
-        }}
-      >
-        X
-      </Badge>
-    </Badge>
+    <Chip
+      sx={{ my: "5px", mx: "5px" }}
+      size="medium"
+      key={index}
+      variant="filled"
+      color="primary"
+      avatar={<Avatar src={imgFromStorage(owner?._id)} />}
+      onDelete={() => removeOwner(owner)}
+      label={owner.email}
+    />
   ));
 
   return (
     <>
-      <Modal
-        centered
-        show={showEditOwner}
-        onHide={() => setShowEditOwner((prev) => !prev)}
+      <Dialog
+        open={showEditOwner}
+        onClose={() => setShowEditOwner((prev) => !prev)}
       >
-        <Modal.Body className="d-flex m-2">
-          <Col md={6}>
-            <h5>Select owner/s</h5>
+        <Typography textAlign="center" m={2} variant="h4">
+          Select or remove owners
+        </Typography>
+        <Divider />
+        <DialogContent sx={{ display: "flex" }}>
+          <div>
+            <Typography>Add</Typography>
             {currentProjectMembers}
-          </Col>
-          <div className="mx-2 border border-dark vr" />
-          <Col md={6}>
-            <h5>Current Owners</h5>
+          </div>
+          <Divider
+            sx={{ mx: 2 }}
+            orientation="vertical"
+            color="grey"
+            flexItem
+          />
+          <div>
+            <Typography>Remove</Typography>
             {itemOwnersArr}
-          </Col>
-        </Modal.Body>
-      </Modal>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
