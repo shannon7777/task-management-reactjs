@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-// import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { ColorModeContext } from "../theme";
 import { CssBaseline, ThemeProvider, Container } from "@mui/material";
@@ -15,7 +14,6 @@ const Layout = ({ setNotify, notificationMsg, errorMsg, infoMsg }) => {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <div className="app">
-            {/* <Navbar setNotify={setNotify} /> */}
             {user && <Sidebar />}
             <main className="content">
               {notificationMsg}

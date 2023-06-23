@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SelectTaskStatus from "../../components/SelectTaskStatus";
-import { Box, TableCell } from "@mui/material";
+import { Chip, TableCell, Typography } from "@mui/material";
 
 const Status = ({ progress, item_id, editItem }) => {
   const [show, setShow] = useState(false);
@@ -29,10 +29,7 @@ const Status = ({ progress, item_id, editItem }) => {
     <TableCell
       sx={{
         maxWidth: 50,
-        cursor: "pointer",
-        bgcolor: progressColors[progress],
       }}
-      onClick={() => setShow(true)}
       onMouseLeave={() => setShow(false)}
     >
       {show ? (
@@ -44,7 +41,20 @@ const Status = ({ progress, item_id, editItem }) => {
           />
         </span>
       ) : (
-        <p>{progress}</p>
+        <Chip
+          variant="outlined"
+          onClick={() => setShow(true)}
+          size="small"
+          label={
+            <Typography variant="h6">
+              {progress.toUpperCase()}
+            </Typography>
+          }
+          sx={{
+            color: progressColors[progress],
+            borderColor: progressColors[progress],
+          }}
+        />
       )}
     </TableCell>
   );

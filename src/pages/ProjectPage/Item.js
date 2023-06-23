@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { disableNewlines } from "./ProjectPage";
 import { IconButton, TableCell, Typography } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 
 const Item = ({ projectItem, editItem, deleteItem }) => {
   const [hover, onHover] = useState(false);
@@ -14,7 +14,7 @@ const Item = ({ projectItem, editItem, deleteItem }) => {
 
   return (
     <TableCell
-      sx={{ maxWidth: 100 }}
+      sx={{ maxWidth: 50 }}
       onMouseOver={() => onHover(true)}
       onMouseOut={() => onHover(false)}
     >
@@ -36,14 +36,11 @@ const Item = ({ projectItem, editItem, deleteItem }) => {
         >
           {projectItem?.item}
         </Typography>
-          {hover && (
-            <IconButton
-              onClick={() => deleteItem(projectItem._id)}
-              size="small"
-            >
-              <Delete />
-            </IconButton>
-          )}
+        {hover && (
+          <IconButton onClick={() => deleteItem(projectItem._id)} size="small">
+            <Delete />
+          </IconButton>
+        )}
       </div>
     </TableCell>
   );

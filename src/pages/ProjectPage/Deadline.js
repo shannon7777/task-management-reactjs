@@ -1,11 +1,11 @@
 // import DatePicker from "react-datepicker";
 import { useState } from "react";
-import { Col, ProgressBar, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import { timelineBar, progressColors } from "../Projectlist/Project";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { TableCell } from "@mui/material";
+import { LinearProgress, TableCell } from "@mui/material";
 import dayjs from "dayjs";
 
 const Deadline = ({ editItem, projectItem, completion_date }) => {
@@ -28,14 +28,11 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
                   width: 150,
                 }}
                 className="mt-3"
-                label={
-                  completion_date
-                    ? "Edit the completion date"
-                    : "Please set a completion date"
-                }
-                value={dayjs(completion_date)}
+                label="Edit the completion date"
+                value={dayjs(deadline)}
                 onChange={(date) => edit(date)}
                 slotProps={{ textField: { size: "small" } }}
+                maxDate={dayjs(completion_date)}
               />
             </LocalizationProvider>
           </Col>
@@ -46,10 +43,17 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
               style={{ cursor: "pointer", width: 0 }}
             >
               {deadline}
-              <ProgressBar
-                variant={progressColors(createdAt, deadline)}
-                animated
-                now={timelineBar(createdAt, deadline)}
+              <LinearProgress
+                variant="determinate"
+                value={timelineBar(createdAt, deadline)}
+                sx={{
+                  height: 7,
+                  borderRadius: 5,
+                  "& .MuiLinearProgress-bar": {
+                    bgcolor: progressColors(createdAt, deadline),
+                  },
+                  bgcolor: "grey",
+                }}
               />
             </Col>
           </>

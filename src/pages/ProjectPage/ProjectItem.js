@@ -31,35 +31,32 @@ const ProjectItem = ({
   };
 
   return (
-    <TableBody>
-      <TableRow>
-        <Item
-          projectItem={projectItem}
-          editItem={editItem}
-          deleteItem={deleteItem}
-        />
-        <Owners
-          item_id={projectItem?._id}
-          teamMembers={teamMembers}
-          // teamMembers={teamMembers.map((member) => member.email)}
-          owners={owners}
-          setOwners={setOwners}
-          project_id={project_id}
-        />
+    <TableRow>
+      <Item
+        projectItem={projectItem}
+        editItem={editItem}
+        deleteItem={deleteItem}
+      />
+      <Owners
+        item_id={projectItem?._id}
+        teamMembers={teamMembers}
+        owners={owners}
+        setOwners={setOwners}
+        project_id={project_id}
+      />
 
-        <Deadline
-          projectItem={projectItem}
-          editItem={editItem}
-          completion_date={completion_date}
-        />
-        <Status
-          progress={projectItem?.progress}
-          editItem={editItem}
-          item_id={projectItem?._id}
-        />
-        <Notes projectItem={projectItem} editItem={editItem} owners={owners} />
-      </TableRow>
-    </TableBody>
+      <Deadline
+        projectItem={projectItem}
+        editItem={editItem}
+        completion_date={completion_date}
+      />
+      <Status
+        progress={projectItem?.progress}
+        editItem={editItem}
+        item_id={projectItem?._id}
+      />
+      <Notes projectItem={projectItem} editItem={editItem} owners={owners} />
+    </TableRow>
   );
 };
 export default ProjectItem;

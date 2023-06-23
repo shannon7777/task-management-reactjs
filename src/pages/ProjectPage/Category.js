@@ -3,10 +3,8 @@ import { useState } from "react";
 import ProjectItem from "./ProjectItem";
 import ProjectItemForm from "./ProjectItemForm";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "@emotion/react";
 import { disableNewlines } from "./ProjectPage";
+import { useTheme } from "@mui/material";
 
 import { useParams } from "react-router-dom";
 
@@ -21,9 +19,11 @@ import {
   Typography,
   Chip,
   Stack,
+  TableBody,
+  IconButton,
 } from "@mui/material";
 import { tokens } from "../../theme";
-import { Add } from "@mui/icons-material";
+import { DeleteForever, Edit, LibraryAdd } from "@mui/icons-material";
 
 const Category = ({
   category,
@@ -41,10 +41,10 @@ const Category = ({
   deadline,
   setDeadline,
 }) => {
-  const [showForm, setShowForm] = useState(false);
-  const [hover, setHover] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [showForm, setShowForm] = useState(false);
+  const [hover, setHover] = useState(false);
   const { project_id } = useParams();
   let teamMembers = JSON.parse(
     localStorage.getItem(`teamMembers-${project_id}`)
@@ -62,7 +62,8 @@ const Category = ({
           sx={{ borderRadius: 1, mb: 2 }}
           label={
             <Typography
-              color={colors.greenAccent[500]}
+              onMouseOver={() => setHover(true)}
+              onMouseOut={() => setHover(false)}
               variant="h5"
               contentEditable={true}
               suppressContentEditableWarning={true}
@@ -82,18 +83,26 @@ const Category = ({
           }
         />
         {hover && (
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => deleteCategory(category._id)}
-            sx={{ height: "fit-content" }}
-          >
-            Delete
-          </Button>
+          <>
+            <Edit sx={{ mx: 2, mt: 0.5 }} />
+            <Button
+              endIcon={<DeleteForever />}
+              variant="contained"
+              onClick={() => deleteCategory(category._id)}
+              sx={{
+                height: "fit-content",
+                bgcolor: colors.redAccent[700],
+                color: "white",
+                ml: "auto",
+              }}
+            >
+              Delete
+            </Button>
+          </>
         )}
       </Stack>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ mb: 2 }}>
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
@@ -103,42 +112,43 @@ const Category = ({
             </TableRow>
           </TableHead>
 
-          {projectItems
-            ?.filter((item) => item.category_id === category._id)
-            .map((item, index) => (
-              <ProjectItem
-                key={index}
-                projectItem={item}
-                teamMembers={teamMembers}
-                editItem={editItem}
-                deleteItem={deleteItem}
-                completion_date={completion_date}
+          <TableBody>
+            {projectItems
+              ?.filter((item) => item.category_id === category._id)
+              .map((item, index) => (
+                <ProjectItem
+                  key={index}
+                  projectItem={item}
+                  teamMembers={teamMembers}
+                  editItem={editItem}
+                  deleteItem={deleteItem}
+                  completion_date={completion_date}
+                />
+              ))}
+            {showForm && (
+              <ProjectItemForm
+                setShowForm={setShowForm}
+                createProjectItem={createProjectItem}
+                deadline={deadline}
+                setDeadline={setDeadline}
+                item={item}
+                setItem={setItem}
+                category_id={category._id}
               />
-            ))}
+            )}
+          </TableBody>
         </Table>
       </TableContainer>
 
-      {showForm && (
-        <ProjectItemForm
-          setShowForm={setShowForm}
-          createProjectItem={createProjectItem}
-          deadline={deadline}
-          setDeadline={setDeadline}
-          item={item}
-          setItem={setItem}
-          category_id={category._id}
-        />
-      )}
       {!showForm && (
-        <span className="d-flex m-3">
-          <FontAwesomeIcon
-            icon={faSquarePlus}
-            size="xl"
-            style={{ cursor: "pointer" }}
-            onClick={() => setShowForm(true)}
-          />
-          <p className="mx-2">Add Item</p>
-        </span>
+        <Stack direction="row" gap={2} my={2}>
+          <IconButton onClick={() => setShowForm(true)}>
+            <LibraryAdd sx={{ color: colors.greenAccent[400] }} />
+          </IconButton>
+          <Typography my={1} color={colors.grey[400]}>
+            Add a project item
+          </Typography>
+        </Stack>
       )}
     </>
   );

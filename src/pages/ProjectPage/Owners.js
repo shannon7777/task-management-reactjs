@@ -29,7 +29,6 @@ const Owners = ({ item_id, teamMembers, owners, setOwners, project_id }) => {
       <span className="d-flex justify-content-between">
         {showEditOwner && (
           <EditOwnersModal
-            // owners={owners?.map((owner) => owner.email)}
             owners={owners}
             teamMembers={teamMembers}
             setShowEditOwner={setShowEditOwner}

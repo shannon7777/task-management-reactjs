@@ -1,4 +1,5 @@
 import axios from "axios";
+import dayjs from "dayjs";
 
 const fetchCategoriesAndItems = async (
   setCategories,
@@ -56,7 +57,7 @@ const createItem = async (
   if (!item) return;
   const createdItem = {
     item,
-    deadline: deadline.toDateString(),
+    deadline: dayjs(deadline).toDate().toDateString(),
     category_id,
   };
   try {

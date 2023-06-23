@@ -179,16 +179,15 @@ const timelineBar = (createdAt, completion_date) => {
     (new Date(completion_date) - new Date(createdAt)) / 1000 / 60 / 60 / 24;
   let daysPassed = (new Date() - new Date(createdAt)) / 1000 / 60 / 60 / 24;
   let percentage = (daysPassed / totalDays) * 100;
-  if (percentage < 0) return 100;
+  if (percentage < 0 || percentage > 100) return 100;
   return Math.round(percentage);
 };
 
-const progressColors = (createdAt, completion_date) => {
-  let timeline = timelineBar(createdAt, completion_date);
-  if (timeline <= 25) return "primary";
-  if (timeline > 25 && timeline <= 50) return "info";
-  if (timeline > 50 && timeline <= 75) return "warning";
-  if (timeline > 75) return "danger";
+const progressColors = (createdAt, deadline) => {
+  let timeline = timelineBar(createdAt, deadline);
+  if (timeline <= 33) return "#c3c6fd";
+  if (timeline > 33 && timeline <= 75) return "#4cceac";
+  if (timeline > 75) return "#af3f3b";
 };
 
 export { Project, timelineBar, progressColors };

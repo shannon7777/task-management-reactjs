@@ -1,5 +1,15 @@
-import { Form, Button, Row, Col } from "react-bootstrap";
-import DatePicker from "react-datepicker";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
+import { tokens } from "../../theme";
+import {
+  Button,
+  TableCell,
+  TableRow,
+  TextField,
+  useTheme,
+} from "@mui/material";
 
 const ProjectItemForm = ({
   deadline,
@@ -10,6 +20,8 @@ const ProjectItemForm = ({
   setItem,
   category_id,
 }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const onSubmit = (e) => {
     e.preventDefault();
     createProjectItem(category_id);
@@ -17,52 +29,47 @@ const ProjectItemForm = ({
   };
 
   return (
-    <Form className="m-3">
-      <Row>
-        <Col>
-          <Form.Group className="my-3" controlId="formItem">
-            <Form.Label>Project Item</Form.Label>
-            <Form.Control
-              value={item}
-              type="text"
-              name="item"
-              onChange={(e) => setItem(e.target.value)}
-            />
-          </Form.Group>
-        </Col>
+    <TableRow>
+      <TableCell sx={{ maxWidth: 100 }}>
+        <TextField
+          label="Create Item"
+          variant="standard"
+          size="small"
+          name="item"
+          onChange={(e) => setItem(e.target.value)}
+          value={item}
+          fullWidth
+        />
+      </TableCell>
+      <TableCell sx={{ maxWidth: 100 }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            className="mt-3"
+            label="Set a deadline"
+            value={dayjs(deadline)}
+            onChange={(date) => setDeadline(date)}
+            slotProps={{ textField: { size: "small" } }}
+          />
+        </LocalizationProvider>
+      </TableCell>
+      <TableCell sx={{ maxWidth: 100 }}>
+        <Button
+          variant="contained"
+          onClick={onSubmit}
+          sx={{ bgcolor: colors.blueAccent[700] }}
+        >
+          Save
+        </Button>
 
-        <Col>
-          <Form.Group className="my-3" controlId="datePicker">
-            <Form.Label>Set a deadline</Form.Label>
-            <DatePicker
-              className="btn btn-outline-dark shadow"
-              onChange={(date) => setDeadline(date)}
-              selected={deadline}
-              value={deadline}
-              dateFormat="MMMM d, yyyy"
-              minDate={new Date()}
-              showPopperArrow={false}
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Button
-        className="px-3 mx-auto"
-        variant="success"
-        onClick={onSubmit}
-        type="submit"
-      >
-        Add
-      </Button>
-      <Button
-        className="mx-3"
-        variant="danger"
-        onClick={() => setShowForm(false)}
-      >
-        Cancel
-      </Button>
-    </Form>
+        <Button
+          onClick={() => setShowForm(false)}
+          sx={{ mx: 2, bgcolor: colors.redAccent[700] }}
+          variant="contained"
+        >
+          Cancel
+        </Button>
+      </TableCell>
+    </TableRow>
   );
 };
 

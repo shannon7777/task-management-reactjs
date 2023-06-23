@@ -14,7 +14,6 @@ const Header = ({ totalTasks, title, onAdd, showAddTask }) => {
             color="success"
           >
             <Chip
-              size="big"
               label={title}
               sx={{ borderRadius: 1, height: 50, fontSize: 30 }}
             />

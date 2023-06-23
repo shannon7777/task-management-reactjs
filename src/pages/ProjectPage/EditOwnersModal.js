@@ -1,11 +1,9 @@
-import { Cancel } from "@mui/icons-material";
 import {
   Avatar,
   Chip,
   Dialog,
   DialogContent,
   Divider,
-  Stack,
   Typography,
 } from "@mui/material";
 import { useState } from "react";

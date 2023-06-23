@@ -15,8 +15,9 @@ import {
   removeCategory,
 } from "../../services/category";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
+import { Button, Chip, Typography, useTheme } from "@mui/material";
+import { Add, ControlPoint } from "@mui/icons-material";
+import { tokens } from "../../theme";
 
 const Tables = ({ completion_date }) => {
   const [categories, setCategories] = useState([]);
@@ -25,8 +26,9 @@ const Tables = ({ completion_date }) => {
   const [item, setItem] = useState("");
   const [deadline, setDeadline] = useState(new Date());
   const [showForm, setShowForm] = useState(false);
-  const [hover, setHover] = useState(false);
   const { project_id } = useParams();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     fetchAllData();
@@ -90,22 +92,17 @@ const Tables = ({ completion_date }) => {
 
   return (
     <>
-      <div
-        className="my-4"
-        onMouseOver={() => setHover(true)}
-        onMouseOut={() => setHover(false)}
-        style={{ cursor: "pointer" }}
-      >
-        <FontAwesomeIcon
-          icon={faCirclePlus}
-          style={{
-            color: !hover && "rgb(192,191,191)",
-          }}
-          size="xl"
+      {!showForm && (
+        <Button
+          startIcon={<Add />}
+          variant="contained"
           onClick={() => setShowForm(true)}
-        />
-        <span className="mx-2">Create Category</span>
-      </div>
+          sx={{ my: 2.5, bgcolor: colors.greenAccent[600] }}
+        >
+          <Typography variant="h6">Add a Category</Typography>
+        </Button>
+      )}
+
       {showForm && (
         <CategoryForm
           {...{ createCategory, setShowForm, setCategoryTitle, categoryTitle }}
@@ -121,7 +118,6 @@ const Tables = ({ completion_date }) => {
               deleteCategory,
               setCategoryTitle,
               projectItems,
-              // teamMembers,
               createProjectItem,
               completion_date,
               editItem,

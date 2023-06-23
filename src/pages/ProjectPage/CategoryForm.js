@@ -1,33 +1,44 @@
-import { Button, Form, Row, Col } from "react-bootstrap";
+import { Box, TextField, Button } from "@mui/material";
+import { tokens } from "../../theme";
+import { useTheme } from "@emotion/react";
+import { Cancel, TaskAlt } from "@mui/icons-material";
 
-const CategoryForm = ({ createCategory, setShowForm, setCategoryTitle, categoryTitle }) => {
+const CategoryForm = ({
+  createCategory,
+  setShowForm,
+  setCategoryTitle,
+  categoryTitle,
+}) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   return (
-    <Form>
-      <Row className="my-3">
-        <Col>
-          <Form.Group controlId="categoryForm">
-            <Form.Control
-              type="text"
-              placeholder="Create a category"
-              value={categoryTitle}
-              name="category"
-              onChange={(e) => setCategoryTitle(e.target.value)}
-            />
-          </Form.Group>
-        </Col>
-
-        <Col>
-          <Button onClick={createCategory}>Create</Button>
-          <Button
-            className="mx-2"
-            variant="danger"
-            onClick={() => setShowForm(false)}
-          >
-            Cancel
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+    <Box my={4}>
+      <TextField
+        label="Create Category"
+        variant="standard"
+        size="small"
+        name="item"
+        onChange={(e) => setCategoryTitle(e.target.value)}
+        value={categoryTitle}
+        sx={{ minWidth: 300 }}
+      />
+      <Button
+        endIcon={<TaskAlt />}
+        variant="contained"
+        onClick={createCategory}
+        sx={{ color: colors.greenAccent[500], ml: 2 }}
+      >
+        Create
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ color: colors.redAccent[500], ml: 2 }}
+        onClick={() => setShowForm(false)}
+        endIcon={<Cancel />}
+      >
+        cancel
+      </Button>
+    </Box>
   );
 };
 
