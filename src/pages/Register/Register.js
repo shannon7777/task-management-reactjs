@@ -60,9 +60,7 @@ const Register = ({ setError, setNotify, setInfo }) => {
     }
   };
 
-  return (
-    <RegisterForm onChange={onChange} onSubmit={onSubmit} navigate={navigate} />
-  );
+  return <RegisterForm onChange={onChange} onSubmit={onSubmit} />;
 };
 
 export default Register;

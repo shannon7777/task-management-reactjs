@@ -1,16 +1,16 @@
-// import DatePicker from "react-datepicker";
 import { useState } from "react";
 import { Col, Row } from "react-bootstrap";
 
 import { timelineBar, progressColors } from "../Projectlist/Project";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LinearProgress, TableCell } from "@mui/material";
+import { LinearProgress, TableCell, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 const Deadline = ({ editItem, projectItem, completion_date }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { _id, deadline, createdAt } = projectItem;
+
   const edit = (date) => {
     setShowDatePicker(false);
     let editedDeadline = { deadline: dayjs(date).toDate().toDateString() };
@@ -42,7 +42,7 @@ const Deadline = ({ editItem, projectItem, completion_date }) => {
               onClick={() => setShowDatePicker((prev) => !prev)}
               style={{ cursor: "pointer", width: 0 }}
             >
-              {deadline}
+              <Typography variant="h6">{deadline}</Typography>
               <LinearProgress
                 variant="determinate"
                 value={timelineBar(createdAt, deadline)}

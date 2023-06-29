@@ -12,26 +12,10 @@ import {
 import TeamMembers from "../../components/TeamMember";
 import EditMembersModal from "./EditMembersModal";
 import Tables from "./Tables";
-import DatePicker from "react-datepicker";
 import "react-circular-progressbar/dist/styles.css";
 
-// import { Badge, Card, Col, Row } from "react-bootstrap";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCircleArrowLeft,
-  faPenToSquare,
-  faUsersLine,
-  faUserGear,
-  faXmark,
-  faSquarePen,
-  faStar,
-  faCircleCheck,
-} from "@fortawesome/free-solid-svg-icons";
-import { faCalendarCheck } from "@fortawesome/free-regular-svg-icons";
 import {
   Box,
-  Paper,
   Stack,
   Card,
   CardContent,
@@ -42,16 +26,20 @@ import {
   Button,
   useTheme,
   Divider,
+  Badge,
 } from "@mui/material";
 import {
   ArrowForward,
   Assignment,
   Diversity3,
   Edit,
+  EditCalendar,
   Group,
-  Leaderboard,
 } from "@mui/icons-material";
 import { tokens } from "../../theme";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [project, setProject] = useState([]);
@@ -71,7 +59,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    completion_date: "",
   });
 
   const {
@@ -113,8 +100,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
     );
   };
 
-  const editProject = async (e) => {
-    e.preventDefault();
+  const editProject = async () => {
     updateProject(
       project_id,
       formData,
@@ -123,6 +109,19 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
       setShowEdit,
       setError
     );
+  };
+
+  const editCompletionDate = async (date) => {
+    let dateObj = { completion_date: dayjs(date).toDate().toDateString() };
+    await updateProject(
+      project_id,
+      dateObj,
+      setFormData,
+      setProject,
+      setShowEdit,
+      setError
+    );
+    setShowEdit({ datePicker: false });
   };
 
   const addMember = async (membersArr) => {
@@ -169,7 +168,8 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
             borderRadius: 1,
             px: 1,
             height: 50,
-            bgcolor: colors.blueAccent[600],
+            bgcolor: colors.grey[600],
+            boxShadow: 4,
           }}
           variant="filled"
           label={<Typography variant="h2">Project :</Typography>}
@@ -204,6 +204,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
 
       <Box display="flex" justifyContent="space-between">
         <Card
+          elevation={4}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -212,15 +213,17 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
             maxWidth: "45%",
             my: 2,
             p: 1,
-            bgcolor: colors.primary[400],
+            background: colors.primary[400],
           }}
         >
           <CardContent>
-            <Typography variant="h4">Project Details</Typography>
-            <Stack my={2}>
-              <Typography variant="h5" color="text.secondary">
-                Description
-              </Typography>
+            <Stack spacing={1}>
+              <div className="d-flex">
+                <Typography variant="h4" mr={2}>
+                  Description
+                </Typography>
+                {hover.description && <Edit />}
+              </div>
               <Typography
                 overflow="auto"
                 onMouseOver={() => setHover({ description: true })}
@@ -234,29 +237,80 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 name="description"
                 variant="h6"
                 sx={{
-                  bgcolor: colors.grey[400],
+                  background: colors.grey[500],
                   borderRadius: 1,
                   p: 1,
                   maxHeight: "5rem",
                   overflow: "auto",
+                  cursor: "pointer",
                 }}
               >
                 {project.description}
               </Typography>
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                gap={1}
+                py={1}
+                onMouseOver={() => setHover({ datePicker: true })}
+                onMouseOut={() => setHover({ datePicker: false })}
+                onMouseLeave={() => setShowEdit({ datePicker: false })}
+                onClick={() => setShowEdit({ datePicker: true })}
+                sx={{ cursor: "pointer" }}
+              >
+                {showEdit.datePicker ? (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      sx={{
+                        width: 150,
+                      }}
+                      className="mt-3"
+                      label="Edit the completion date"
+                      value={dayjs(project.completion_date)}
+                      onChange={(date) => editCompletionDate(date)}
+                      slotProps={{ textField: { size: "small" } }}
+                      closeOnSelect={true}
+                    />
+                  </LocalizationProvider>
+                ) : (
+                  <>
+                    <EditCalendar />
+                    <Typography
+                      variant="h6"
+                      color="text.secondary"
+                      sx={{
+                        color: colors.greenAccent[500],
+                      }}
+                    >
+                      Completion Date
+                    </Typography>
+                    {hover.datePicker && <Edit />}
+                  </>
+                )}
+                <Typography
+                  color={colors.greenAccent[500]}
+                  variant="h5"
+                  ml="auto"
+                  fontWeight="bold"
+                >
+                  {new Date(project.completion_date).toDateString()}
+                </Typography>
+              </Box>
             </Stack>
           </CardContent>
 
           <Box mt="auto">
-            <Divider variant="middle" color="darkgrey" />
+            <Divider color="darkgrey" />
 
-            <CardActions sx={{ m: 1 }}>
+            <CardActions sx={{ mt: 0.5 }}>
               <Button
                 component={Link}
                 to={`/project-dashboard/${project_id}`}
                 variant="contained"
                 startIcon={<Assignment />}
                 endIcon={<ArrowForward />}
-                sx={{ bgcolor: colors.blueAccent[600] }}
+                sx={{ bgcolor: colors.blueAccent[600], borderRadius: 3 }}
               >
                 Project Dashboard
               </Button>
@@ -265,6 +319,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
         </Card>
 
         <Card
+          elevation={4}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -272,7 +327,7 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
             minWidth: "45%",
             my: 2,
             p: 1,
-            bgcolor: colors.primary[400],
+            background: colors.primary[400],
           }}
         >
           <CardContent>
@@ -293,7 +348,21 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
                 sx={{ mx: 2 }}
                 onClick={() => setShowEdit({ users: true })}
               >
-                <Diversity3 />
+                <Badge
+                  badgeContent={
+                    <Typography fontSize={12}>{teamMembers.length}</Typography>
+                  }
+                  color="success"
+                  sx={{
+                    ".MuiBadge-badge": {
+                      height: 15,
+                      width: 15,
+                      minWidth: 15,
+                    },
+                  }}
+                >
+                  <Diversity3 />
+                </Badge>
               </IconButton>
               {editMembersModal}
             </Stack>
@@ -313,16 +382,16 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
           </CardContent>
 
           <Box mt="auto">
-            <Divider sx={{ mb: "auto" }} variant="middle" color="darkgrey" />
+            <Divider color="darkgrey" />
 
-            <CardActions sx={{ m: 1 }}>
+            <CardActions sx={{ mt: 0.5 }}>
               <Button
                 component={Link}
                 to={`/members-dashboard/${project_id}`}
                 variant="contained"
                 endIcon={<ArrowForward />}
                 startIcon={<Group />}
-                sx={{ bgcolor: colors.blueAccent[600] }}
+                sx={{ bgcolor: colors.blueAccent[600], borderRadius: 3 }}
               >
                 Members Dashboard
               </Button>

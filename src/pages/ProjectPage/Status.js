@@ -23,6 +23,7 @@ const Status = ({ progress, item_id, editItem }) => {
   const onSelect = (e) => {
     let editedObj = { progress: e.target.value };
     editItem(item_id, editedObj);
+    setShow((prev) => !prev);
   };
 
   return (
@@ -45,11 +46,7 @@ const Status = ({ progress, item_id, editItem }) => {
           variant="outlined"
           onClick={() => setShow(true)}
           size="small"
-          label={
-            <Typography variant="h6">
-              {progress.toUpperCase()}
-            </Typography>
-          }
+          label={<Typography variant="h6">{progress.toUpperCase()}</Typography>}
           sx={{
             color: progressColors[progress],
             borderColor: progressColors[progress],

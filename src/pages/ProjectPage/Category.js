@@ -102,12 +102,24 @@ const Category = ({
         )}
       </Stack>
 
-      <TableContainer component={Paper} sx={{ mb: 2 }}>
+      <TableContainer
+        component={Paper}
+        sx={{ mb: 2, background: colors.primary[400] }}
+        elevation={4}
+      >
         <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
               {projectHeaders.map((header, index) => (
-                <TableCell key={`header-${index}`}>{header}</TableCell>
+                <TableCell key={`header-${index}`}>
+                  <Typography
+                    color="text.secondary"
+                    fontWeight="bold"
+                    fontSize={15}
+                  >
+                    {header}
+                  </Typography>
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>

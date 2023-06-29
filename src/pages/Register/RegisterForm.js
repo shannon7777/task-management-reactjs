@@ -1,98 +1,142 @@
-import { Form, Button, Row, Col } from "react-bootstrap";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Link } from "react-router-dom";
+import { tokens } from "../../theme";
+import { HowToReg, Login } from "@mui/icons-material";
 
-const Register = ({ navigate, onChange, onSubmit }) => {
+const Register = ({ onChange, onSubmit }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   return (
     <>
-      <Form className="border border-secondary shadow rounded m-5 p-4">
-        <h2 className="pb-2">Registration</h2>
-        <Row>
-          <Col>
-            <Form.Group className="mb-3" controlId="formFirstName">
-              <Form.Label>First name</Form.Label>
-              <Form.Control
-                className="shadow"
-                type="text"
+      <Card
+        elevation={4}
+        sx={{
+          position: "absolute",
+          top: "40%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          p: 2,
+          width: 700,
+          background: colors.greenAccent[700],
+          borderRadius: 4,
+        }}
+      >
+        <CardContent sx={{ alignItems: "center" }}>
+          <Typography
+            color={colors.primary[500]}
+            variant="h3"
+            fontWeight="bold"
+            mb={2}
+          >
+            Create Your Account
+          </Typography>
+          <Stack gap={2}>
+            <Box gap={7} display="flex" justifyContent="space-between">
+              <TextField
+                required
+                id="firstName"
                 name="firstName"
-                placeholder="first name"
-                onChange={onChange}
-              />
-            </Form.Group>
-          </Col>
-          <Col>
-            <Form.Group className="mb-3" controlId="formLastName">
-              <Form.Label>Last name</Form.Label>
-              <Form.Control
-                className="shadow"
+                label="First Name"
+                variant="standard"
                 type="text"
-                name="lastName"
-                placeholder="last name"
                 onChange={onChange}
+                fullWidth
               />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Form.Group className="mb-3" controlId="formEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            className="shadow"
-            type="email"
-            placeholder="Enter email"
-            onChange={onChange}
-            name="email"
-          />
-          <Form.Text className="text-muted">
-            Your email is kept private.
-          </Form.Text>
-        </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formUsername">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            className="shadow"
-            type="text"
-            name="username"
-            placeholder="username"
-            onChange={onChange}
-          />
-        </Form.Group>
+              <TextField
+                required
+                id="lastName"
+                name="lastName"
+                label="Last Name"
+                type="text"
+                variant="standard"
+                onChange={onChange}
+                fullWidth
+              />
+            </Box>
 
-        <Form.Group className="mb-3" controlId="formPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            className="shadow"
-            type="password"
-            placeholder="Password"
-            onChange={onChange}
-            name="password"
-          />
-        </Form.Group>
+            <Box gap={7} display="flex" justifyContent="space-between">
+              <TextField
+                required
+                id="email"
+                name="email"
+                label="Email Address"
+                type="text"
+                variant="standard"
+                onChange={onChange}
+                fullWidth
+              />
+              <TextField
+                required
+                id="username"
+                name="username"
+                label="Username"
+                type="text"
+                variant="standard"
+                onChange={onChange}
+                fullWidth
+              />
+            </Box>
 
-        <Form.Group className="mb-3" controlId="formRetypePassword">
-          <Form.Label>Re-type your password</Form.Label>
-          <Form.Control
-            className="shadow"
-            type="password"
-            placeholder="Password"
-            onChange={onChange}
-            name="passwordRetype"
-          />
-        </Form.Group>
-        <div className="d-flex justify-content-between">
-          <Button variant="outline-primary" type="submit" onClick={onSubmit}>
+            <TextField
+              required
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              onChange={onChange}
+              variant="standard"
+            />
+
+            <TextField
+              required
+              id="passwordRetype"
+              name="passwordRetype"
+              label="Retype Password"
+              type="password"
+              variant="standard"
+              onChange={onChange}
+            />
+          </Stack>
+        </CardContent>
+
+        <CardActions sx={{ justifyContent: "space-between" }}>
+          <Button
+            sx={{ bgcolor: colors.blueAccent[700], borderRadius: 2, m: 1 }}
+            onClick={onSubmit}
+            variant="contained"
+            type="submit"
+            endIcon={<HowToReg />}
+          >
             Register
           </Button>
-          <Button variant="outline-danger" onClick={() => navigate("/login")}>
-            Cancel
-          </Button>
-        </div>
-        <br />
-        <Form.Label className="m-2">
-          Already have an account? Log in here
-        </Form.Label>
 
-        <Link to="/login">Sign in</Link>
-      </Form>
+          <div className="d-flex">
+            <Typography mx={1} mt={1} color="text.secondary">
+              Already have an account?{" "}
+            </Typography>
+            <Button
+              component={Link}
+              to={`/login`}
+              endIcon={<Login />}
+              sx={{ borderRadius: 2, bgcolor: colors.blueAccent[400] }}
+              variant="contained"
+            >
+              Log In
+            </Button>
+          </div>
+        </CardActions>
+      </Card>
     </>
   );
 };

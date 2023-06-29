@@ -44,15 +44,6 @@ body {
   font-family:'Courier New', Courier, monospace;
 }
 
-.navbar{
-  background-color: rgb(27, 29, 66);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
-}
-
 
 .site-title {
   font-size: 1.5rem;

@@ -128,6 +128,8 @@ const updateProject = async (
   if (!formData.title && !formData.description && !formData.completion_date)
     return;
   try {
+    console.log(formData);
+    // setFormData({ ...formData, completion_date: completion_date ? })
     const { data } = await axios.put(`projects/${project_id}`, formData);
     setProject(data.updatedProject);
     setShowEdit((prev) => !prev);

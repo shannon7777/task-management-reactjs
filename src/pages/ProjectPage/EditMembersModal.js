@@ -1,20 +1,24 @@
-import {
-  Modal,
-  Button,
-  Form,
-  Col,
-  Row,
-  Badge,
-  Tabs,
-  Tab,
-} from "react-bootstrap";
+import { Tabs, Tab } from "react-bootstrap";
 import { useState } from "react";
+import {
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+  Button,
+  useTheme,
+} from "@mui/material";
+import { GroupAdd, GroupRemove } from "@mui/icons-material";
+import { tokens } from "../../theme";
 
 const EditMembersModal = ({
   owner_email,
   addMember,
   removeMember,
-  // project_id,
   setShowEditMember,
   showEditMember,
   teamMembers,
@@ -24,6 +28,9 @@ const EditMembersModal = ({
 
   const [membersList, setMembersList] = useState(teamMembers);
   const [membersToRemove, setMembersToRemove] = useState([]);
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   // --- INSIDE INVITE MEMBERS TAB ---
 
@@ -49,18 +56,15 @@ const EditMembersModal = ({
   };
 
   const membersToBeInvited = membersToAdd?.map((email, index) => (
-    <Badge
-      className="m-1"
+    <Chip
       key={`member-${index}`}
-      pill
-      bg="dark"
-      style={{ cursor: "pointer" }}
-    >
-      {email}
-      <Badge bg="danger" className="mx-1" onClick={() => remove(email)}>
-        X
-      </Badge>
-    </Badge>
+      sx={{ my: "5px", mx: "5px" }}
+      size="medium"
+      variant="filled"
+      color="success"
+      label={email}
+      onDelete={() => remove(email)}
+    />
   ));
 
   // --- INSIDE REMOVE MEMBERS TAB ---
@@ -84,132 +88,158 @@ const EditMembersModal = ({
   const currentMembersList = membersList
     ?.filter((member) => member !== owner_email)
     .map((member, index) => (
-      <Badge bg="dark" key={`member-${index}`}>
-        {member}{" "}
-        <Badge
-          bg="danger"
-          className="mx-1"
-          style={{ cursor: "pointer" }}
-          onClick={(e) => {
-            e.preventDefault();
-            removeFromCurrentMembersArr(member);
-          }}
-        >
-          X
-        </Badge>
-      </Badge>
+      <Chip
+        key={`member-${index}`}
+        sx={{ my: "5px", mx: "5px" }}
+        size="medium"
+        variant="filled"
+        color="primary"
+        label={member}
+        onDelete={() => removeFromCurrentMembersArr(member)}
+      />
     ));
 
   const membersToBeRemoved = membersToRemove.map((email, index) => (
-    <Badge bg="danger" key={`member-${index}`}>
-      {email}{" "}
-      <Badge
-        bg="dark"
-        className="mx-1"
-        style={{ cursor: "pointer" }}
-        onClick={(e) => {
-          e.preventDefault();
-          removeFromArr(email);
-        }}
-      >
-        X
-      </Badge>
-    </Badge>
+    <Chip
+      key={`member-${index}`}
+      sx={{ my: "5px", mx: "5px" }}
+      size="medium"
+      variant="filled"
+      color="warning"
+      label={email}
+      onDelete={() => removeFromArr(email)}
+    />
   ));
 
   return (
     <>
-      <Modal
-        centered
-        show={showEditMember}
-        onHide={() => setShowEditMember((prev) => !prev)}
+      <Dialog
+        open={showEditMember}
+        onClose={() => setShowEditMember((prev) => !prev)}
       >
-        <Tabs className="justify-content-center">
-          <Tab eventKey="tab-invite" title="Invite Members">
-            <Modal.Header>
-              <Modal.Title>Invite Team Members</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group className="mb-3">
-                  <Row className="my-3">
-                    <Col md="10">
-                      <Form.Control
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="Add a team member/s"
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoFocus
-                      />
-                    </Col>
-                    <Col md="2">
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          add(email);
-                        }}
-                        type="submit"
-                      >
-                        select
-                      </Button>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>{membersToBeInvited}</Col>
-                  </Row>
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger"
-                onClick={() => setShowEditMember(!showEditMember)}
-              >
-                Cancel
-              </Button>
+        <Tabs
+          className="justify-content-center"
+          style={{ backgroundColor: colors.primary[400] }}
+        >
+          <Tab
+            eventKey="tab-invite"
+            title="Invite Members"
+            style={{ backgroundColor: colors.primary[400] }}
+          >
+            <DialogContent sx={{ minWidth: 400 }}>
+              <div className="d-flex">
+                <TextField
+                  type="email"
+                  name="email"
+                  value={email}
+                  variant="standard"
+                  placeholder="Add a team member/s"
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoFocus
+                  fullWidth
+                />
+
+                <Button
+                  variant="contained"
+                  onClick={() => add(email)}
+                  sx={{
+                    height: "fit-content",
+                    bgcolor: "darkgreen",
+                    color: "white",
+                    ml: 2,
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
+
+              <Divider color="grey" sx={{ my: 2 }} />
+
+              {membersToBeInvited}
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
               {membersToAdd.length > 0 && (
                 <Button
-                  variant="outline-success"
-                  type="submit"
+                  startIcon={<GroupAdd />}
+                  variant="contained"
                   onClick={onInvite}
+                  sx={{
+                    height: "fit-content",
+                    bgcolor: "darkgreen",
+                    color: "white",
+                  }}
                 >
                   Invite
                 </Button>
               )}
-            </Modal.Footer>
-          </Tab>
-          <Tab eventKey="tab-remove" title="Remove Members">
-            <Modal.Header>
-              <Modal.Title>Remove Members from This Project</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form className="d-flex">
-                <Col>
-                  <span>Current Team Members: </span>
-                  {currentMembersList}
-                </Col>
-                <div className="vr" />
-                <Col className="mx-3">
-                  <span>To Be Removed:</span>
-                  {membersToBeRemoved}
-                </Col>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
+
               <Button
-                variant="danger"
-                onClick={() => setShowEditMember((prev) => !prev)}
+                variant="contained"
+                onClick={() => setShowEditMember(false)}
+                sx={{
+                  height: "fit-content",
+                  bgcolor: "darkred",
+                  color: "white",
+                }}
               >
                 Cancel
               </Button>
+            </DialogActions>
+          </Tab>
+
+          <Tab
+            eventKey="tab-remove"
+            title="Remove Members from Project"
+            style={{ backgroundColor: colors.primary[400] }}
+          >
+            <DialogContent sx={{ display: "flex" }}>
+              <div>
+                <Typography>Current Members: </Typography>
+                {currentMembersList}
+              </div>
+              <Divider
+                sx={{ mx: 2 }}
+                orientation="vertical"
+                color="grey"
+                flexItem
+              />
+              <div>
+                <Typography>To be Removed: </Typography>
+                {membersToBeRemoved}
+              </div>
+            </DialogContent>
+            <DialogActions sx={{ p: 2 }}>
               {membersToRemove.length > 0 && (
-                <Button onClick={onRemove}>Remove</Button>
+                <Button
+                  variant="contained"
+                  endIcon={<GroupRemove />}
+                  onClick={() => add(email)}
+                  sx={{
+                    height: "fit-content",
+                    bgcolor: "Darkred",
+                    color: "white",
+                    ml: 2,
+                  }}
+                >
+                  Remove
+                </Button>
               )}
-            </Modal.Footer>
+              <Button
+                variant="contained"
+                onClick={() => setShowEditMember(false)}
+                sx={{
+                  height: "fit-content",
+                  bgcolor: "grey",
+                  color: "white",
+                  ml: 2,
+                }}
+              >
+                Cancel
+              </Button>
+            </DialogActions>
           </Tab>
         </Tabs>
-      </Modal>
+      </Dialog>
     </>
   );
 };

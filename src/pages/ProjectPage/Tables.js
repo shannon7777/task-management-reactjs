@@ -97,7 +97,7 @@ const Tables = ({ completion_date }) => {
           startIcon={<Add />}
           variant="contained"
           onClick={() => setShowForm(true)}
-          sx={{ my: 2.5, bgcolor: colors.greenAccent[600] }}
+          sx={{ my: 2.5, bgcolor: colors.greenAccent[600], borderRadius: 3 }}
         >
           <Typography variant="h6">Add a Category</Typography>
         </Button>

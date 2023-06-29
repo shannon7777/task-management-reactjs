@@ -4,6 +4,7 @@ import { Menu, MenuItem, SubMenu, ProSidebar } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
 import {
+  Assignment,
   Equalizer,
   Groups3,
   HelpOutlineOutlined,
@@ -131,7 +132,7 @@ const Sidebar = () => {
               <Item
                 title="Project Dashboard"
                 to={"/project-dashboard"}
-                icon={<PersonOutline />}
+                icon={<Assignment />}
                 {...{ selected, setSelected }}
               />
               <Item

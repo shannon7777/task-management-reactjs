@@ -53,7 +53,19 @@ const Task = ({
 
   return (
     <>
-      <Accordion>
+      <Accordion
+        variant="elevation"
+        sx={{
+          background: colors.primary[400],
+          my: 1,
+          "&.MuiAccordion-root": {
+            borderRadius: 5,
+          },
+          "&.MuiAccordion-root:before": {
+            display: "none",
+          },
+        }}
+      >
         <AccordionSummary
           expandIcon={<ExpandMore />}
           id={`accordion-${task._id}`}
