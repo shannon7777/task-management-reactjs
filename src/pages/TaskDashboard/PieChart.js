@@ -1,7 +1,7 @@
 // import { PieChart as PieChartApi, Pie, Cell, Tooltip } from "recharts";
 import { ResponsivePie } from "@nivo/pie";
 import { Col } from "react-bootstrap";
-import { taskProgressColors } from "../Home/Home";
+import { taskProgressColors } from "../PersonalTasks/TasksPage";
 
 const PieChart = ({ tasks }) => {
   let pieChartData = Object.keys(taskProgressColors).map((progress) => {

@@ -1,27 +1,19 @@
 import PropTypes from "prop-types";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FiPlus } from "react-icons/fi";
-import { Chip, Badge, Typography } from "@mui/material";
+import { Badge, Typography } from "@mui/material";
 
-const Header = ({ totalTasks, title, onAdd, showAddTask }) => {
+const Header = ({ title, variant, sx, color }) => {
   return (
-    <Row className="justify-content-between mt-5" xs="auto">
+    <Row xs="auto">
       <Col className="d-flex">
-        <h2>
-          <Badge
-            badgeContent={<Typography fontSize={18}>{totalTasks}</Typography>}
-            color="success"
-          >
-            <Chip
-              label={title}
-              sx={{ borderRadius: 1, height: 50, fontSize: 30 }}
-            />
-          </Badge>
-        </h2>
+        <Typography variant={variant} fontWeight="bold" sx={sx} mb={2}>
+          {title}
+        </Typography>
       </Col>
 
-      <Col>
+      {/* <Col>
         <Button variant={showAddTask ? "danger" : "success"} onClick={onAdd}>
           {showAddTask ? "Close" : <FiPlus size={30} />}
         </Button>
@@ -36,14 +28,14 @@ const Header = ({ totalTasks, title, onAdd, showAddTask }) => {
             placeholder="Search a task..."
           />
         </form>
-      </Col>
+      </Col> */}
     </Row>
   );
 };
 
 // We can also declare default props like so
 Header.defaultProps = {
-  title: "Personal Tasks",
+  title: "Home",
 };
 
 // here we can set the type of property ( proptypes )

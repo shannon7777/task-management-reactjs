@@ -117,6 +117,7 @@ const Register = ({ onChange, onSubmit }) => {
             variant="contained"
             type="submit"
             endIcon={<HowToReg />}
+            size="large"
           >
             Register
           </Button>

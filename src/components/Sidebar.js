@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+
 import { tokens } from "../theme";
 import { Menu, MenuItem, SubMenu, ProSidebar } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
@@ -6,6 +8,7 @@ import "react-pro-sidebar/dist/css/styles.css";
 import {
   Assignment,
   Equalizer,
+  FormatListBulleted,
   Groups3,
   HelpOutlineOutlined,
   HomeOutlined,
@@ -14,18 +17,15 @@ import {
   PersonOutline,
   PlaylistAddCheck,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
 
-const Item = ({ title, to, icon, selected, setSelected }) => {
+const Item = ({ title, to, icon }) => {
   const theme = useTheme();
+  const location = useLocation();
   const colors = tokens(theme.palette.mode);
+  const active = location.pathname === to;
+
   return (
-    <MenuItem
-      active={selected === title}
-      style={{ color: colors.grey[100] }}
-      onClick={() => setSelected(title)}
-      icon={icon}
-    >
+    <MenuItem active={active} style={{ color: colors.grey[100] }} icon={icon}>
       <Typography>{title}</Typography>
       <Link to={to} />
     </MenuItem>
@@ -36,7 +36,6 @@ const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [collapsed, setCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Home");
 
   const user = JSON.parse(localStorage.getItem(`user`));
   const userImg = JSON.parse(localStorage.getItem(`userImg`));
@@ -116,50 +115,40 @@ const Sidebar = () => {
           )}
 
           <Box paddingLeft={collapsed ? undefined : "10%"}>
+            <Item title="Home" to={"/"} icon={<HomeOutlined />} />
             <Item
-              title="Home"
-              to={"/"}
-              icon={<HomeOutlined />}
-              {...{ selected, setSelected }}
+              title="Personal Tasks"
+              to={"/tasks"}
+              icon={<FormatListBulleted />}
             />
             <Item
               title="Team Projects"
               to="/team-projects"
               icon={<Groups3 />}
-              {...{ selected, setSelected }}
             />
             <SubMenu title="Dashboard" icon={<Equalizer />}>
               <Item
                 title="Project Dashboard"
                 to={"/project-dashboard"}
                 icon={<Assignment />}
-                {...{ selected, setSelected }}
               />
               <Item
                 title="Members Dashboard"
                 to={"/members-dashboard"}
                 icon={<PeopleAlt />}
-                {...{ selected, setSelected }}
               />
               <Item
                 title="Personal Tasks Dashboard"
                 to={"/task-dashboard"}
                 icon={<PlaylistAddCheck />}
-                {...{ selected, setSelected }}
               />
             </SubMenu>
             <Item
               title="User Profile"
               to={"/profile"}
               icon={<PersonOutline />}
-              {...{ selected, setSelected }}
             />
-            <Item
-              title="About"
-              to={"/about"}
-              icon={<HelpOutlineOutlined />}
-              {...{ selected, setSelected }}
-            />
+            <Item title="About" to={"/about"} icon={<HelpOutlineOutlined />} />
           </Box>
         </Menu>
       </ProSidebar>

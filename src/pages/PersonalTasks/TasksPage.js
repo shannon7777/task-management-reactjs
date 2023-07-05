@@ -8,13 +8,14 @@ import {
 } from "../../services/task";
 import useAuth from "../../hooks/useAuth";
 
-import Header from "./Header";
+import Header from "../../components/Header";
 import AddTask from "./AddTask";
 import Task from "./Task";
-import useFetchImg from "../../hooks/useFetchImg";
-import { Chip } from "@mui/material";
+import { Button, Chip, useTheme } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { tokens } from "../../theme";
 
-const Home = ({ setNotifications }) => {
+const TasksPage = ({ setNotifications }) => {
   const [tasks, setTasks] = useState([]);
   const [formData, setFormData] = useState({
     text: "",
@@ -25,17 +26,14 @@ const Home = ({ setNotifications }) => {
   const [dateToComplete, setDateToComplete] = useState(new Date());
   const [showAddTask, setShowAddTask] = useState(false);
   const {
-    auth,
     auth: { user },
   } = useAuth();
-  // const user = JSON.parse(localStorage.getItem("user"));
-  const fetchImg = useFetchImg();
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
     getTasks();
-    if (localStorage.getItem("userImg")) return;
-    fetchImg();
-  }, [auth]);
+  }, []);
 
   const getTasks = () => {
     fetchAllTasks(user._id, setTasks);
@@ -102,11 +100,17 @@ const Home = ({ setNotifications }) => {
 
   return (
     <>
-      <Header
-        onAdd={onAdd}
-        showAddTask={showAddTask}
-        totalTasks={tasks.length}
-      />
+      <Header variant="h1" title="Personal Tasks" sx={{ mt: 2 }} />
+
+      <Button
+        variant="contained"
+        size="large"
+        endIcon={<Add />}
+        onClick={() => setShowAddTask((prev) => !prev)}
+        sx={{ background: colors.greenAccent[600] }}
+      >
+        Add a Task
+      </Button>
 
       <AddTask
         addTask={addTask}
@@ -127,7 +131,7 @@ const Home = ({ setNotifications }) => {
   );
 };
 
-export default Home;
+export default TasksPage;
 
 export const taskProgressColors = {
   "New Task": "#92a8d1",

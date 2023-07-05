@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-// import { ColorModeContext } from "./theme";
-// import useColorMode from "./hooks/useColorMode";
-// import { CssBaseline, ThemeProvider } from "@mui/material";
 
-import Home from "./pages/Home";
+import Homepage from "./pages/Home";
+import TasksPage from "./pages/PersonalTasks";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
@@ -25,10 +23,9 @@ import axios from "axios";
 
 const App = () => {
   const {
-    auth: { accessToken },
+    auth: { accessToken, user },
   } = useAuth();
 
-  // const [theme, colorMode] = useColorMode();
   const [notify, setNotify] = useState({ show: false, text: "" });
   const [error, setError] = useState({ show: false, text: "" });
   const [info, setInfo] = useState({ show: false, text: "" });
@@ -101,7 +98,16 @@ const App = () => {
             <Route element={<RequireAuth />}>
               <Route
                 path="/"
-                element={<Home setNotifications={setNotifications} />}
+                element={
+                  <Homepage user={user} setNotifications={setNotifications} />
+                }
+              />
+            </Route>
+
+            <Route element={<RequireAuth />}>
+              <Route
+                path="/tasks"
+                element={<TasksPage setNotifications={setNotifications} />}
               />
             </Route>
 

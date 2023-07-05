@@ -5,7 +5,7 @@ import BarChartCompletedTasks from "./BarChartCompletedTasks";
 import PieChart from "./PieChart";
 import ProgressBar from "./ProgressBar";
 
-import { taskProgressColors } from "../Home/Home";
+import { taskProgressColors } from "../PersonalTasks/TasksPage";
 
 const TaskDashboard = () => {
   let tasks = JSON.parse(localStorage.getItem("tasks"));

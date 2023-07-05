@@ -163,22 +163,11 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
   return (
     <>
       <Stack direction="row">
-        <Chip
-          sx={{
-            borderRadius: 1,
-            px: 1,
-            height: 50,
-            bgcolor: colors.grey[600],
-            boxShadow: 4,
-          }}
-          variant="filled"
-          label={<Typography variant="h2">Project :</Typography>}
-        />
-
         <Typography
           onMouseOver={() => setHover({ title: true })}
           onMouseOut={() => setHover({ title: false })}
-          variant="h2"
+          variant="h1"
+          fontWeight="bold"
           suppressContentEditableWarning={true}
           contentEditable={true}
           onBlur={editProject}
@@ -193,7 +182,6 @@ const ProjectPage = ({ setError, setNotify, setInfo }) => {
               border: "none",
             },
             cursor: "pointer",
-            mx: 3,
             mt: 1,
           }}
         >

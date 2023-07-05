@@ -5,15 +5,24 @@ import {
   Card,
   CardActions,
   CardContent,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import { tokens } from "../../theme";
-import { HowToReg, Login } from "@mui/icons-material";
+import {
+  HowToReg,
+  Login,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
+import { useState } from "react";
 
 const LoginForm = ({ onChange, onSubmit }) => {
+  const [visible, setVisible] = useState(false);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -46,7 +55,7 @@ const LoginForm = ({ onChange, onSubmit }) => {
                 required
                 id="email"
                 name="email"
-                label="email"
+                label="Email"
                 variant="standard"
                 onChange={onChange}
               />
@@ -55,19 +64,47 @@ const LoginForm = ({ onChange, onSubmit }) => {
                 id="password"
                 name="password"
                 label="Password"
-                type="password"
+                type={visible ? "text" : "password"}
                 onChange={onChange}
                 variant="standard"
+                helperText="Do not share your password with anyone"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {visible ? (
+                        <IconButton
+                          size="small"
+                          onClick={() => setVisible(false)}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          size="small"
+                          onClick={() => setVisible(true)}
+                        >
+                          <VisibilityOff />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Stack>
           </CardContent>
           <CardActions sx={{ justifyContent: "space-between" }}>
             <Button
-              sx={{ bgcolor: colors.blueAccent[700], borderRadius: 2, m: 1 }}
+              sx={{
+                width: 200,
+                bgcolor: colors.blueAccent[700],
+                borderRadius: 2,
+                my: 1,
+              }}
               onClick={onSubmit}
               variant="contained"
               type="submit"
               endIcon={<Login />}
+              size="large"
             >
               Continue
             </Button>
@@ -80,8 +117,9 @@ const LoginForm = ({ onChange, onSubmit }) => {
                 component={Link}
                 to={`/register`}
                 endIcon={<HowToReg />}
-                sx={{ borderRadius: 2, bgcolor: colors.blueAccent[400] }}
+                sx={{ borderRadius: 2, bgcolor: colors.blueAccent[700] }}
                 variant="contained"
+                size=""
               >
                 Register
               </Button>

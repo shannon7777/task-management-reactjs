@@ -1,6 +1,6 @@
 import { ResponsiveBar } from "@nivo/bar";
 import { Col } from "react-bootstrap";
-import { taskProgressColors } from "../Home/Home";
+import { taskProgressColors } from "../PersonalTasks/TasksPage";
 
 const BarChartDueTasks = ({ tasks }) => {
   const startOfTheWeek = new Date(
