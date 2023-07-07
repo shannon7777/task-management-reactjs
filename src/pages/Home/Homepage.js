@@ -152,13 +152,16 @@ const Homepage = ({ user, setTasks, setProjects }) => {
               <Divider flexItem sx={{ my: 1 }} />
 
               {upcomingTasks.map((task, index) => (
-                <div key={index} className="d-flex">
-                  <Box p={1}>
-                    <p>{task.dateToComplete.split(" ")[1]}</p>
-                    <p>{new Date(task.dateToComplete).getDate()}</p>
-                  </Box>
-                  <Typography variant="h5">{task.text}</Typography>
-                </div>
+                <>
+                  <div key={index} className="d-flex">
+                    <Box borderRadius={3} p={1} bgcolor={colors.primary[300]} height={70}>
+                      <p>{task.dateToComplete.split(" ")[1]}</p>
+                      <p>{new Date(task.dateToComplete).getDate()}</p>
+                    </Box>
+                    <Typography variant="h5">{task.text}</Typography>
+                  </div>
+                  <Divider flexItem />
+                </>
               ))}
             </CardContent>
           </Card>
