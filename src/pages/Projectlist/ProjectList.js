@@ -5,16 +5,21 @@ import useAuth from "../../hooks/useAuth";
 import { Project } from "./Project";
 import AddProjectForm from "./AddProjectForm";
 import {
-  getProjects,
   addProject,
+  getProjects,
   removeProject,
 } from "../../services/projectDetail";
 
-const ProjectList = ({ setNotify, setError, setInfo }) => {
+const ProjectList = ({
+  projects,
+  setProjects,
+  setNotify,
+  setError,
+  setInfo,
+}) => {
   const {
     auth: { user },
   } = useAuth();
-  const [projects, setProjects] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -25,12 +30,8 @@ const ProjectList = ({ setNotify, setError, setInfo }) => {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
     getProjects(setProjects, user._id, setError);
-  };
+  }, []);
 
   const createProject = async (e) => {
     e.preventDefault();

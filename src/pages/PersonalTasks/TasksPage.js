@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import {
-  fetchAllTasks,
   createTask,
   updateTask,
   removeTask,
+  fetchAllTasks,
 } from "../../services/task";
 import useAuth from "../../hooks/useAuth";
 
@@ -15,8 +15,7 @@ import { Button, Chip, useTheme } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { tokens } from "../../theme";
 
-const TasksPage = ({ setNotifications }) => {
-  const [tasks, setTasks] = useState([]);
+const TasksPage = ({ tasks, setTasks, setNotifications }) => {
   const [formData, setFormData] = useState({
     text: "",
     description: "",
@@ -32,12 +31,8 @@ const TasksPage = ({ setNotifications }) => {
   const colors = tokens(theme.palette.mode);
 
   useEffect(() => {
-    getTasks();
-  }, []);
-
-  const getTasks = () => {
     fetchAllTasks(user._id, setTasks);
-  };
+  }, []);
 
   const addTask = async (e) => {
     e.preventDefault();

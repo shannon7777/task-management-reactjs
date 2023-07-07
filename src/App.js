@@ -30,6 +30,9 @@ const App = () => {
   const [error, setError] = useState({ show: false, text: "" });
   const [info, setInfo] = useState({ show: false, text: "" });
 
+  const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
+
   axios.defaults.baseURL = `http://localhost:5000/api`;
   axios.defaults.withCredentials = true;
   axios.defaults.headers.common = {
@@ -99,7 +102,9 @@ const App = () => {
               <Route
                 path="/"
                 element={
-                  <Homepage user={user} setNotifications={setNotifications} />
+                  <Homepage
+                    {...{ user, setNotifications, setTasks, setProjects }}
+                  />
                 }
               />
             </Route>
@@ -107,7 +112,9 @@ const App = () => {
             <Route element={<RequireAuth />}>
               <Route
                 path="/tasks"
-                element={<TasksPage setNotifications={setNotifications} />}
+                element={
+                  <TasksPage {...{ setNotifications, tasks, setTasks }} />
+                }
               />
             </Route>
 
@@ -135,7 +142,14 @@ const App = () => {
             </Route>
 
             <Route path="team-projects" element={<RequireAuth />}>
-              <Route index element={<ProjectList {...setNotifications} />} />
+              <Route
+                index
+                element={
+                  <ProjectList
+                    {...{ projects, setProjects, setNotifications }}
+                  />
+                }
+              />
               <Route
                 path=":project_id"
                 element={<ProjectPage {...setNotifications} />}
