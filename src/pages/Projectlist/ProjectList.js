@@ -30,7 +30,7 @@ const ProjectList = ({
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    getProjects(setProjects, user._id, setError);
+    getProjects(user._id, setProjects, setError);
   }, []);
 
   const createProject = async (e) => {

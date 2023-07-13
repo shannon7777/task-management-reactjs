@@ -10,6 +10,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  Chip,
   Divider,
   Grid,
   Stack,
@@ -167,30 +168,39 @@ const Homepage = ({ user, setTasks, setProjects }) => {
               <Divider flexItem sx={{ my: 1 }} />
 
               {upcomingTasks?.map((task, index) => (
-                <>
-                  <div key={index} className="d-flex">
-                    <Box
-                      p={1}
-                      mr={2}
-                      my={1}
-                      borderRadius={3}
-                      bgcolor={colors.primary[300]}
-                      textAlign="center"
-                      height={60}
-                    >
-                      <Typography>
-                        {task.dateToComplete.split(" ")[1]}
-                      </Typography>
-                      <Typography fontWeight="bold" variant="h3">
-                        {new Date(task.dateToComplete).getDate()}
-                      </Typography>
-                    </Box>
-                    <Typography mt={2.5} variant="h5">
-                      {task.text}
+                <div key={index} className="d-flex justify-content-between">
+                  <Box
+                    p={1}
+                    mr={2}
+                    my={1}
+                    borderRadius={3}
+                    bgcolor={colors.primary[300]}
+                    textAlign="center"
+                    height={60}
+                  >
+                    <Typography>{task.dateToComplete.split(" ")[1]}</Typography>
+                    <Typography fontWeight="bold" variant="h3">
+                      {new Date(task.dateToComplete).getDate()}
                     </Typography>
-                  </div>
+                  </Box>
+                  <Typography mt={2.5} variant="h5">
+                    {task.text}
+                  </Typography>
+                  <Chip
+                    variant="outlined"
+                    size="small"
+                    label={
+                      <Typography variant="h6">{task.progress}</Typography>
+                    }
+                    sx={{
+                      ml: "auto",
+                      mt: 2.5,
+                      color: progressColors[task.progress],
+                      borderColor: progressColors[task.progress],
+                    }}
+                  />
                   <Divider flexItem />
-                </>
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -201,3 +211,11 @@ const Homepage = ({ user, setTasks, setProjects }) => {
 };
 
 export default Homepage;
+
+const progressColors = {
+  "Not Started": "#c9c7c1",
+  "In Progress": "#92a8d1",
+  Stuck: "#c94c4c",
+  "Awaiting Review": "#c4971a",
+  Completed: "#82b74b",
+};
