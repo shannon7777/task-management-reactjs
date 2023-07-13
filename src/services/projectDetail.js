@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const getProjects = async (setProjects, user_id, setError) => {
+const getProjects = async (user_id, setProjects, setError) => {
   try {
     let allProjects = JSON.parse(localStorage.getItem(`projects`));
     if (allProjects) return setProjects(allProjects);

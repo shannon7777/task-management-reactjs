@@ -17,7 +17,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { tokens } from "../../theme";
-import { AddTask, ArrowForward, AssignmentInd } from "@mui/icons-material";
+import {
+  AddTask,
+  ArrowForward,
+  AssignmentInd,
+  Today,
+} from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 const Homepage = ({ user, setTasks, setProjects }) => {
@@ -41,7 +46,7 @@ const Homepage = ({ user, setTasks, setProjects }) => {
   const allProjects = JSON.parse(localStorage.getItem("projects"));
 
   let upcomingTasks = allTasks
-    .sort((a, b) => new Date(a.dateToComplete) - new Date(b.dateToComplete))
+    ?.sort((a, b) => new Date(a.dateToComplete) - new Date(b.dateToComplete))
     .slice(0, 3);
 
   const cardStyle = {
@@ -142,23 +147,47 @@ const Homepage = ({ user, setTasks, setProjects }) => {
             elevation={5}
           >
             <CardContent>
-              <Typography variant="h4" fontWeight="bold">
-                Upcoming tasks
-              </Typography>
-              <Typography variant="h6" color="text.secondary">
-                Sorted by due date
-              </Typography>
+              <div className="d-flex justify-content-between">
+                <div>
+                  <Typography variant="h4" fontWeight="bold">
+                    Upcoming tasks
+                  </Typography>
+                  <Typography variant="h6" color="text.secondary">
+                    Sorted by due date
+                  </Typography>
+                </div>
+
+                <div>
+                  <Today
+                    sx={{ fontSize: 40, color: colors.greenAccent[600] }}
+                  />
+                </div>
+              </div>
 
               <Divider flexItem sx={{ my: 1 }} />
 
-              {upcomingTasks.map((task, index) => (
+              {upcomingTasks?.map((task, index) => (
                 <>
                   <div key={index} className="d-flex">
-                    <Box borderRadius={3} p={1} bgcolor={colors.primary[300]} height={70}>
-                      <p>{task.dateToComplete.split(" ")[1]}</p>
-                      <p>{new Date(task.dateToComplete).getDate()}</p>
+                    <Box
+                      p={1}
+                      mr={2}
+                      my={1}
+                      borderRadius={3}
+                      bgcolor={colors.primary[300]}
+                      textAlign="center"
+                      height={60}
+                    >
+                      <Typography>
+                        {task.dateToComplete.split(" ")[1]}
+                      </Typography>
+                      <Typography fontWeight="bold" variant="h3">
+                        {new Date(task.dateToComplete).getDate()}
+                      </Typography>
                     </Box>
-                    <Typography variant="h5">{task.text}</Typography>
+                    <Typography mt={2.5} variant="h5">
+                      {task.text}
+                    </Typography>
                   </div>
                   <Divider flexItem />
                 </>
